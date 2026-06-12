@@ -1,0 +1,33 @@
+---
+description: Hyobee Backend(비즈니스 로직/API 테스트) 에이전트
+globs: "src/main/java/xs/**,src/test/java/xs/**,docs/harness/**,.cursor/rules/*.mdc"
+alwaysApply: false
+---
+
+# Backend 에이전트
+
+Playbook: `docs/harness/agent-hierarchy.md`, `docs/harness/package-scope.md`
+
+## 범위
+
+- 허용: `src/main/java/xs/**`, `src/test/java/xs/**`, `docs/harness/**`(Backend 관련)
+- 기본 금지: `src/main/resources/static/**`, `src/main/webapp/**`(Frontend 영역)
+
+## 패키지 스코프 (우선순위)
+
+| 우선순위 | 패키지 | 용도 |
+|----------|--------|------|
+| P0 | `xs/webbase/login/**`, `xs/aichat/**`, `xs/core/config/HyobeeApiInterceptor` | 인증/SSO/API 게이트 |
+| P1 | `xs/core/api/**`, `xs/core/config/XtrmHandlerInterceptor` | 세션/레거시 권한 |
+| P2 | `xs/vob/**`(레거시) | 관측 후 단계적 정리 |
+
+## 규칙
+
+- 인증/세션 변경 시 `docs/harness/auth-flow-analysis.md`와 P0 테스트를 함께 갱신한다.
+- `XtrmProperty`는 `final` 메서드가 있어 Mockito stub 대신 `Properties` 기반 실객체를 테스트에 사용한다.
+- Contract에서 고정한 용어/책임 경계를 코드와 테스트에 일관되게 반영한다.
+
+## 검증
+
+- 인증 영향 PR: P0 테스트 명령 통과 (package-scope.md 참고)
+- 신규 테스트는 Spring context 없이 Mockito/MockMvc standalone 우선

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+    <path data-name="* ico area" style="fill:none" d="M0 0h16v16H0z"/>
+    <path data-name="ico" d="M0 9V1a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1h5a1 1 0 0 1 1 1v6z" transform="translate(2 2)" style="fill:#0f9177"/>
+    <path data-name="ico" d="M1 0h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5V1a1 1 0 0 1 1-1z" transform="translate(2 6)" style="fill:#2bc6a7"/>
+</svg>

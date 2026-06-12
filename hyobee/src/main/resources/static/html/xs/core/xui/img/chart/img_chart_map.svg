@@ -1,0 +1,28 @@
+<svg id="img_chart_map" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="80" height="80" viewBox="0 0 80 80">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-3 {
+        fill: url(#linear-gradient-2);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ccc"/>
+      <stop offset="1" stop-color="#e0e0e0"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="0.5" y1="1" x2="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ccc"/>
+      <stop offset="1" stop-color="#b3b3b3"/>
+    </linearGradient>
+  </defs>
+  <rect id="_area" data-name="* area" class="cls-1" width="80" height="80"/>
+  <path id="map" class="cls-2" d="M5320.579-15008.053h0l-22-12-22,6v-44l22-6h0l22,12,22-6v22.8a14.792,14.792,0,0,0-10.582-4.419,16.1,16.1,0,0,0-5.958,1.168,14.2,14.2,0,0,0-5.461,3.884l0,0v-13.432l-22-12v36l22,12v-1.371a32.963,32.963,0,0,0,3.337,4.461l-3.337.91Z" transform="translate(-5269.581 15076.051)"/>
+  <path id="location" class="cls-3" d="M61,39.447a13.141,13.141,0,0,0-4.859.956A11.26,11.26,0,0,0,49.2,49C47.469,59.65,57.641,67.97,60.35,69.976a1.1,1.1,0,0,0,.653.216,1.112,1.112,0,0,0,.658-.216C64.175,68.144,73,61.029,73,51.447A12,12,0,0,0,61,39.447ZM61,56a5,5,0,1,1,5-5A5,5,0,0,1,61,56Z" transform="translate(1.419 0.053)"/>
+</svg>

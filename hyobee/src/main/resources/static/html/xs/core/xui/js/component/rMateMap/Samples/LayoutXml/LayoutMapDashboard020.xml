@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rMateMapChart>
+	<!-- backFunction 하위맵 상태에서 상위맵 버튼, 지도 외부 클릭 시 불려지는 함수 설정 -->
+	<!-- clickFunction 지역 클릭 시 불려지는 함수 설정하기 localFillByRange="[#ebf0f4,#81b3fc,#367de4,#003d95]" rangeLegendDataField="disCnt"-->
+	<MapChart id="mainMap1" showDataTips="false"
+		dataTipType="Type4" dataTipFill="#fff0f0" dataTipBorderColor="#fff0f0"
+		dataTipColor="#ffffff" dataTipAlpha="1"
+		drillDownEnabled="true"
+		mapChangeJsFunction="dashboard020.mapChangeJsFunction"
+
+		backToMapJsFunction="dashboard020.backFunction"
+		dataTipJsFunction="dashboard020.dataTipFunction"
+		itemClickJsFunction="dashboard020.itemClickFunction"
+		>
+		<series>
+			<!-- labelPosition 지역명 표시 위치 및 표시 안함 none inside bottom 등등 -->
+			<!-- localFillJsFunction 초기 색상 지정 함수 -->
+			<MapSeries id="mapseries" interactive="true" selectionMarking="line" color="#777777" labelPosition="inside"
+					displayName="Map" useGis="true"
+					dataTipAlpha="1" hideOverSizeLabel="false"
+					localFillJsFunction="dashboard020.colorFunction"
+					labelJsFunction="dashboard020.labelFunction"
+					useHandCursor="true" rollOverFill="#ffdbb5"
+				>
+				<stroke>
+					<Stroke color="#CAD7E0" weight="0.5" alpha="1"/>
+				</stroke>
+				<rollOverStroke>
+					<Stroke color="#CAD7E0" weight="0.5" alpha="1"/>
+				</rollOverStroke>
+				<localFill>
+					<SolidColor color="#EBF0F4"/>
+				</localFill>
+
+			</MapSeries>
+			<MapPanelSeries id="panel1"
+							titleField="areaName" bodyTextField="disCnt"
+							horizontalCenterGapField="h" verticalCenterGapField="v"
+							bodyColor="#555555" color="#FFFFFF"
+							horizontalAlign="center"
+							fill="#2e7dca" panelWidth="50" headerHeight="20" panelHeight="20"  strokeColor="#0BFF91" rollOverFillShadeValue="10"
+							useGis="true"
+							titleJsFunction="dashboard020.titleFunction"
+							codeJsFunction="dashboard020.codeFunction"
+							useHandCursor="true"
+			>
+				<showDataEffect>
+					<SeriesInterpolate duration="1000"/>
+				</showDataEffect>
+			</MapPanelSeries>
+
+		</series>
+	</MapChart>
+</rMateMapChart>

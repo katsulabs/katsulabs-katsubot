@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="ico_bullet_tree" width="20" height="20" viewBox="0 0 20 20">
+    <defs>
+        <style>
+            .cls-2{fill:#999}.cls-3{fill:#697076}
+        </style>
+    </defs>
+    <path id="Rectangle_690" fill="none" d="M0 0H20V20H0z"/>
+    <rect id="Rectangle_749" width="8" height="7" class="cls-2" rx="1" transform="translate(6 2)"/>
+    <rect id="Rectangle_750" width="4" height="5" class="cls-3" rx="1" transform="translate(2 13)"/>
+    <rect id="Rectangle_751" width="4" height="5" class="cls-3" rx="1" transform="translate(8 13)"/>
+    <rect id="Rectangle_752" width="4" height="5" class="cls-3" rx="1" transform="translate(14 13)"/>
+    <path id="Rectangle_753" d="M0 0H1V4H0z" class="cls-2" transform="translate(9.5 9)"/>
+    <path id="Rectangle_755" d="M1 0v3H0V1a1 1 0 0 1 1-1z" class="cls-2" transform="translate(3.5 10)"/>
+    <path id="Rectangle_756" d="M0 0a1 1 0 0 1 1 1v2H0V0z" class="cls-2" transform="translate(15.5 10)"/>
+    <path id="Rectangle_754" d="M0 0H11V1H0z" class="cls-2" transform="translate(4.5 10)"/>
+</svg>

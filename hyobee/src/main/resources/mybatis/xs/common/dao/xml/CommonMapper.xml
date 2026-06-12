@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xs.aichat.v2.mapper.CommonMapper">
+
+    <!-- 초기 WAS 로드 시 메모리에 상주하는 다국어 메시지 조회 (MessageDataLoader에서 사용) -->
+    <select id="findAllMessages" resultType="xs.aichat.v2.dto.common.ComMessageLang">
+        /* [selectAllMessage] 초기 WAS LOAD 시 메모리에 상주하는 다국어 메시지 조회 */
+        select message_id,
+               language_code,
+               message_contents
+        from com_message_lang
+        where use_at = 'Y'
+    </select>
+</mapper>

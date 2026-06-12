@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>rMate HTML5 Chart</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="description" content="rMateChart for HTML5, Riamore Soft 2016">
+<meta name="keywords" content="HTML5,Chart,JavaScript,CSS,Ajax,Graph,rMateChart">
+
+<style type="text/css">
+
+@font-face{
+	font-family:open-sans;
+	src:url(./fonts/OpenSans.woff);
+}
+
+html, body{
+	line-height:1;
+	font-family:"malgun gothic";
+	padding:0;
+	margin:0;
+}
+
+div{
+	box-sizing:border-box;
+}
+
+.overview{
+	margin:30px 0px 77px 0;
+	width:1080px;
+}
+
+.overview_title{
+	height:75px;
+	background:url(./Images/title.png) center no-repeat;
+}
+
+.overview_title > div{
+	margin-top:12px;
+	font-size:23px;
+	letter-spacing:0;
+}
+
+#chart_overview{
+	margin-top: -35px;
+	padding-left:38px;
+	display:inline-block;
+}
+
+#chart_overview div{
+	display:inline-block;
+}
+
+#chart_overview > div{
+	width:223px;
+	height:200px;
+	margin-right:30px;
+	margin-top:60px;
+	background-repeat:no-repeat;
+	background-position:50% 0;
+	position:relative;
+	cursor:pointer;
+	float:left;
+}
+
+#chart_overview > div > div{
+	bottom:0;
+	top: 200px;
+	margin-top:15px;
+	font-size:15px;
+	width:100%;
+	position:absolute;
+	font-family:"malgun gothic";
+	color:#555;
+	text-align:center;
+	letter-spacing: -1px;
+}
+
+</style>
+
+<!-- jQuery -->
+<script src="./jQuery/jquery-1.12.4.min.js"></script>
+
+<script type="text/javascript">
+
+var overviewList = {
+	"Multi Plot":0,
+	"Panel Series":2,
+	"Bubble Series":6,
+	"Spark-Column":11,
+	"Spark-Pie":12,
+	"Route Series":10,
+	"Pattern Map":4,
+	"GIS 연동":1,
+	"데이터 영역 범례":4,
+	"Design Map":0,
+	"Image Map":8,
+	"Div 데이터팁":1
+};
+
+$(document).ready(function(){
+	$("#chart_overview").bind("click", function(event){
+		var sampleLi, 
+			menuType, sampleURL,
+			chartMenu = event.target,
+			menu = window.parent.menuFrame,
+			chartSubMenu, subMenuList, overviewItem;
+		
+		if(chartMenu.id == "chart_overview")
+			return;
+
+		overviewItem = chartMenu.innerText;
+		
+		chartSubMenu = chartMenu.id.replace("_ov","")+"_sub";
+		subMenuList = menu.document.getElementById("chart_type_subList");
+		sampleLi = menu.document.getElementById(chartSubMenu).childNodes[overviewList[overviewItem]];
+
+		sampleURL = getSampleURL(sampleLi.childNodes[0]);
+		
+		menuType = menu.document.getElementById(chartMenu.id.replace("_ov",""));
+		if(!menuType._expand)
+			menu.expandItem(menuType);
+		menu.selectTypeItem(sampleLi);
+		var openURL = setInterval(function(){
+			if ( menu.subFrameOpened ) {
+				window.parent.sampleFrame.frameElement.src = "./Samples/" + sampleURL;
+				clearInterval(openURL);
+			}
+		}, 100)
+	});
+});
+
+// return sample url
+function getSampleURL(a){
+	a = a.href.split("/");
+	return a[a.length - 1];
+}
+
+</script>
+
+</head>
+<body>
+<div class="overview">
+	<div class="overview_title"></div>
+	<div id="chart_overview">
+		<div id="맵차트 Series_ov" style="background-image:url(./Images/plot.png);"><div id="맵차트 Series_ov">Multi Plot</div></div>
+		<div id="맵차트 Series_ov" style="background-image:url(./Images/panel.png);"><div id="맵차트 Series_ov">Panel Series</div></div>
+		<div id="맵차트 Series_ov" style="background-image:url(./Images/bubble.png);"><div id="맵차트 Series_ov">Bubble Series</div></div>
+		<div id="맵차트 Series_ov" style="background-image:url(./Images/spark_column.png);"><div id="맵차트 Series_ov">Spark-Column</div></div>
+		<div id="맵차트 Series_ov" style="background-image:url(./Images/spark_pie.png);"><div id="맵차트 Series_ov">Spark-Pie</div></div>
+		<div id="맵차트 Series_ov" style="background-image:url(./Images/route.png);"><div id="맵차트 Series_ov">Route Series</div></div>
+		<div id="맵차트 컬러_ov" style="background-image:url(./Images/pattern.png);"><div id="맵차트 컬러_ov">Pattern Map</div></div>
+		<div id="GIS 데이터 연동_ov" style="background-image:url(./Images/gis.png);"><div id="GIS 데이터 연동_ov">GIS 연동</div></div>
+		<div id="범례_ov" style="background-image:url(./Images/legend.png);"><div id="범례_ov">데이터 영역 범례</div></div>
+		<div id="지도종류(디자인)_ov" style="background-image:url(./Images/design.png);"><div id="지도종류(디자인)_ov">Design Map</div></div>
+		<div id="사용자 정의 설정_ov" style="background-image:url(./Images/divTip.png);"><div id="사용자 정의 설정_ov">Div 데이터팁</div></div>
+		<div id="맵차트 Series_ov" style="background-image:url(./Images/image.png);"><div id="맵차트 Series_ov">Image Map</div></div>
+
+	</div>
+</div>
+</body>
+</html>

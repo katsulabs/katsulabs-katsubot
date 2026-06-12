@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xs.aichat.v2.mapper.UserMapper">
+<select id="findById" resultType="xs.aichat.v2.dto.User">
+select vue.user_id,
+       cu.user_name,
+       vue.pg_code,
+       vue.pg_name,
+       vue.pu_code,
+       vue.pu_name,
+       vue.corp_code,
+       vue.corp_name,
+       vdl.dept_code as team_code,
+       vdl.dept_name as team_name,
+       vue.official_position_name
+ from com_user cu
+inner join vob_user_ext vue
+   on cu.user_id = vue.user_id
+  and vue.dept_code = cu.dept_code
+  and vue.company_code = cu.company_code
+  and vue.company_code = '1000'
+inner join vob_dept_lang vdl
+   on vue.corp_code = vdl.corp_code
+  and vdl.language_code = 'ko'
+  and vue.company_code = vdl.company_code
+  and vdl.dept_code = vue.dept_special_code
+<!--  AND vdl.dept_code = (-->
+<!--        CASE-->
+<!--            WHEN vue.dept_code != vue.DEPT_SPECIAL_CODE THEN vue.DEPT_SPECIAL_CODE-->
+<!--            ELSE cu.dept_code-->
+<!--        END-->
+<!--      )-->
+where cu.user_id =  #{userId};
+</select>
+
+<select id="findUserByIdAndCodes" resultType="xs.aichat.v2.dto.User">
+select vue.user_id as userId,
+       cu.user_name,
+       vue.pg_code as pgCode,
+       vue.pg_name,
+       vue.pu_code as puCode,
+       vue.pu_name,
+       vue.corp_code as corpCode,
+       vue.corp_name,
+       vdl.dept_code as teamCode,
+       vdl.dept_name as teamName
+from vob_user_ext vue
+inner join com_user cu
+    on vue.user_id = cu.user_id
+    and vue.dept_special_code = cu.dept_code
+    and vue.company_code = cu.company_code
+    and vue.company_code = '1000'
+inner join vob_dept_lang vdl
+    on vue.corp_code = vdl.corp_code
+    and cu.dept_code = vdl.dept_special_code
+    and vdl.language_code = 'ko'
+    and vue.company_code = vdl.company_code
+where vue.user_id = #{userId}
+  and vue.pg_code = #{pgCode}
+  AND vue.pu_code = #{puCode}
+  and vue.corp_code = #{corpCode}
+  and vue.dept_code = #{teamCode}
+</select>
+
+    <select id="findViewableTeamsById" resultType="xs.aichat.v2.dto.Team">
+        select cvt.dept_code as code,
+               d.dept_name   as name
+        from chat_viewable_teams cvt
+                 inner join view_vob_dept_info d
+                            on d.company_code = '1000'
+                                and d.corp_code = cvt.corp_code
+                                and d.dept_code = cvt.dept_code
+                                and d.language_code = lower(#{languageCode})
+        where cvt.user_id = #{userId}
+          and cvt.is_deleted = false
+        group by cvt.dept_code, d.dept_name
+        order by d.dept_name
+    </select>
+
+    <select id="findConversationDeptMappingsByUserId" resultType="xs.aichat.v2.dto.ConversationDeptMapping">
+        select cvt.dept_code as deptCode,
+               cvt.corp_code as corpCode,
+               conv.conversation_id as conversationId
+        from chat_viewable_teams cvt
+                 cross join lateral unnest(cvt.conversations) as conv(conversation_id)
+        where cvt.user_id = #{userId}
+          and cvt.is_deleted = false
+    </select>
+
+    <select id="findActiveViewableDeptCode" resultType="string">
+        select dept_code
+        from chat_viewable_teams
+        where user_id = #{userId}
+          and is_active = true
+          and is_deleted = false
+        limit 1
+    </select>
+
+    <select id="countViewableTeamsByUserId" resultType="int">
+        select count(*)::int
+        from chat_viewable_teams
+        where user_id = #{userId}
+          and is_deleted = false
+    </select>
+
+    <select id="findAllViewableTeamCodesByUserId" resultType="string">
+        select dept_code
+        from chat_viewable_teams
+        where user_id = #{userId}
+          and is_deleted = false
+    </select>
+
+    <update id="deactivateAllViewableTeams">
+        update chat_viewable_teams
+        set is_active = false
+        where user_id = #{userId}
+          and is_deleted = false
+    </update>
+
+    <update id="activateViewableTeam">
+        update chat_viewable_teams
+        set is_active = true
+        where user_id = #{userId}
+          and corp_code = #{corpCode}
+          and dept_code = #{deptCode}
+          and is_deleted = false
+    </update>
+
+    <update id="appendConversation">
+        update chat_viewable_teams
+        set conversations = case
+            when #{conversationId} = any (conversations) then conversations
+            else array_append(conversations, #{conversationId})
+        end
+        where user_id = #{userId}
+          and corp_code = #{corpCode}
+          and dept_code = #{deptCode}
+          and is_deleted = false
+    </update>
+
+    <update id="removeConversations">
+        update chat_viewable_teams
+        set conversations = coalesce(
+            array(
+                select e
+                from unnest(conversations) as e
+                where e not in
+                <foreach collection="conversationIds" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            ),
+            '{}'::integer[]
+        )
+        where user_id = #{userId}
+          and is_deleted = false
+    </update>
+</mapper>

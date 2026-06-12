@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="ico_grid_swap_ver_def" width="11.999" height="18" viewBox="0 0 11.999 18">
+    <defs>
+        <style>
+            .cls-2{fill:#ccc}
+        </style>
+    </defs>
+    <path id="_ico_area" fill="none" d="M10456 12763v-18h12v18z" transform="translate(-10456.002 -12745.002)"/>
+    <path id="ico_arrow_down" d="M15.5 12.5l3 5 3-5z" class="cls-2" transform="translate(-12.502 -2.502)"/>
+    <path id="ico_arrow_up" d="M15.5 17.5l3-5 3 5z" class="cls-2" transform="translate(-12.502 -10.502)"/>
+</svg>

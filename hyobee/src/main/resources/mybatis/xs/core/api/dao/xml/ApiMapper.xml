@@ -1,0 +1,899 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xs.core.api.ApiMapper">
+    
+<select id="getHolidayData" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [getHolidayData] 일정정보 조회 */
+<![CDATA[
+SELECT COMPANY_CODE
+     , STANDARD_DATE
+     , LUNAR_CALENDAR_DATE
+     , RESTDE_AT
+     , NATIONAL_HOLIDAY_AT
+     , RESTDE_CONTENTS
+     , WEEK_PERIOD
+     , WEEKEND_CODE
+     , SEXAGENARY_CYCLE_NAME
+  FROM COM_CALENDAR
+ WHERE RESTDE_AT      = 'Y'
+   AND STANDARD_DATE >= SUBSTR(TO_CHAR(ADD_MONTHS(CURRENT_TIMESTAMP, -12), 'YYYYMMDD'), 1, 4) || '0101'
+   AND STANDARD_DATE <= SUBSTR(TO_CHAR(ADD_MONTHS(CURRENT_TIMESTAMP,  12), 'YYYYMMDD'), 1, 4) || '1231'
+ ORDER BY STANDARD_DATE
+]]>
+</select>
+
+<select id="getCmmnCodeData" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [getCmmnCodeData] 회사별 공통코드 조회 */
+<![CDATA[
+SELECT CASE WHEN A.CODE = '*****' THEN A.CODE_SECTION_CODE ELSE A.CODE              END AS NODE_ID
+     , CASE WHEN A.CODE = '*****' THEN A.CODE              ELSE A.CODE_SECTION_CODE END AS PARENT_NODE_ID
+     , A.GROUP_CODE
+     , A.CODE
+     , A.CODE_NAME                                                                      AS CODE_NAME          -- 다국어 코드명
+     , A.CODE_DESC                                                                      AS CODE_DESC          --다국어 코드설명
+     , A.CODE_SECTION_CODE
+     , A.ETC_01_INFO
+     , A.ETC_02_INFO
+     , A.ETC_03_INFO
+     , A.ETC_04_INFO
+     , A.ETC_05_INFO
+     , A.ETC_06_INFO
+     , A.ETC_07_INFO
+     , A.ETC_08_INFO
+     , A.ETC_09_INFO
+     , A.ETC_10_INFO
+     , A.SORTING_SN
+  FROM VIEW_COM_CODE A
+ WHERE A.COMPANY_CODE   = #{sessionCompanyCode}
+   AND A.USE_AT         = 'Y'
+   AND A.BEGIN_DATE    <= TO_CHAR(CURRENT_TIMESTAMP,'YYYYMMDD')
+   AND A.END_DATE      >= TO_CHAR(CURRENT_TIMESTAMP,'YYYYMMDD')
+   AND A.LANGUAGE_CODE  = #{sessionLanguageCode}
+]]>
+<if test="@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(groupCode)"> 
+   AND A.GROUP_CODE     = #{groupCode}
+</if>
+ GROUP BY A.COMPANY_CODE
+        , A.GROUP_CODE
+        , A.CODE_SECTION_CODE
+        , A.CODE
+        , A.CODE_NAME
+        , A.CODE_DESC
+        , A.ETC_01_INFO
+        , A.ETC_02_INFO
+        , A.ETC_03_INFO
+        , A.ETC_04_INFO
+        , A.ETC_05_INFO
+        , A.ETC_06_INFO
+        , A.ETC_07_INFO
+        , A.ETC_08_INFO
+        , A.ETC_09_INFO
+        , A.ETC_10_INFO
+        , A.BEGIN_DATE
+        , A.END_DATE
+        , A.SORTING_SN
+        , A.USE_AT
+        , A.FIRST_CREATE_USER_ID
+        , A.LAST_UPDATE_USER_ID
+        , A.CREATE_DT
+        , A.UPDATE_DT
+ ORDER BY CASE WHEN A.CODE = '*****' THEN A.CODE ELSE A.CODE_SECTION_CODE END, A.SORTING_SN, A.CODE
+</select>
+
+<select id="getSysCodeData" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [getSysCodeData] 시스템 공통코드 조회 */
+<![CDATA[
+SELECT CASE WHEN A.CODE = '*****' THEN A.CODE_SECTION_CODE ELSE A.CODE              END      AS NODE_ID
+     , CASE WHEN A.CODE = '*****' THEN A.CODE              ELSE A.CODE_SECTION_CODE END      AS PARENT_NODE_ID
+     , A.GROUP_CODE                                                                          AS GROUP_CODE
+     , A.CODE                                                                                AS CODE
+     , A.CODE_NAME                                                                           AS CODE_NAME          -- 다국어 코드명
+     , A.CODE_DESC                                                                           AS CODE_DESC          --다국어 코드설명
+     , A.CODE_SECTION_CODE                                                                   AS CODE_SECTION_CODE
+     , A.ETC_01_INFO                                                                         AS ETC_01_INFO
+     , A.ETC_02_INFO                                                                         AS ETC_02_INFO
+     , A.ETC_03_INFO                                                                         AS ETC_03_INFO
+     , A.ETC_04_INFO                                                                         AS ETC_04_INFO
+     , A.ETC_05_INFO                                                                         AS ETC_05_INFO
+     , A.ETC_06_INFO                                                                         AS ETC_06_INFO
+     , A.ETC_07_INFO                                                                         AS ETC_07_INFO
+     , A.ETC_08_INFO                                                                         AS ETC_08_INFO
+     , A.ETC_09_INFO                                                                         AS ETC_09_INFO
+     , A.ETC_10_INFO                                                                         AS ETC_10_INFO
+     , A.SORTING_SN
+  FROM VIEW_COM_SYS_CODE  A
+ WHERE A.USE_AT         = 'Y'
+   AND A.BEGIN_DATE    <= TO_CHAR(CURRENT_TIMESTAMP,'YYYYMMDD')
+   AND A.END_DATE      >= TO_CHAR(CURRENT_TIMESTAMP,'YYYYMMDD')
+]]>
+<if test="@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(languageCode)">
+   AND A.LANGUAGE_CODE = #{languageCode}
+</if>
+<if test="@xs.core.handler.mybatis.XtrmParamCheckHandler@isEmpty(languageCode)">
+   AND A.LANGUAGE_CODE = #{sessionLanguageCode}
+</if>
+<if test="@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(groupCode)"> 
+   AND A.GROUP_CODE     = #{groupCode}
+</if>
+ ORDER BY CASE WHEN A.CODE = '*****' THEN A.CODE ELSE A.CODE_SECTION_CODE END, A.SORTING_SN, A.CODE
+</select>
+
+<select id="getCmmnCodeDataByGroupCodeList" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [getCmmnCodeDataByGroupCodeList] 멀티 그룹코드 기준 리스트 검색 */
+<![CDATA[
+SELECT GROUP_CODE
+     , CODE
+     , CODE_NAME
+     , CODE_SECTION_CODE
+     , ETC_01_INFO
+     , ETC_02_INFO
+     , ETC_03_INFO
+     , ETC_04_INFO
+     , ETC_05_INFO
+     , CODE_DESC
+     , SORTING_SN
+  FROM VIEW_COM_CODE
+ WHERE COMPANY_CODE   = #{sessionCompanyCode}
+   AND CODE          != '*****'
+   AND USE_AT         = 'Y'
+   AND BEGIN_DATE    <= TO_CHAR(CURRENT_TIMESTAMP,'YYYYMMDD')
+   AND END_DATE      >= TO_CHAR(CURRENT_TIMESTAMP,'YYYYMMDD')
+   AND LANGUAGE_CODE  = #{sessionLanguageCode}
+]]>
+<if test='groupCodeList != null and groupCodeList.size() > 0'>
+   AND GROUP_CODE            IN
+<foreach collection="groupCodeList" item="groupCode" open="(" close=")" separator=",">
+       #{groupCode, jdbcType=VARCHAR}
+</foreach>
+</if>
+ UNION ALL 
+<![CDATA[
+SELECT GROUP_CODE
+     , CODE
+     , CODE_NAME
+     , CODE_SECTION_CODE
+     , ETC_01_INFO
+     , ETC_02_INFO
+     , ETC_03_INFO
+     , ETC_04_INFO
+     , ETC_05_INFO
+     , CODE_DESC     
+     , SORTING_SN
+  FROM VIEW_COM_SYS_CODE
+ WHERE CODE          != '*****'
+   AND USE_AT         = 'Y'
+   AND BEGIN_DATE    <= TO_CHAR(CURRENT_TIMESTAMP,'YYYYMMDD')
+   AND END_DATE      >= TO_CHAR(CURRENT_TIMESTAMP,'YYYYMMDD')
+   AND LANGUAGE_CODE  = #{sessionLanguageCode}
+]]>
+<if test='groupCodeList != null and groupCodeList.size() > 0'>
+   AND GROUP_CODE            IN
+<foreach collection="groupCodeList" item="groupCode" open="(" close=")" separator=",">
+       #{groupCode, jdbcType=VARCHAR}
+</foreach>
+</if> 
+ ORDER BY CODE_SECTION_CODE, SORTING_SN, CODE
+</select>
+
+<select id="getAuthMenuTreeData" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [getAuthMenuTreeData] 권한이 적용된 메뉴 트리 검색 */
+
+WITH RECURSIVE CTE_AUTH_MENU(MAIN_MENU_KEY, MENU_KEY, UPPER_MENU_KEY, SCREEN_VISIBLE_AT)
+  AS ( SELECT MAX(CASE WHEN AA.PRIOR_RANK = 1 THEN AA.MAIN_MENU_KEY ELSE NULL END) OVER() AS MAIN_MENU_KEY
+            , BB.MENU_KEY
+            , BB.UPPER_MENU_KEY
+            , BB.SCREEN_VISIBLE_AT
+         FROM ( 
+                SELECT A.COMPANY_CODE
+                     , ROW_NUMBER() OVER(ORDER BY B.PRIOR_RANK) AS PRIOR_RANK
+                     , D.MENU_KEY
+                     , MAX(B.MAIN_MENU_KEY)                     AS MAIN_MENU_KEY
+                  FROM COM_USER            A
+                 INNER JOIN COM_AUTH_GROUP      B
+                    ON A.COMPANY_CODE        = B.COMPANY_CODE
+                 INNER JOIN COM_AUTH_GROUP_USER C
+                    ON A.COMPANY_CODE        = C.COMPANY_CODE
+                   AND A.USER_ID             = C.USER_ID 
+                   AND B.GROUP_KEY           = C.GROUP_KEY
+                 INNER JOIN COM_AUTH_GROUP_MENU D
+                    ON A.COMPANY_CODE        = D.COMPANY_CODE
+                   AND B.GROUP_KEY           = D.GROUP_KEY
+                 WHERE A.COMPANY_CODE        = #{sessionCompanyCode}
+                   AND A.USER_ID             = #{sessionUserId}
+                 GROUP BY A.COMPANY_CODE, B.PRIOR_RANK, D.MENU_KEY
+              ) AA
+        INNER JOIN COM_MENU BB
+           ON AA.COMPANY_CODE = BB.COMPANY_CODE
+          AND AA.MENU_KEY     = BB.MENU_KEY
+        UNION ALL
+       SELECT NULL
+            , A.MENU_KEY
+            , A.UPPER_MENU_KEY
+            , A.SCREEN_VISIBLE_AT
+         FROM COM_MENU A
+        INNER JOIN CTE_AUTH_MENU B
+           ON A.MENU_KEY     = B.UPPER_MENU_KEY
+        WHERE A.COMPANY_CODE = #{sessionCompanyCode}
+     )
+
+SELECT MAX(CASE WHEN AA.USER_MAIN_MENU_KEY IS NULL THEN AA.MAIN_MENU_KEY ELSE AA.USER_MAIN_MENU_KEY END) OVER() AS MAIN_MENU_KEY
+     , AA.MENU_KEY
+     , AA.FULL_MENU_KEY
+     , AA.FULL_MENU_NAME
+     , AA.MENU_NAME
+     , AA.NODE_LEVEL
+     , AA.UPPER_MENU_KEY
+     , AA.MENU_DESC
+     , AA.PROGRAM_PARAM_CONTENTS
+     , AA.VIEW_TARGET_CODE
+     , AA.MENU_PATH_INFO
+     , AA.POPUP_WIDTH_SIZE
+     , AA.POPUP_VERTICAL_SIZE
+     , AA.ICON_CLASS_NAME
+     , AA.HAS_CHILD_AT
+     , CASE WHEN DD.MENU_KEY IS NOT NULL THEN 'Y'           ELSE 'N' END AS FAVORITE_AT
+     , CASE WHEN DD.MENU_KEY IS NOT NULL THEN DD.SORTING_SN ELSE 0   END AS FAVORITE_SORTING_SN
+     , AA.SCREEN_VISIBLE_AT
+  FROM (
+         SELECT DISTINCT
+                MAX(B.MAIN_MENU_KEY) OVER()                                        AS MAIN_MENU_KEY
+              , MAX(C.MAIN_MENU_KEY) OVER()                                        AS USER_MAIN_MENU_KEY
+              , A.MENU_KEY                                                         AS MENU_KEY
+              , A.FULL_MENU_KEY                                                    AS FULL_MENU_KEY
+ 			  , A.FULL_MENU_NAME                                                   AS FULL_MENU_NAME
+              , A.MENU_NAME                                                        AS MENU_NAME
+              , A.NODE_LEVEL                                                       AS NODE_LEVEL
+              , A.UPPER_MENU_KEY                                                   AS UPPER_MENU_KEY
+              , A.MENU_DESC                                                        AS MENU_DESC
+              , A.PROGRAM_PARAM_CONTENTS                                           AS PROGRAM_PARAM_CONTENTS
+              , A.VIEW_TARGET_CODE                                                 AS VIEW_TARGET_CODE
+              , A.MENU_PATH_INFO                                                   AS MENU_PATH_INFO
+              , A.POPUP_WIDTH_SIZE                                                 AS POPUP_WIDTH_SIZE
+              , A.POPUP_VERTICAL_SIZE                                              AS POPUP_VERTICAL_SIZE
+              , A.ICON_CLASS_NAME                                                  AS ICON_CLASS_NAME
+              , A.CUSTOM_SORTING_SN                                                AS CUSTOM_SORTING_SN
+              , #{sessionOriginCompanyCode}                                        AS COMPANY_CODE
+              , #{sessionCompanyCode}                                              AS TARGET_COMPANY_CODE
+              , CASE WHEN (SELECT COUNT(MENU_KEY) FROM COM_MENU WHERE UPPER_MENU_KEY = A.MENU_KEY) > 0 THEN 'Y'
+                     ELSE 'N'
+                 END                                                               AS HAS_CHILD_AT
+              , A.SCREEN_VISIBLE_AT
+           FROM VIEW_MENU_INFO A
+          INNER JOIN CTE_AUTH_MENU  B
+             ON A.MENU_KEY              = B.MENU_KEY
+           LEFT OUTER JOIN COM_USER C
+             ON B.MENU_KEY              = C.MAIN_MENU_KEY
+            AND C.COMPANY_CODE          = #{sessionCompanyCode}
+            AND C.USER_ID               = #{sessionUserId}
+          WHERE A.COMPANY_CODE          = #{sessionCompanyCode}
+            AND A.FULL_USE_AT           NOT LIKE '%N%'  -- TODO: 사용 여부 TREE 중 N이 포함된 케이스에 대응하기 위한 인덱스 추가
+            AND A.LANGUAGE_CODE         = #{sessionLanguageCode}
+<if test="@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(solutionSectionCode)"> 
+            AND A.SOLUTION_SECTION_CODE = #{solutionSectionCode}
+</if>
+     ) AA
+  LEFT OUTER JOIN COM_COMPANY     BB
+    ON AA.COMPANY_CODE = BB.COMPANY_CODE
+  LEFT OUTER JOIN COM_USER_BOOKMARK DD
+    ON AA.MENU_KEY     = DD.MENU_KEY
+   AND DD.COMPANY_CODE = #{sessionCompanyCode}
+   AND DD.USER_ID      = #{sessionUserId}
+ ORDER BY CUSTOM_SORTING_SN
+</select>
+
+<select id="selectBaseDateTime" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+SELECT TO_CHAR(CURRENT_TIMESTAMP,'YYYY-MM-DD HH24:MI:SS.FF') AS BASE_DATE_TIME
+</select>
+
+<select id="getUniqueKeyWithSequence" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+SELECT FN_GET_COM_UNIQUE_KEY() AS UNIQUE_KEY
+</select>
+
+<insert id="insertUserAccessLog">
+<selectKey keyProperty="logKey" resultType="String" order="BEFORE">
+SELECT FN_GET_COM_UNIQUE_KEY()
+</selectKey>
+INSERT INTO COM_USER_ACCESS_LOG
+       ( COMPANY_CODE
+       , LOG_KEY
+       , ACCESS_DT
+       , ACCESS_SECTION_CODE
+       , ACCESS_SERVER_IP
+       , REQUEST_URI_INFO
+       , REQUEST_UUID_INFO
+       , REQUEST_CLIENT_IP
+       , REQUEST_HEADER_DETAIL
+       , REQUEST_BODY_PART_DETAIL
+       , RESPONSE_HEADER_DETAIL
+       , RESPONSE_BODY_PART_DETAIL
+       , ETC_01_INFO
+       , ETC_02_INFO
+       , ETC_03_INFO
+       , ETC_04_INFO
+       , ETC_05_INFO
+       , USER_ID
+       , MENU_KEY
+       , FIRST_CREATE_USER_ID
+       , CREATE_DT
+       )
+VALUES ( #{sessionCompanyCode}
+       , #{logKey}
+       , CURRENT_TIMESTAMP
+       , #{accessSectionCode}
+       , #{accessServerIp}
+       , #{requestUriInfo}
+       , #{requestUuidInfo}::UUID
+       , #{requestClientIp}
+       , #{requestHeaderDetail}
+       , #{requestBodyPartDetail}
+       , #{responseHeaderDetail}
+       , #{responseBodyPartDetail}
+       , #{etc01Info}
+       , #{etc02Info}
+       , #{etc03Info}
+       , #{etc04Info}
+       , #{etc05Info}
+       , #{sessionUserId}
+       , #{menuKey}
+       , #{sessionUserId}
+       , CURRENT_TIMESTAMP
+       )
+</insert>
+
+<insert id="insertComFiles">
+INSERT INTO COM_FILES_EXT
+       ( COMPANY_CODE
+       , FILE_GROUP_KEY
+       , FILE_KEY
+       , ORIGINAL_FILE_NAME
+       , SAFETY_FILE_NAME
+       , FILE_PATH_INFO
+       , FILE_SIZE
+       , FILE_EXTENSION_NAME
+       , USE_AT
+       , DOWNLOAD_COUNT
+       , FIRST_CREATE_USER_ID
+       , CREATE_DT
+       , LAST_UPDATE_USER_ID
+       , UPDATE_DT
+       )
+VALUES ( #{sessionCompanyCode}
+       , #{fileGroupKey}
+       , #{fileKey}
+       , #{originalFileSubject}
+       , #{safetyFileName}
+       , #{filePathInfo}
+       , #{fileSize}
+       , #{fileExtensionName}
+       , #{useAt}
+       , #{downloadCount}
+       , #{sessionUserId}
+       , CURRENT_TIMESTAMP
+       , #{sessionUserId}
+       , CURRENT_TIMESTAMP
+       )
+</insert>
+
+<update id="updateFileDownloadCount">
+UPDATE COM_FILES
+   SET DOWNLOAD_COUNT       = DOWNLOAD_COUNT + 1
+     , LAST_UPDATE_USER_ID  = #{sessionUserId}
+     , UPDATE_DT            = CURRENT_TIMESTAMP
+ WHERE COMPANY_CODE         = (CASE WHEN #{sessionCompanyCode} = '' THEN #{companyCode} ELSE #{sessionCompanyCode} END)
+   AND FILE_GROUP_KEY       IN
+<foreach collection="fileGroupKeyList" item="fileGroupKey" open="(" close=")" separator=",">
+#{fileGroupKey, jdbcType=VARCHAR}
+</foreach>
+<if test='fileKeyList != null and fileKeyList.size() > 0'>
+   AND FILE_KEY             IN
+<foreach collection="fileKeyList" item="fileKey" open="(" close=")" separator=",">
+#{fileKey, jdbcType=VARCHAR}
+</foreach>
+</if>
+</update>
+
+<update id="updateFileExtDownloadCount">
+UPDATE COM_FILES_EXT
+   SET DOWNLOAD_COUNT       = DOWNLOAD_COUNT + 1
+     , LAST_UPDATE_USER_ID  = #{sessionUserId}
+     , UPDATE_DT            = CURRENT_TIMESTAMP
+ WHERE COMPANY_CODE         = (CASE WHEN #{sessionCompanyCode} = '' THEN #{companyCode} ELSE #{sessionCompanyCode} END)
+   AND FILE_GROUP_KEY      IN
+<foreach collection="fileGroupKeyList" item="fileGroupKey" open="(" close=")" separator=",">
+#{fileGroupKey, jdbcType=VARCHAR}
+</foreach>
+<if test='fileKeyList != null and fileKeyList.size() > 0'>
+   AND FILE_KEY            IN
+<foreach collection="fileKeyList" item="fileKey" open="(" close=")" separator=",">
+#{fileKey, jdbcType=VARCHAR}
+</foreach>
+</if>
+</update>
+
+<delete id="deleteComFiles">
+DELETE FROM COM_FILES
+ WHERE COMPANY_CODE    = #{sessionCompanyCode}
+   AND FILE_GROUP_KEY  IN
+<foreach collection="fileGroupKeyList" item="fileGroupKey" open="(" close=")" separator=",">
+#{fileGroupKey, jdbcType=VARCHAR}
+</foreach>
+<if test='fileKeyList != null and fileKeyList.size() > 0'>
+   AND FILE_KEY        IN
+<foreach collection="fileKeyList" item="fileKey" open="(" close=")" separator=",">
+#{fileKey, jdbcType=VARCHAR}
+</foreach>
+</if>   
+</delete>
+
+<select id="getUploadFileGroupList" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+SELECT COMPANY_CODE
+     , FILE_GROUP_KEY
+     , FILE_KEY
+     , ORIGINAL_FILE_NAME
+     , SAFETY_FILE_NAME
+     , SUBSTR(FILE_PATH_INFO, 1, INSTR(FILE_PATH_INFO, '/', -1, 1) - 1) AS DIRECTORY_PATH_INFO
+     , FILE_PATH_INFO
+     , FILE_SIZE
+     , FILE_EXTENSION_NAME
+     , USE_AT
+     , DOWNLOAD_COUNT
+     , TO_CHAR(CREATE_DT, 'YYYY-MM-DD HH24:MI:SS.FF')                        AS CREATE_DT
+  FROM COM_FILES_EXT
+ WHERE COMPANY_CODE    = #{sessionCompanyCode}
+<if test='fileGroupKeyList != null and fileGroupKeyList.size() > 0'>
+   AND FILE_GROUP_KEY  IN
+<foreach collection="fileGroupKeyList" item="fileGroupKey" open="(" close=")" separator=",">
+#{fileGroupKey, jdbcType=VARCHAR}
+</foreach>
+</if>
+<if test='fileKeyList != null and fileKeyList.size() > 0'>
+   AND FILE_KEY        IN
+<foreach collection="fileKeyList" item="fileKey" open="(" close=")" separator=",">
+#{fileKey, jdbcType=VARCHAR}
+</foreach>
+</if>
+<if test='filePathInfoList != null and filePathInfoList.size() > 0'>
+   AND FILE_PATH_INFO  IN
+<foreach collection="filePathInfoList" item="filePathInfo" open="(" close=")" separator=",">
+#{filePathInfo, jdbcType=VARCHAR}
+</foreach>
+</if>
+</select>
+
+<select id="selectDeptData" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectDeptData] 공통js에서 부서 정보 조회 */
+SELECT A.DEPT_CODE
+     , A.DEPT_NAME
+  FROM (
+         SELECT DEPT_CODE
+              , DEPT_NAME
+           FROM VIEW_DEPT_INFO
+          WHERE COMPANY_CODE     = #{sessionCompanyCode}
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(deptInfo)'>
+            AND ( DEPT_CODE LIKE '%' || #{deptInfo} || '%'
+             OR   DEPT_NAME LIKE '%' || #{deptInfo} || '%' )
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(useAt)'>
+            AND USE_AT           = #{useAt}
+</if>
+       ) A
+ WHERE 1 = 1
+</select>
+
+<select id="selectUserData" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectUserData] 공통 사용자 정보 조회 */
+SELECT A.USER_ID                  AS USER_ID
+     , A.USER_NAME                AS USER_NAME
+  FROM COM_USER A
+ WHERE A.COMPANY_CODE            = #{sessionCompanyCode}
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(userInfo)'>
+   AND ( A.USER_ID   LIKE '%' || #{userInfo} || '%'
+    OR   A.USER_NAME LIKE '%' || #{userInfo} || '%' )
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(accountUseAt)'>
+   AND A.ACCOUNT_USE_AT          = #{accountUseAt}
+</if>
+</select>
+
+<select id="selectCustomerData" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectCustomerData] 공통 고객 정보 조회 */
+SELECT PU_CODE
+     , CUST_CODE
+     , CUST_NAME
+     , GLOBAL_CUST_NAME
+     , CUST_NATION_CODE
+     , REGION_CODE
+  FROM VOB_CUSTOMER
+ WHERE 1=1
+   AND COMPANY_CODE       = #{sessionCompanyCode}
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(custInfo)'>
+   AND ( CUST_CODE        LIKE '%' || #{custInfo} || '%'
+    OR   CUST_NAME        LIKE '%' || #{custInfo} || '%'
+    OR   GLOBAL_CUST_NAME LIKE '%' || #{custInfo} || '%'
+       )
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(puCode)'>
+   AND PU_CODE            = #{puCode}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(nationCode)'>
+   AND CUST_NATION_CODE   = #{nationCode}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(regionCode)'>
+   AND REGION_CODE        = #{regionCode}
+</if>
+ ORDER BY CUST_NAME
+</select>
+
+<update id="updateReadingCountClobFiles">
+UPDATE COM_CLOB_FILES
+   SET READING_COUNT       = READING_COUNT + 1
+ WHERE COMPANY_CODE        = #{sessionCompanyCode}
+   AND FILE_KEY            = #{fileKey}
+</update>
+
+<select id="selectClobFileData" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+SELECT A.COMPANY_CODE
+     , A.FILE_KEY
+     , A.FILE_PATH_INFO
+     , A.FILE_SIZE
+     , A.TARGET_TABLE_NAME
+     , A.TARGET_COLUMN_NAME
+     , A.READING_COUNT
+  FROM COM_CLOB_FILES A
+  LEFT OUTER JOIN VOC_ANALYSIS_LOG B
+    ON A.COMPANY_CODE   = B.COMPANY_CODE
+   AND A.FILE_KEY       = B.STT_FILE_KEY
+ WHERE A.COMPANY_CODE   = #{sessionCompanyCode}
+<if test="fileKey	!='' and fileKey != null">
+   AND A.FILE_KEY       = #{fileKey}
+</if>
+<if test="filePathInfo	!='' and filePathInfo != null">
+   AND A.FILE_PATH_INFO = #{filePathInfo}
+</if> 
+</select>
+
+<!-- COM_USER_BOOKMARK: 사용자즐겨찾기정보 (C,U,D) -->
+<insert id="insertComUserBookmark">
+/* [insertComUserBookmark] 사이트맵의 매뉴 즐겨찾기 등록 */
+INSERT INTO COM_USER_BOOKMARK 
+     (
+       COMPANY_CODE
+     , USER_ID
+     , MENU_KEY
+     , SORTING_SN
+     , FIRST_CREATE_USER_ID
+     , CREATE_DT
+     , LAST_UPDATE_USER_ID
+     , UPDATE_DT
+     )
+SELECT #{sessionCompanyCode}
+     , #{sessionUserId}
+     , #{menuKey}
+     , #{sortingSn}
+     , #{sessionUserId}
+     , CURRENT_TIMESTAMP
+     , #{sessionUserId}
+     , CURRENT_TIMESTAMP
+ WHERE EXISTS (
+               SELECT USER_ID
+                 FROM COM_USER
+                WHERE COMPANY_CODE = #{sessionCompanyCode}
+                  AND USER_ID      = #{sessionUserId}
+              )
+</insert>
+
+<delete id="deleteComUserBookmark">
+/* [deleteComUserBookmark] 사이트맵의 매뉴 즐겨찾기 삭제 */
+DELETE FROM COM_USER_BOOKMARK
+ WHERE COMPANY_CODE        = #{sessionCompanyCode}
+   AND USER_ID             = #{sessionUserId}
+   AND MENU_KEY            = #{menuKey}
+</delete>
+
+<update id="updateComUserBookmark">
+/* [updateComUserBookmark] 사이트맵애 등록한 즐겨찾기 드래그로 순서 변경 시 */
+UPDATE COM_USER_BOOKMARK
+   SET LAST_UPDATE_USER_ID = #{sessionUserId}
+     , UPDATE_DT           = CURRENT_TIMESTAMP
+     , SORTING_SN          = #{sortingSn}
+ WHERE COMPANY_CODE        = #{sessionCompanyCode}
+   AND USER_ID             = #{sessionUserId}
+   AND MENU_KEY            = #{menuKey}   
+</update>
+<!-- COM_USER_BOOKMARK: 사용자즐겨찾기정보 (C,U,D) -->
+
+<!-- COM_EXCEL: 엑셀요청정보 (C) -->
+<insert id="insertComExcel">
+/* [insertComExcel] 엑셀 다운로드 요청시 관련정보 저장 */
+<selectKey keyProperty="excelRequestKey" resultType="String" order="BEFORE">
+SELECT FN_GET_COM_UNIQUE_KEY()
+</selectKey>
+INSERT INTO COM_EXCEL
+       (
+         COMPANY_CODE                  --회사 코드
+       , EXCEL_REQUEST_KEY             --엑셀 요청 KEY
+       , MENU_KEY                      --메뉴 KEY
+<if test="requestPageInfo        !='' and requestPageInfo        != null">
+       , REQUEST_PAGE_INFO             --요청 페이지 정보
+</if>
+       , REQUEST_USER_ID               --요청 사용자 ID
+<if test="attachingFileKey       !='' and attachingFileKey       != null">
+       , ATTACHING_FILE_KEY            --첨부 파일 KEY
+</if>
+<if test="executionSqlSpeciality !='' and executionSqlSpeciality != null">
+       , EXECUTION_SQL_SPECIALITY      --실행 SQL 전문
+</if>
+<if test="processStatusCode      !='' and processStatusCode      != null">
+       , PROCESS_STATUS_CODE           --처리 상태 코드
+</if>       
+       , REQUEST_CONTENTS              --요청 내용
+       , REQUEST_DATE                  --요청 일자
+       , REQUEST_DT                    --요청 일시
+<if test="etc01Info              !='' and etc01Info              != null">
+       , ETC_01_INFO                   --기타 01 정보
+</if>
+<if test="etc02Info              !='' and etc02Info              != null">
+       , ETC_02_INFO                   --기타 02 정보
+</if>
+<if test="etc03Info              !='' and etc03Info              != null">
+       , ETC_03_INFO                   --기타 03 정보
+</if>       
+       , FIRST_CREATE_USER_ID          --최초 생성자 ID
+       , LAST_UPDATE_USER_ID           --최종 수정자 ID
+       , CREATE_DT                     --생성 일시
+       , UPDATE_DT                     --수정 일시
+       )
+VALUES ( #{sessionCompanyCode}         --회사 코드
+       , #{excelRequestKey}            --엑셀 요청 KEY
+       , #{menuKey}                    --메뉴 KEY
+<if test="requestPageInfo        !='' and requestPageInfo        != null">
+       , #{requestPageInfo}            --요청 페이지 정보
+</if>       
+       , #{sessionUserId}              --요청 사용자 ID
+<if test="attachingFileKey       !='' and attachingFileKey       != null">
+       , #{attachingFileKey}           --첨부 파일 KEY
+</if>
+<if test="executionSqlSpeciality !='' and executionSqlSpeciality != null">
+       , #{executionSqlSpeciality}     --실행 SQL 전문
+</if>
+<if test="processStatusCode      !='' and processStatusCode      != null">
+       , #{processStatusCode}          --처리 상태 코드
+</if>       
+       , #{requestContents}            --요청 사유
+       , TO_CHAR(CURRENT_TIMESTAMP, 'YYYYMMDD')  --요청 일자
+       , CURRENT_TIMESTAMP                  --요청 일시
+<if test="etc01Info              !='' and etc01Info              != null">
+       , #{etc01Info}                  --기타 01 정보
+</if>
+<if test="etc02Info              !='' and etc02Info              != null">
+       , #{etc02Info}                  --기타 02 정보
+</if>
+<if test="etc03Info              !='' and etc03Info              != null">
+       , #{etc03Info}                  --기타 03 정보
+</if>         
+       , #{sessionUserId}              --최초 생성자 ID
+       , #{sessionUserId}              --최종 수정자 ID
+       , CURRENT_TIMESTAMP                  --생성 일시
+       , CURRENT_TIMESTAMP                  --수정 일시
+       )
+</insert>
+<!-- COM_EXCEL: 엑셀요청정보 (C) -->
+
+<select id="getUploadFileExtGroupList" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+SELECT COMPANY_CODE
+     , FILE_GROUP_KEY
+     , FILE_KEY
+     , ORIGINAL_FILE_NAME
+     , SAFETY_FILE_NAME
+     , SUBSTRING(FILE_PATH_INFO FROM 1 FOR LENGTH(FILE_PATH_INFO) - POSITION('/' IN REVERSE(FILE_PATH_INFO)) + 1) AS DIRECTORY_PATH_INFO
+     , FILE_PATH_INFO
+     , FILE_SIZE
+     , FILE_EXTENSION_NAME
+     , STATUS_AT                                                        AS FILE_STATUS
+     , USE_AT
+     , DOWNLOAD_COUNT
+     , TO_CHAR(CREATE_DT, 'YYYY-MM-DD HH24:MI:SS.FF')                        AS CREATE_DT
+  FROM COM_FILES_EXT
+ WHERE COMPANY_CODE    = #{sessionCompanyCode}
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(statusAt)'>
+   AND STATUS_AT       = #{statusAt}
+</if>
+<if test='fileGroupKeyList != null and fileGroupKeyList.size() > 0'>
+   AND FILE_GROUP_KEY  IN
+<foreach collection="fileGroupKeyList" item="fileGroupKey" open="(" close=")" separator=",">
+#{fileGroupKey, jdbcType=VARCHAR}
+</foreach>
+</if>
+<if test='fileKeyList != null and fileKeyList.size() > 0'>
+   AND FILE_KEY        IN
+<foreach collection="fileKeyList" item="fileKey" open="(" close=")" separator=",">
+#{fileKey, jdbcType=VARCHAR}
+</foreach>
+</if>
+<if test='filePathInfoList != null and filePathInfoList.size() > 0'>
+   AND FILE_PATH_INFO  IN
+<foreach collection="filePathInfoList" item="filePathInfo" open="(" close=")" separator=",">
+#{filePathInfo, jdbcType=VARCHAR}
+</foreach>
+</if>
+</select>
+
+<insert id="insertComFilesExt">
+INSERT INTO COM_FILES_EXT
+       ( COMPANY_CODE
+       , FILE_GROUP_KEY
+       , FILE_KEY
+       , ORIGINAL_FILE_NAME
+       , SAFETY_FILE_NAME
+       , FILE_PATH_INFO
+       , FILE_SIZE
+       , FILE_EXTENSION_NAME
+       , USE_AT
+       , STATUS_AT
+       , DOWNLOAD_COUNT
+       , FIRST_CREATE_USER_ID
+       , CREATE_DT
+       , LAST_UPDATE_USER_ID
+       , UPDATE_DT
+       )
+VALUES ( #{sessionCompanyCode}
+       , #{fileGroupKey}
+       , #{fileKey}
+       , #{originalFileName}
+       , #{safetyFileName}
+       , #{filePathInfo}
+       , #{fileSize}
+       , #{fileExtensionName}
+       , #{useAt}
+       , #{fileStatus}
+       , #{downloadCount}
+       , #{sessionUserId}
+       , CURRENT_TIMESTAMP
+       , #{sessionUserId}
+       , CURRENT_TIMESTAMP
+       )
+</insert>
+
+<update id="updateComFilesExt">
+UPDATE COM_FILES_EXT
+   SET LAST_UPDATE_USER_ID  = #{sessionUserId}
+     , UPDATE_DT            = CURRENT_TIMESTAMP
+     , STATUS_AT            = #{fileStatus}
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(realPathInfo)'>
+     , FILE_PATH_INFO       = #{realPathInfo}
+</if>
+ WHERE COMPANY_CODE         = #{sessionCompanyCode}
+   AND FILE_GROUP_KEY       = #{fileGroupKey}
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(fileKey)'>
+   AND FILE_KEY             = #{fileKey}
+</if>
+</update>
+
+<delete id="deleteComFilesExt">
+DELETE FROM COM_FILES_EXT
+ WHERE COMPANY_CODE    = #{sessionCompanyCode}
+   AND FILE_GROUP_KEY  = #{fileGroupKey}
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(fileKey)'>
+   AND FILE_KEY        = #{fileKey}
+</if>   
+</delete>
+
+<!-- TODO: USER_ID, PU_CODE INDEX 신설 (VOB_AUTH_DATA_USER) -->
+<!-- TODO: COMPANY_CODE, USE_AT INDEX 신설 (VOB_PU) -->
+<!-- TODO: OVER()문 활용으로 발생하는 UPDATE_DT DESC INDEX 신설 (VOB_PU) -->
+<!-- TODO: VOB_PU_LANG에 반입되는 FK INDEX (HR_PU_CODE, COMPANY_CODE) CARDINALITY 순서 재확인 -->
+<select id="selectPuCode" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+SELECT A.PU_CODE                      AS NODE_ID
+     , '*****'                        AS PARENT_NODE_ID
+     , A.PU_CODE                      AS CODE
+     , B.PU_NAME                      AS CODE_NAME
+     , '1'                            AS NODE_LEVEL
+  FROM VOB_AUTH_DATA_USER A
+ INNER JOIN VOB_PU_LANG B
+    ON A.COMPANY_CODE  = B.COMPANY_CODE
+   AND A.PU_CODE       = B.HR_PU_CODE 
+   AND B.LANGUAGE_CODE = #{sessionLanguageCode}
+ WHERE A.USER_ID       = #{sessionUserId}
+   AND A.COMPANY_CODE  = #{sessionCompanyCode}
+ GROUP BY A.PU_CODE
+        , B.PU_NAME
+ ORDER BY A.PU_CODE 
+</select>
+
+<select id="selectPuCodeMarketing" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectPuCodeMarketing] 데이터권한에 의존하지 않고 마케팅 담당자가 작성한 모든 PU를 대상으로 콤보를 생성 */
+SELECT A.PU_CODE  AS NODE_ID
+     , '*****'    AS PARENT_NODE_ID
+     , A.PU_CODE  AS CODE
+     , C.PU_NAME  AS CODE_NAME
+     , '1'        AS NODE_LEVEL
+  FROM VOB_CONTENTS_VOC A
+ INNER JOIN COM_CODE B
+    ON A.COMPANY_CODE  = B.COMPANY_CODE
+   AND A.VOC_WRITER_ID = B.CODE
+   AND B.GROUP_CODE    = 'VOB049'
+ INNER JOIN VOB_PU_LANG C
+    ON A.COMPANY_CODE  = C.COMPANY_CODE
+   AND A.PU_CODE       = C.HR_PU_CODE
+   AND C.LANGUAGE_CODE = #{sessionLanguageCode}
+ WHERE A.COMPANY_CODE  = #{sessionCompanyCode}
+ GROUP BY A.PU_CODE, A.PU_CODE, C.PU_NAME
+ ORDER BY A.PU_CODE
+</select>
+
+<select id="selectCorpCode" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectCorpCode] PU 권한이 적용된 공통 CORP (법인 회사) 정보 조회 */
+SELECT A.SAP_CORP_CODE                      AS NODE_ID
+     , '*****'                              AS PARENT_NODE_ID
+     , A.SAP_CORP_CODE                      AS CODE
+     , B.SAP_CORP_NAME                      AS CODE_NAME
+     , '1'                                  AS NODE_LEVEL
+  FROM VOB_AUTH_DATA_USER A
+ INNER JOIN VOB_CORP_LANG B
+    ON A.COMPANY_CODE   = B.COMPANY_CODE
+   AND A.SAP_CORP_CODE  = B.SAP_CORP_CODE
+   AND B.LANGUAGE_CODE  = #{sessionLanguageCode}
+  WHERE A.USER_ID       = #{sessionUserId}
+   AND A.PU_CODE        = #{puCode}
+   AND A.COMPANY_CODE   = #{sessionCompanyCode} 
+ ORDER BY A.CORP_CODE  
+</select>
+
+<select id="selectCorpCodeMarketing" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectCorpCodeMarketing] 데이터권한에 의존하지 않고 마케팅 담당자 PU를 대상으로 법인 콤보를 생성 */
+SELECT A.SAP_CORP_CODE  AS NODE_ID
+     , '*****'          AS PARENT_NODE_ID
+     , A.SAP_CORP_CODE  AS CODE
+     , B.SAP_CORP_NAME  AS CODE_NAME
+     , '1'              AS NODE_LEVEL
+  FROM VOB_PU_CORP A
+ INNER JOIN VOB_CORP_LANG B
+    ON A.COMPANY_CODE  = B.COMPANY_CODE
+   AND A.SAP_CORP_CODE = B.SAP_CORP_CODE
+   AND B.LANGUAGE_CODE = #{sessionLanguageCode}
+ WHERE A.COMPANY_CODE  = #{sessionCompanyCode}
+   AND A.HR_PU_CODE    = #{puCode}
+ ORDER BY A.SAP_CORP_CODE
+</select>
+
+<select id="selectCategoryCode" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectCategoryCode] PU 권한이 적용된 공통 Category (카테 고리) 정보 조회 */
+SELECT B.CODE_NAME      AS NODE_ID
+     , '*****'          AS PARENT_NODE_ID
+     , B.CODE_NAME      AS CODE
+     , B.CODE_NAME      AS CODE_NAME
+     , '1'              AS NODE_LEVEL
+  FROM COM_CODE A
+  LEFT OUTER JOIN COM_CODE_LANG B
+    ON A.COMPANY_CODE  = B.COMPANY_CODE
+   AND A.GROUP_CODE    = B.GROUP_CODE
+   AND A.CODE          = B.CODE
+   AND B.LANGUAGE_CODE = 'en'              -- 영문고정 필수, 원본데이터가 (EN으로 들어옴. )
+ WHERE A.GROUP_CODE     = 'VOC_CATEGORY'   -- 카테고리구분자
+   AND A.ETC_02_INFO    = #{puCode}        -- PU 코드
+   AND A.USE_AT         = 'Y'
+   AND A.COMPANY_CODE   = #{sessionCompanyCode}
+ ORDER BY B.CODE
+</select>
+
+<select id="selectMessageData" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectMessageData] 다국어 데이터를 조회한다. */
+SELECT MESSAGE_ID
+     , LANGUAGE_CODE
+     , MESSAGE_CONTENTS
+     , USE_AT
+  FROM COM_MESSAGE_LANG
+ WHERE USE_AT        = 'Y'
+<if test="@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(languageCode)">
+   AND LANGUAGE_CODE = #{languageCode}
+</if>
+<if test="@xs.core.handler.mybatis.XtrmParamCheckHandler@isEmpty(languageCode)">
+   AND LANGUAGE_CODE = #{sessionLanguageCode}
+</if>
+<if test="messageId != '' and messageId != null">
+   AND MESSAGE_ID    = #{messageId}
+</if>
+</select>
+
+
+</mapper>

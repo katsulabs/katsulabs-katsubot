@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xs.vob.cmmn.CmmnMapper">
+
+<!-- PAGING QUERY -->
+<sql id="pre-paging-sql">
+<if test="@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(xtrmPageNo) and @xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(xtrmRowPerPage)">
+SELECT PRIME.*
+  FROM ( SELECT SUBQRY.*
+              , COUNT(1) OVER() AS XTRM_DATA_TOT_COUNT
+           FROM (
+</if>
+</sql>
+<sql id="post-paging-sql">
+<if test="@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(xtrmPageNo) and @xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(xtrmRowPerPage)">
+<![CDATA[
+                ) SUBQRY
+       ) PRIME
+ WHERE PRIME.ROW_NUMBER >= ((#{xtrmPageNo}-1)*#{xtrmRowPerPage}) + 1
+   AND PRIME.ROW_NUMBER <= #{xtrmPageNo}*#{xtrmRowPerPage}
+]]>
+</if>
+</sql>
+<!-- PAGING QUERY -->
+
+<select id="selectSysCodeDetailData" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectSysCodeDetailData] 시스템코드관리 화면의 상세 코드 조회 */
+SELECT AA.ROW_NUMBER
+     , AA.GROUP_CODE
+     , AA.CODE_SECTION_CODE
+     , AA.CODE
+     , AA.CODE_NAME
+     , AA.CODE_DESC
+     , BB.CHANGE_DATA_LIST
+     , AA.ETC_01_INFO
+     , AA.ETC_02_INFO
+     , AA.ETC_03_INFO
+     , AA.ETC_04_INFO
+     , AA.ETC_05_INFO
+     , AA.ETC_06_INFO
+     , AA.ETC_07_INFO
+     , AA.ETC_08_INFO
+     , AA.ETC_09_INFO
+     , AA.ETC_10_INFO
+     , AA.BEGIN_DATE
+     , AA.END_DATE
+     , AA.SORTING_SN
+     , AA.USE_AT_NAME
+     , AA.USE_AT
+     , AA.FIRST_CREATE_USER_NAME
+     , AA.FIRST_CREATE_USER_ID
+     , AA.LAST_UPDATE_USER_NAME
+     , AA.LAST_UPDATE_USER_ID
+     , AA.CREATE_DT
+     , AA.UPDATE_DT
+  FROM (
+        SELECT ROW_NUMBER() OVER(ORDER BY A.SORTING_SN, A.GROUP_CODE) AS ROW_NUMBER
+             , A.GROUP_CODE                                                                                    --그룹코드
+             , A.CODE_SECTION_CODE                                                                             --코드구분코드
+             , A.CODE                                                                                          --코드
+             , A.CODE_NAME
+             , A.CODE_DESC
+             , A.ETC_01_INFO                                                                            --기타 01 정보
+             , A.ETC_02_INFO                                                                            --기타 02 정보
+             , A.ETC_03_INFO                                                                            --기타 03 정보
+             , A.ETC_04_INFO                                                                            --기타 04 정보
+             , A.ETC_05_INFO                                                                            --기타 05 정보
+             , A.ETC_06_INFO                                                                            --기타 06 정보
+             , A.ETC_07_INFO                                                                            --기타 07 정보
+             , A.ETC_08_INFO                                                                            --기타 08 정보
+             , A.ETC_09_INFO                                                                            --기타 09 정보
+             , A.ETC_10_INFO                                                                            --기타 10 정보
+             , A.BEGIN_DATE                                                                             --코드적용일자
+             , A.END_DATE                                                                               --코드종료일자
+             , A.SORTING_SN                                                                             --정렬순번
+             , CASE WHEN A.USE_AT = 'Y' THEN '사용' ELSE '미사용' END AS USE_AT_NAME                    --사용여부명
+             , A.USE_AT                                                                                 --사용여부
+             , COALESCE(B.USER_NAME, A.FIRST_CREATE_USER_ID)               AS FIRST_CREATE_USER_NAME         --최초생성자명
+             , A.FIRST_CREATE_USER_ID                                                                   --최초생성자ID
+             , COALESCE(C.USER_NAME, A.LAST_UPDATE_USER_ID)                AS LAST_UPDATE_USER_NAME          --최종수정자명
+             , A.LAST_UPDATE_USER_ID                                                                    --최종수정자ID
+             , A.CREATE_DT                                                                              --최초생성일시
+             , A.UPDATE_DT                                                                              --최종수정일시
+          FROM VIEW_COM_SYS_CODE A
+          LEFT OUTER JOIN COM_USER B
+            ON A.FIRST_CREATE_USER_ID = B.USER_ID
+           AND B.COMPANY_CODE         = #{sessionCompanyCode}
+          LEFT OUTER JOIN COM_USER C
+            ON A.LAST_UPDATE_USER_ID  = C.USER_ID
+           AND C.COMPANY_CODE         = #{sessionCompanyCode}
+         WHERE 1=1
+           AND A.LANGUAGE_CODE        = #{sessionLanguageCode}
+           AND A.CODE                != '*****'
+           AND A.GROUP_CODE           = #{groupCode}
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(searchUseAtDetail)'>
+           AND A.USE_AT               = #{searchUseAtDetail}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(useAt)'>
+           AND A.USE_AT               = #{useAt}
+</if>
+         GROUP BY A.GROUP_CODE
+                , A.CODE_SECTION_CODE
+                , A.CODE
+                , A.CODE_NAME
+                , A.CODE_DESC
+                , A.ETC_01_INFO
+                , A.ETC_02_INFO
+                , A.ETC_03_INFO
+                , A.ETC_04_INFO
+                , A.ETC_05_INFO
+                , A.ETC_06_INFO
+                , A.ETC_07_INFO
+                , A.ETC_08_INFO
+                , A.ETC_09_INFO
+                , A.ETC_10_INFO
+                , A.BEGIN_DATE
+                , A.END_DATE
+                , A.SORTING_SN
+                , A.USE_AT
+                , A.FIRST_CREATE_USER_ID
+                , A.LAST_UPDATE_USER_ID
+                , A.CREATE_DT
+                , A.UPDATE_DT
+                , B.USER_NAME
+                , C.USER_NAME
+       ) AA
+  LEFT OUTER JOIN
+       (
+         SELECT STRING_AGG( ( A.LANGUAGE_CODE || '###' || COALESCE(A.CODE_NAME,'') || '###' || COALESCE(A.CODE_DESC,'') ), '%%') AS CHANGE_DATA_LIST
+              , A.CODE
+              , A.GROUP_CODE
+           FROM VIEW_COM_SYS_CODE A
+          WHERE A.CODE         != '*****'
+            AND A.GROUP_CODE    = #{groupCode}
+            AND A.LANGUAGE_CODE IN ( SELECT CODE
+                                       FROM COM_SYS_CODE
+                                      WHERE GROUP_CODE = 'SYS028' -- 사용여부가 Y인 다국어 언어만 보이도록
+                                        AND CODE      != '*****'
+                                        AND USE_AT     = 'Y'
+                                   )
+          GROUP BY A.GROUP_CODE, A.CODE
+       ) BB
+    ON AA.GROUP_CODE = BB.GROUP_CODE
+   AND AA.CODE       = BB.CODE
+ ORDER BY AA.GROUP_CODE
+        , AA.SORTING_SN
+</select>
+
+<select id="selectUserMenuData" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectUserMenuData] 매뉴 dialog 오픈시 매뉴 리스트 정보 검색 */
+WITH RECURSIVE CTE_AUTH_MENU(MAIN_MENU_KEY, USER_MAIN_MENU_KEY, MENU_KEY, UPPER_MENU_KEY)
+  AS ( SELECT MAX(CASE WHEN AA.PRIOR_RANK = 1 THEN AA.MAIN_MENU_KEY ELSE NULL END) OVER()      AS MAIN_MENU_KEY
+            , MAX(CASE WHEN AA.PRIOR_RANK = 1 THEN AA.USER_MAIN_MENU_KEY ELSE NULL END) OVER() AS USER_MAIN_MENU_KEY
+            , BB.MENU_KEY
+            , BB.UPPER_MENU_KEY
+         FROM (
+                SELECT A.COMPANY_CODE
+                     , ROW_NUMBER() OVER(ORDER BY B.PRIOR_RANK) AS PRIOR_RANK
+                     , D.MENU_KEY
+                     , MAX(B.MAIN_MENU_KEY)                     AS MAIN_MENU_KEY
+                     , MAX(A.MAIN_MENU_KEY)                     AS USER_MAIN_MENU_KEY
+                  FROM COM_USER A
+                 INNER JOIN COM_AUTH_GROUP B
+                    ON A.COMPANY_CODE = B.COMPANY_CODE
+                 INNER JOIN COM_AUTH_GROUP_USER C
+                    ON A.COMPANY_CODE = C.COMPANY_CODE
+                   AND A.USER_ID      = C.USER_ID
+                   AND B.GROUP_KEY    = C.GROUP_KEY
+                 INNER JOIN COM_AUTH_GROUP_MENU D
+                    ON A.COMPANY_CODE = D.COMPANY_CODE
+                   AND B.GROUP_KEY    = D.GROUP_KEY
+                 WHERE A.COMPANY_CODE = #{sessionCompanyCode}
+                   AND A.USER_ID      = #{selectUserId}
+                 GROUP BY A.COMPANY_CODE, B.PRIOR_RANK, D.MENU_KEY
+              ) AA
+        INNER JOIN COM_MENU BB
+           ON AA.COMPANY_CODE = BB.COMPANY_CODE
+          AND AA.MENU_KEY     = BB.MENU_KEY
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(menuInfo)'>
+          AND (BB.MENU_KEY LIKE '%' || #{menuInfo} || '%' OR BB.MENU_NAME LIKE '%' || #{menuInfo} || '%')
+</if>
+        UNION ALL
+       SELECT NULL
+            , NULL
+            , A.MENU_KEY
+            , A.UPPER_MENU_KEY
+         FROM COM_MENU A
+        INNER JOIN CTE_AUTH_MENU B
+           ON A.MENU_KEY     = B.UPPER_MENU_KEY
+        WHERE A.COMPANY_CODE = #{sessionCompanyCode}
+     )
+
+SELECT AA.MENU_KEY                                                                     AS NODE_ID
+     , AA.UPPER_MENU_KEY                                                               AS PARENT_NODE_ID
+     , AA.MENU_NAME                                                                    AS NODE_TITLE
+     , AA.FULL_MENU_NAME                                                               AS TOOL_TIP
+     , CASE WHEN (CASE WHEN AA.USER_MAIN_MENU_KEY IS NULL
+                       THEN AA.MAIN_MENU_KEY
+                       ELSE AA.USER_MAIN_MENU_KEY
+                 END) = AA.MENU_KEY
+            THEN 'mainMenuNode'
+            ELSE NULL
+       END                                                                             AS CLASSES
+     , AA.MENU_KEY
+     , AA.FULL_MENU_KEY
+     , AA.MENU_NAME
+     , AA.FULL_MENU_NAME
+     , AA.NODE_LEVEL
+     , AA.UPPER_MENU_KEY
+     , AA.MENU_DESC
+     , AA.PROGRAM_PARAM_CONTENTS
+     , AA.VIEW_TARGET_CODE
+     , AA.MENU_PATH_INFO
+     , AA.POPUP_WIDTH_SIZE
+     , AA.POPUP_VERTICAL_SIZE
+     , AA.ICON_CLASS_NAME
+     , AA.HAS_CHILD_AT
+     , AA.USE_AT
+  FROM (
+         SELECT DISTINCT
+                A.MENU_KEY
+              , A.FULL_MENU_KEY
+              , A.MENU_NAME
+              , A.FULL_MENU_NAME
+              , A.NODE_LEVEL
+              , A.UPPER_MENU_KEY
+              , A.MENU_DESC
+              , A.PROGRAM_PARAM_CONTENTS
+              , A.VIEW_TARGET_CODE
+              , A.MENU_PATH_INFO
+              , A.POPUP_WIDTH_SIZE
+              , A.POPUP_VERTICAL_SIZE
+              , A.ICON_CLASS_NAME
+              , A.CUSTOM_SORTING_SN
+              , A.USE_AT
+              , CASE WHEN (SELECT COUNT(MENU_KEY) FROM COM_MENU WHERE UPPER_MENU_KEY = A.MENU_KEY) > 0 THEN 'Y' ELSE 'N' END AS HAS_CHILD_AT
+              , MAX(B.MAIN_MENU_KEY) OVER()                                                                                  AS MAIN_MENU_KEY
+              , MAX(B.USER_MAIN_MENU_KEY) OVER()                                                                             AS USER_MAIN_MENU_KEY
+           FROM VIEW_MENU_INFO A
+          INNER JOIN CTE_AUTH_MENU  B
+             ON A.MENU_KEY     = B.MENU_KEY
+          WHERE A.COMPANY_CODE  = #{sessionCompanyCode}
+            AND A.LANGUAGE_CODE = #{sessionLanguageCode}
+            AND A.FULL_USE_AT  NOT LIKE '%N%'  -- TODO: 사용 여부 TREE 중 N이 포함된 케이스에 대응하기 위한 인덱스 추가
+       ) AA
+ ORDER BY CUSTOM_SORTING_SN
+</select>
+
+<select id="selectCompanyByKey" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectCompanyByKey] 회사의 암호화 키 정보 조회 */
+SELECT ENCPT_KEY_INFO
+  FROM COM_COMPANY
+ WHERE COMPANY_CODE = #{companyCode}
+</select>
+
+<select id="selectUserPasswordHist" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectUserPasswordHist] 로그인 화면 비밀번호 변경 시 비밀번호 변경 이력 조회 */
+SELECT COMPANY_CODE
+     , USER_ID
+     , HISTORY_KEY
+     , PASSWORD_ENCPT
+     , ENCPT_KEY_INFO
+     , CHANGE_DT
+     , FIRST_CREATE_USER_ID
+     , CREATE_DT
+     , CASE WHEN TO_CHAR(CHANGE_DT, 'YYYYMMDD') = TO_CHAR(CURRENT_TIMESTAMP, 'YYYYMMDD')
+            THEN 'Y'
+            ELSE 'N'
+       END                                     AS TODAY_CHANGE_AT
+  FROM COM_USER_PASSWORD_HISTORY
+ WHERE COMPANY_CODE         = #{companyCode}
+   AND USER_ID              = #{userId}
+   AND FIRST_CREATE_USER_ID = #{userId}
+ ORDER BY CHANGE_DT DESC
+</select>
+
+<select id="selectUserBase" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectUserBase] 사용자 기본 정보 검색 */
+SELECT A.COMPANY_CODE                                                                                        AS COMPANY_CODE           -- COMPANY_CODE
+     , (SELECT COMPANY_NAME FROM COM_COMPANY WHERE COMPANY_CODE = A.COMPANY_CODE)                            AS COMPANY_NAME           -- COMPANY_NAME
+     , (SELECT ENCPT_KEY_INFO FROM COM_COMPANY WHERE COMPANY_CODE = A.COMPANY_CODE)                          AS ENCPT_KEY_INFO         -- ENCPT_KEY_INFO
+     , A.USER_ID                                                                                             AS USER_ID                -- 사용자 ID
+     , CASE WHEN C.USER_NAME IS NULL THEN B.USER_NAME
+            ELSE C.USER_NAME
+        END                                                                                                  AS USER_NAME              -- 사용자명
+     , A.PASSWORD_ENCPT                                                                                      AS PASSWORD_ENCPT         -- 암호화된 패스워드
+     , A.MOBILE_PHONE_KEY                                                                                    AS MOBILE_PHONE_KEY       -- 모바일단방향암호화
+     , A.MOBILE_PHONE_MASK                                                                                   AS MOBILE_PHONE_MASK      -- 모바일번호(마스킹)
+     , A.MOBILE_PHONE_ENCPT                                                                                  AS MOBILE_PHONE_ENCPT     -- 모바일번호(암호화)
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(userIdKey)'>
+     , CASE WHEN A.MOBILE_PHONE_ENCPT IS NOT NULL AND A.MOBILE_PHONE_MASK IS NOT NULL THEN DEC_AES(A.MOBILE_PHONE_ENCPT, #{userIdKey})
+            ELSE ''
+       END                                                                                                   AS MOBILE_PHONE
+</if>
+     , A.CABLETELEPHONE_KEY                                                                                  AS CABLETELEPHONE_KEY
+     , A.CABLETELEPHONE_MASK                                                                                 AS CABLETELEPHONE_MASK
+     , A.CABLETELEPHONE_ENCPT                                                                                AS CABLETELEPHONE_ENCPT
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(userIdKey)'>
+     , CASE WHEN A.CABLETELEPHONE_ENCPT IS NOT NULL AND A.CABLETELEPHONE_KEY IS NOT NULL THEN DEC_AES(A.CABLETELEPHONE_ENCPT, #{userIdKey})
+            ELSE ''
+       END                                                                                                   AS CABLETELEPHONE
+</if>
+     , A.EMAIL_KEY                                                                                           AS EMAIL_KEY
+     , A.EMAIL_MASK                                                                                          AS EMAIL_MASK
+     , A.EMAIL_ENCPT                                                                                         AS EMAIL_ENCPT
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(userIdKey)'>
+     , CASE WHEN A.EMAIL_ENCPT IS NOT NULL AND A.EMAIL_KEY IS NOT NULL THEN DEC_AES(A.EMAIL_ENCPT, #{userIdKey})
+            ELSE ''
+       END                                                                                                   AS EMAIL
+</if>
+     , A.ACCOUNT_USE_AT                                                                                      AS ACCOUNT_USE_AT
+     , A.LOCAL_EXTENTION_NUMBER                                                                              AS LOCAL_EXTENTION_NUMBER
+     , A.RSPOFC_CODE                                                                                         AS RSPOFC_CODE
+     , A.ETC_01_INFO                                                                                         AS ETC_01_INFO
+     , A.ETC_02_INFO                                                                                         AS ETC_02_INFO
+     , A.ETC_03_INFO                                                                                         AS ETC_03_INFO
+     , A.ETC_04_INFO                                                                                         AS ETC_04_INFO
+     , A.ETC_05_INFO                                                                                         AS ETC_05_INFO
+     , A.CTI_ID                                                                                              AS CTI_ID
+     , A.VPN_ID                                                                                              AS VPN_ID
+     , A.VO_IP                                                                                               AS VO_IP
+     , A.PC_IP                                                                                               AS PC_IP
+     , A.VPN_IP                                                                                              AS VPN_IP
+     , A.RECENT_CONNECT_IP                                                                                   AS RECENT_CONNECT_IP
+     , A.RECENT_CONNECT_SESSION_ID_INFO                                                                      AS RECENT_CONNECT_SESSION_ID_INFO
+     , CASE WHEN A.PASSWORD_ERROR_COUNT IS NULL THEN 0
+            ELSE A.PASSWORD_ERROR_COUNT
+         END                                                                                                 AS PASSWORD_ERROR_COUNT
+     , A.LOGIN_AT                                                                                            AS LOGIN_AT
+     , (SELECT MAX(CHANGE_DT)
+          FROM COM_USER_PASSWORD_HISTORY
+         WHERE COMPANY_CODE = A.COMPANY_CODE
+           AND USER_ID      = A.USER_ID)                                                                     AS RECENT_PASSWORD_CHANGE_DATE
+     , A.RECENT_LOGIN_DT                                                                                     AS RECENT_LOGIN_DT
+     , CASE WHEN A.RECENT_LOGIN_DT IS NOT NULL
+            THEN (
+                 CASE WHEN (CURRENT_TIMESTAMP - CAST(A.RECENT_LOGIN_DT AS DATE)) > INTERVAL '180 days'
+                      THEN 'Y'
+                      ELSE 'N'
+                 END)
+            ELSE 'N'
+       END                                                                                                   AS IS_LOCK_ACCOUNT        --180일 안에 로그인 시도여부로 판단한 계정 잠김상태 여부
+     , (SELECT SAP_CORP_CODE FROM VOB_CORP WHERE CORP_CODE = B.CORP_CODE AND COMPANY_CODE = B.COMPANY_CODE)  AS CORP_CODE              -- CORP_CODE
+     , CASE WHEN C.CORP_NAME IS NULL THEN B.CORP_NAME
+            ELSE C.CORP_NAME
+        END                                                                                                  AS CORP_NAME              -- 법인 명
+     , B.DEPT_CODE                                                                                           AS DEPT_CODE              -- 부서 코드
+     , D.FULL_DEPT_CODE                                                                                      AS FULL_DEPT_CODE         -- 전체부서코드
+     , D.DEPT_NAME                                                                                           AS DEPT_NAME              -- 부서명
+     , D.FULL_DEPT_NAME                                                                                      AS FULL_DEPT_NAME         -- 전체부서명
+     , B.CORP_SECTION_CODE                                                                                   AS CORP_SECTION_CODE      -- 법인 구분 코드
+     , B.DEPT_SPECIAL_CODE                                                                                   AS DEPT_SPECIAL_CODE      -- 부서 특수 코드
+     , B.JOB_GRADE_CODE                                                                                      AS JOB_GRADE_CODE         -- 직급 코드
+     , CASE WHEN C.JOB_GRADE_NAME IS NULL THEN B.JOB_GRADE_NAME
+            ELSE C.JOB_GRADE_NAME
+        END                                                                                                  AS JOB_GRADE_NAME         -- 직급 명
+     , B.POSITION_CODE                                                                                       AS POSITION_CODE          -- 직책 코드
+     , CASE WHEN C.POSITION_NAME IS NULL THEN B.POSITION_NAME
+            ELSE C.POSITION_NAME
+        END                                                                                                  AS POSITION_NAME          -- 직책 명
+     , B.OFFICIAL_POSITION_CODE                                                                              AS OFFICIAL_POSITION_CODE -- 직위 코드
+     , CASE WHEN C.OFFICIAL_POSITION_NAME IS NULL THEN B.OFFICIAL_POSITION_NAME
+            ELSE C.OFFICIAL_POSITION_NAME
+        END                                                                                                  AS OFFICIAL_POSITION_NAME -- 직위 명
+     , B.PG_CODE                                                                                             AS PG_CODE                -- PG CODE
+     , CASE WHEN C.PG_NAME IS NULL THEN B.PG_NAME
+            ELSE C.PG_NAME
+        END                                                                                                  AS PG_NAME                -- PG 명
+     , B.PU_CODE                                                                                             AS PU_CODE                -- PU CODE
+     , CASE WHEN C.PU_NAME IS NULL THEN B.PU_NAME
+            ELSE C.PU_NAME
+        END                                                                                                  AS PU_NAME                -- PU 명
+     , B.BUSINESS_PLACE_CODE                                                                                 AS BUSINESS_PLACE_CODE    -- 사업장 코드
+     , CASE WHEN C.BUSINESS_PLACE_NAME IS NULL THEN B.BUSINESS_PLACE_NAME
+            ELSE C.BUSINESS_PLACE_NAME
+        END                                                                                                  AS BUSINESS_PLACE_NAME    -- 사업장 명
+     , B.ZIP_CODE                                                                                            AS ZIP_CODE               -- 우편 번호
+     , B.EMP_STATUS_CODE                                                                                     AS EMP_STATUS_CODE        -- 재직 코드
+     , B.SEX_CODE                                                                                            AS SEX_CODE               -- 성별 코드
+     , B.JOB_GRADE_SECTION_CODE                                                                              AS JOB_GRADE_SECTION_CODE -- 직급 구분 코드
+     , B.ACCOUNT_USE_AT                                                                                      AS EXT_ACCOUNT_USE_AT     -- 확장 계정 사용 여부
+     , B.COOP_COMPANY_AT                                                                                     AS COOP_COMPANY_AT        -- 협력업체여부
+     , B.COOP_COMPANY_CORP_CODE                                                                              AS COOP_COMPANY_CORP_CODE -- 협력업체 법인 코드
+     , B.NATIONALTY_CODE                                                                                     AS NATIONALTY_CODE        -- 국적 코드
+     , B.NATIONALTY_NAME                                                                                     AS NATIONALTY_NAME        -- 국적 명
+     , CASE WHEN C.ADDRESS_ADD_INFO IS NULL THEN B.ADDRESS_ADD_INFO
+            ELSE C.ADDRESS_ADD_INFO
+        END                                                                                                  AS ADDRESS_ADD_INFO       -- 주소추가정보
+     , CASE WHEN C.ADDRESS_INFO IS NULL THEN B.ADDRESS_INFO
+            ELSE C.ADDRESS_INFO
+        END                                                                                                  AS ADDRESS_INFO           -- 주소정보
+  FROM COM_USER A
+  LEFT OUTER JOIN VOB_USER_EXT B
+    ON A.COMPANY_CODE          = B.COMPANY_CODE
+   AND A.USER_ID               = B.USER_ID
+  LEFT OUTER JOIN VOB_USER_EXT_LANG C
+    ON B.COMPANY_CODE          = C.COMPANY_CODE
+   AND B.USER_ID               = C.USER_ID
+   AND C.LANGUAGE_CODE         = LOWER(#{languageCode})
+  LEFT OUTER JOIN VIEW_VOB_DEPT_INFO D
+    ON B.COMPANY_CODE          = D.COMPANY_CODE
+   AND B.DEPT_CODE             = D.DEPT_CODE
+   AND D.LANGUAGE_CODE         = LOWER(#{languageCode})
+ WHERE 1 = 1
+   AND A.COMPANY_CODE          = #{companyCode}
+   AND A.USER_ID               = #{userId}
+</select>
+
+<update id="updateUser">
+/* [updateUser] 사용자정보 수정 */
+UPDATE COM_USER
+   SET UPDATE_DT                     = CURRENT_TIMESTAMP
+<if test="@xs.core.handler.mybatis.XtrmParamCheckHandler@isEmpty(sessionUserId)">
+     , LAST_UPDATE_USER_ID           = 'SYSTEM'
+</if>
+<if test="@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(sessionUserId)">
+     , LAST_UPDATE_USER_ID           = #{sessionUserId}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(passwordEncpt)'>
+     , PASSWORD_ENCPT                = #{passwordEncpt}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(empNumber)'>
+     , EMP_NUMBER                    = #{empNumber}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(userName)'>
+     , USER_NAME                     = #{userName}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(mobilePhoneKey)'>
+     , MOBILE_PHONE_KEY              = #{mobilePhoneKey}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(mobilePhoneMask)'>
+     , MOBILE_PHONE_MASK             = #{mobilePhoneMask}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(mobilePhoneEncpt)'>
+     , MOBILE_PHONE_ENCPT            = #{mobilePhoneEncpt}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(cabletelephoneKey)'>
+     , CABLETELEPHONE_KEY            = #{cabletelephoneKey}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(cabletelephoneMask)'>
+     , CABLETELEPHONE_MASK           = #{cabletelephoneMask}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(cabletelephoneEncpt)'>
+     , CABLETELEPHONE_ENCPT          = #{cabletelephoneEncpt}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(emailKey)'>
+     , EMAIL_KEY                     = #{emailKey}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(emailMask)'>
+     , EMAIL_MASK                    = #{emailMask}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(emailEncpt)'>
+     , EMAIL_ENCPT                   = #{emailEncpt}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(deptCode)'>
+     , DEPT_CODE                     = #{deptCode}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(rspofcCode)'>
+     , RSPOFC_CODE                   = #{rspofcCode}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(workSectionCode)'>
+     , WORK_SECTION_CODE             = #{workSectionCode}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(imageFileGroupKey)'>
+     , IMAGE_FILE_GROUP_KEY          = #{imageFileGroupKey}
+</if>
+<if test='etc01Info != null and etc01Info != ""'>
+     , ETC_01_INFO                   = #{etc01Info}
+</if>
+<if test='etc02Info != null and etc02Info != ""'>
+     , ETC_02_INFO                   = #{etc02Info}
+</if>
+<if test='etc03Info != null and etc03Info != ""'>
+     , ETC_03_INFO                   = #{etc03Info}
+</if>
+<if test='etc04Info != null and etc04Info != ""'>
+     , ETC_04_INFO                   = #{etc04Info}
+</if>
+<if test='etc05Info != null and etc05Info != ""'>
+     , ETC_05_INFO                   = #{etc05Info}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(accountUseAt)'>
+     , ACCOUNT_USE_AT                = #{accountUseAt}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(passwordErrorCount)'>
+     , PASSWORD_ERROR_COUNT          = #{passwordErrorCount}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(loginAt)'>
+     , LOGIN_AT                      = #{loginAt}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(EntranceCompanyDate)'>
+     , ENTRANCE_COMPANY_DATE         = #{EntranceCompanyDate}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(retireDate)'>
+     , RETIRE_DATE                   = #{retireDate}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(retireReasonContents)'>
+     , RETIRE_REASON_CONTENTS        = #{retireReasonContents}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(recentLoginDt)'>
+     , RECENT_LOGIN_DT               = CURRENT_TIMESTAMP AT TIME ZONE 'UTC'
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(recentLogoutDt)'>
+     , RECENT_LOGOUT_DT              = TO_TIMESTAMP(#{recentLogoutDt}, 'YYYY-MM-DD HH24:MI:SS.FF') AT TIME ZONE 'UTC'
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(recentConnectIp)'>
+     , RECENT_CONNECT_IP             = #{recentConnectIp}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(recentConnectSessionIdInfo)'>
+     , RECENT_CONNECT_SESSION_ID_INFO= #{recentConnectSessionIdInfo}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(ctiId)'>
+     , CTI_ID                        = #{ctiId}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(vpnId)'>
+     , VPN_ID                        = #{vpnId}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(localExtentionNumber)'>
+     , LOCAL_EXTENTION_NUMBER        = #{localExtentionNumber}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(externalNumber)'>
+     , EXTERNAL_NUMBER               = #{externalNumber}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(voIp)'>
+     , VO_IP                         = #{voIp}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(natIp)'>
+     , NAT_IP                        = #{natIp}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(pcIp)'>
+     , PC_IP                         = #{pcIp}
+</if>
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(vpnIp)'>
+     , VPN_IP                        = #{vpnIp}
+</if>
+ WHERE COMPANY_CODE                  = #{companyCode}
+   AND USER_ID                       = #{userId}
+</update>
+
+<select id="selectUserForLogin" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectUserForLogin] 로그인을 위한 사용자 정보 검색 */
+SELECT A.COMPANY_CODE                                                                                        AS COMPANY_CODE           -- COMPANY_CODE
+     , (SELECT COMPANY_NAME FROM COM_COMPANY WHERE COMPANY_CODE = A.COMPANY_CODE)                            AS COMPANY_NAME           -- COMPANY_NAME
+     , (SELECT ENCPT_KEY_INFO FROM COM_COMPANY WHERE COMPANY_CODE = A.COMPANY_CODE)                          AS ENCPT_KEY_INFO         -- ENCPT_KEY_INFO
+     , A.USER_ID                                                                                             AS USER_ID                -- 사용자 ID
+     , CASE WHEN C.USER_NAME IS NULL THEN B.USER_NAME
+            ELSE C.USER_NAME
+        END                                                                                                  AS USER_NAME              -- 사용자명
+     , A.PASSWORD_ENCPT                                                                                      AS PASSWORD_ENCPT         -- 암호화된 패스워드
+     , A.MOBILE_PHONE_KEY                                                                                    AS MOBILE_PHONE_KEY       -- 모바일단방향암호화
+     , A.MOBILE_PHONE_MASK                                                                                   AS MOBILE_PHONE_MASK      -- 모바일번호(마스킹)
+     , A.MOBILE_PHONE_ENCPT                                                                                  AS MOBILE_PHONE_ENCPT     -- 모바일번호(암호화)
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(userIdKey)'>
+     , CASE WHEN A.MOBILE_PHONE_ENCPT IS NOT NULL AND A.MOBILE_PHONE_MASK IS NOT NULL THEN DEC_AES(A.MOBILE_PHONE_ENCPT, #{userIdKey})
+            ELSE ''
+       END                                                                                                   AS MOBILE_PHONE
+</if>
+     , A.CABLETELEPHONE_KEY                                                                                  AS CABLETELEPHONE_KEY
+     , A.CABLETELEPHONE_MASK                                                                                 AS CABLETELEPHONE_MASK
+     , A.CABLETELEPHONE_ENCPT                                                                                AS CABLETELEPHONE_ENCPT
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(userIdKey)'>
+     , CASE WHEN A.CABLETELEPHONE_ENCPT IS NOT NULL AND A.CABLETELEPHONE_KEY IS NOT NULL THEN DEC_AES(A.CABLETELEPHONE_ENCPT, #{userIdKey})
+            ELSE ''
+       END                                                                                                   AS CABLETELEPHONE
+</if>
+     , A.EMAIL_KEY                                                                                           AS EMAIL_KEY
+     , A.EMAIL_MASK                                                                                          AS EMAIL_MASK
+     , A.EMAIL_ENCPT                                                                                         AS EMAIL_ENCPT
+<if test='@xs.core.handler.mybatis.XtrmParamCheckHandler@notEmpty(userIdKey)'>
+     , CASE WHEN A.EMAIL_ENCPT IS NOT NULL AND A.EMAIL_KEY IS NOT NULL THEN DEC_AES(A.EMAIL_ENCPT, #{userIdKey})
+            ELSE ''
+       END                                                                                                   AS EMAIL
+</if>
+     , A.ACCOUNT_USE_AT                                                                                      AS ACCOUNT_USE_AT
+     , A.LOCAL_EXTENTION_NUMBER                                                                              AS LOCAL_EXTENTION_NUMBER
+     , A.RSPOFC_CODE                                                                                         AS RSPOFC_CODE
+     , A.ETC_01_INFO                                                                                         AS ETC_01_INFO
+     , A.ETC_02_INFO                                                                                         AS ETC_02_INFO
+     , A.ETC_03_INFO                                                                                         AS ETC_03_INFO
+     , A.ETC_04_INFO                                                                                         AS ETC_04_INFO
+     , A.ETC_05_INFO                                                                                         AS ETC_05_INFO
+     , A.CTI_ID                                                                                              AS CTI_ID
+     , A.VPN_ID                                                                                              AS VPN_ID
+     , A.VO_IP                                                                                               AS VO_IP
+     , A.PC_IP                                                                                               AS PC_IP
+     , A.VPN_IP                                                                                              AS VPN_IP
+     , A.RECENT_CONNECT_IP                                                                                   AS RECENT_CONNECT_IP
+     , A.RECENT_CONNECT_SESSION_ID_INFO                                                                      AS RECENT_CONNECT_SESSION_ID_INFO
+     , CASE WHEN A.PASSWORD_ERROR_COUNT IS NULL THEN 0
+            ELSE A.PASSWORD_ERROR_COUNT
+         END                                                                                                 AS PASSWORD_ERROR_COUNT
+     , A.LOGIN_AT                                                                                            AS LOGIN_AT
+     , (SELECT MAX(CHANGE_DT)
+          FROM COM_USER_PASSWORD_HISTORY
+         WHERE COMPANY_CODE = A.COMPANY_CODE
+           AND USER_ID      = A.USER_ID)                                                                     AS RECENT_PASSWORD_CHANGE_DATE
+     , A.RECENT_LOGIN_DT                                                                                     AS RECENT_LOGIN_DT
+     , CASE WHEN A.RECENT_LOGIN_DT IS NOT NULL
+            THEN (
+                 CASE WHEN (CURRENT_TIMESTAMP - CAST(A.RECENT_LOGIN_DT AS DATE)) > INTERVAL '180 days'
+                      THEN 'Y'
+                      ELSE 'N'
+                 END)
+            ELSE 'N'
+       END                                                                                                   AS IS_LOCK_ACCOUNT        --180일 안에 로그인 시도여부로 판단한 계정 잠김상태 여부
+     , (SELECT SAP_CORP_CODE FROM VOB_CORP WHERE CORP_CODE = B.CORP_CODE AND COMPANY_CODE = B.COMPANY_CODE)  AS CORP_CODE              -- CORP_CODE
+     , CASE WHEN C.CORP_NAME IS NULL THEN B.CORP_NAME
+            ELSE C.CORP_NAME
+        END                                                                                                  AS CORP_NAME              -- 법인 명
+     , B.CORP_GROUP                                                                                          AS CORP_GROUP             -- CORP_GROUP
+     , B.MEETING_GRADE_MOD                                                                                   AS MEETING_GRADE_MOD      -- MEETING_GRADE_MOD
+     , B.DOCUMENT_AUTHORITY_FLAG                                                                             AS DOCUMENT_AUTHORITY_FLAG -- 문서권한
+     , B.UPDATE_YN                                                                                           AS UPDATE_YN              -- 인사정보 업데이트 유무
+     , B.DEPT_CODE                                                                                           AS DEPT_CODE              -- 부서 코드
+     , D.FULL_DEPT_CODE                                                                                      AS FULL_DEPT_CODE         -- 전체부서코드
+     , D.DEPT_NAME                                                                                           AS DEPT_NAME              -- 부서명
+     , D.FULL_DEPT_NAME                                                                                      AS FULL_DEPT_NAME         -- 전체부서명
+     , B.CORP_SECTION_CODE                                                                                   AS CORP_SECTION_CODE      -- 법인 구분 코드
+     , B.DEPT_SPECIAL_CODE                                                                                   AS DEPT_SPECIAL_CODE      -- 부서 특수 코드
+     , B.JOB_GRADE_CODE                                                                                      AS JOB_GRADE_CODE         -- 직급 코드
+     , CASE WHEN C.JOB_GRADE_NAME IS NULL THEN B.JOB_GRADE_NAME
+            ELSE C.JOB_GRADE_NAME
+        END                                                                                                  AS JOB_GRADE_NAME         -- 직급 명
+     , B.POSITION_CODE                                                                                       AS POSITION_CODE          -- 직책 코드
+     , CASE WHEN C.POSITION_NAME IS NULL THEN B.POSITION_NAME
+            ELSE C.POSITION_NAME
+        END                                                                                                  AS POSITION_NAME          -- 직책 명
+     , B.OFFICIAL_POSITION_CODE                                                                              AS OFFICIAL_POSITION_CODE -- 직위 코드
+     , CASE WHEN C.OFFICIAL_POSITION_NAME IS NULL THEN B.OFFICIAL_POSITION_NAME
+            ELSE C.OFFICIAL_POSITION_NAME
+        END                                                                                                  AS OFFICIAL_POSITION_NAME -- 직위 명
+     , B.PG_CODE                                                                                             AS PG_CODE                -- PG CODE
+     , CASE WHEN C.PG_NAME IS NULL THEN B.PG_NAME
+            ELSE C.PG_NAME
+        END                                                                                                  AS PG_NAME                -- PG 명
+     , B.PU_CODE                                                                                             AS PU_CODE                -- PU CODE
+     , CASE WHEN C.PU_NAME IS NULL THEN B.PU_NAME
+            ELSE C.PU_NAME
+        END                                                                                                  AS PU_NAME                -- PU 명
+     , B.BUSINESS_PLACE_CODE                                                                                 AS BUSINESS_PLACE_CODE    -- 사업장 코드
+     , CASE WHEN C.BUSINESS_PLACE_NAME IS NULL THEN B.BUSINESS_PLACE_NAME
+            ELSE C.BUSINESS_PLACE_NAME
+        END                                                                                                  AS BUSINESS_PLACE_NAME    -- 사업장 명
+     , B.ZIP_CODE                                                                                            AS ZIP_CODE               -- 우편 번호
+     , B.EMP_STATUS_CODE                                                                                     AS EMP_STATUS_CODE        -- 재직 코드
+     , B.SEX_CODE                                                                                            AS SEX_CODE               -- 성별 코드
+     , B.JOB_GRADE_SECTION_CODE                                                                              AS JOB_GRADE_SECTION_CODE -- 직급 구분 코드
+     , B.ACCOUNT_USE_AT                                                                                      AS EXT_ACCOUNT_USE_AT     -- 확장 계정 사용 여부
+     , B.COOP_COMPANY_AT                                                                                     AS COOP_COMPANY_AT        -- 협력업체여부
+     , B.COOP_COMPANY_CORP_CODE                                                                              AS COOP_COMPANY_CORP_CODE -- 협력업체 법인 코드
+     , B.NATIONALTY_CODE                                                                                     AS NATIONALTY_CODE        -- 국적 코드
+     , B.NATIONALTY_NAME                                                                                     AS NATIONALTY_NAME        -- 국적 명
+     , CASE WHEN C.ADDRESS_ADD_INFO IS NULL THEN B.ADDRESS_ADD_INFO
+            ELSE C.ADDRESS_ADD_INFO
+        END                                                                                                  AS ADDRESS_ADD_INFO       -- 주소추가정보
+     , CASE WHEN C.ADDRESS_INFO IS NULL THEN B.ADDRESS_INFO
+            ELSE C.ADDRESS_INFO
+        END                                                                                                  AS ADDRESS_INFO           -- 주소정보
+     , E.GBIS_PU_CODE                                                                                        AS GBIS_PU_CODE           -- GBIS PU CODE
+     , AA.ADMIN_AT                                                                                           AS ADMIN_AT
+     , AA.AUTH_GROUP_LIST                                                                                    AS AUTH_GROUP_LIST
+     , AA.AUTH_GROUP_NAME_LIST                                                                               AS AUTH_GROUP_NAME_LIST
+     , AA.AUTH_MENU_LIST                                                                                     AS AUTH_MENU_LIST
+     , AA.MENU_INFO_LIST                                                                                     AS MENU_INFO_LIST
+     , (SELECT STRING_AGG(SAP_CORP_CODE || '_' || PU_CODE, ',')
+          FROM VOB_AUTH_DATA_USER
+         WHERE USER_ID         = #{userId}
+           AND COMPANY_CODE    = #{companyCode}
+         GROUP BY COMPANY_CODE, USER_ID)                                                                     AS VOB_AUTH_DATA_LIST
+     , (SELECT COUNT(*)
+          FROM VOB_AUTH_DATA_USER
+         WHERE USER_ID         = #{userId}
+           AND COMPANY_CODE    = #{companyCode})                                                             AS VOB_AUTH_COUNT        -- PU기준 법인 권한수
+     , B.CORP_CODE                                                                                           AS GBIS_CORP_CODE
+  FROM COM_USER A
+  LEFT OUTER JOIN VOB_USER_EXT B
+    ON A.COMPANY_CODE          = B.COMPANY_CODE
+   AND A.USER_ID               = B.USER_ID
+  LEFT OUTER JOIN VOB_USER_EXT_LANG C
+    ON B.COMPANY_CODE          = C.COMPANY_CODE
+   AND B.USER_ID               = C.USER_ID
+   AND C.LANGUAGE_CODE         = LOWER(#{languageCode})
+  LEFT OUTER JOIN VIEW_VOB_DEPT_INFO D
+    ON B.COMPANY_CODE          = D.COMPANY_CODE
+   AND B.DEPT_CODE             = D.DEPT_CODE
+   AND B.PU_CODE               = D.PU_CODE
+   AND B.CORP_CODE             = D.CORP_CODE
+   AND D.LANGUAGE_CODE         = LOWER(#{languageCode})
+  LEFT OUTER JOIN CM_ORGANIZATION_M E
+   ON B.CORP_CODE              = E.COMPANY_CODE
+   AND B.DEPT_CODE             = E.TEAM_CODE
+  LEFT OUTER JOIN (
+        SELECT AA.COMPANY_CODE                                                                                        AS COMPANY_CODE
+             , AA.USER_ID                                                                                             AS USER_ID
+             , MAX(AA.MANAGER_AT)                                                                                     AS ADMIN_AT
+             , REGEXP_REPLACE(STRING_AGG(AA.GROUP_KEY , ',') , '([^,]+)(,\1)+', '\1')                                 AS AUTH_GROUP_LIST
+             , REGEXP_REPLACE(STRING_AGG(AA.GROUP_NAME, ',') , '([^,]+)(,\1)+', '\1')                                 AS AUTH_GROUP_NAME_LIST
+             , STRING_AGG(AA.MENU_KEY || '||' || AA.SELECT_AUTHORITY_VALUE
+                                      || '||' || AA.SAVE_AUTHORITY_VALUE
+                                      || '||' || AA.CREATE_AUTHORITY_VALUE
+                                      || '||' || AA.UPDATE_AUTHORITY_VALUE
+                                      || '||' || AA.DELETE_AUTHORITY_VALUE
+                                      || '||' || AA.OUTPUT_AUTHORITY_VALUE
+                                      || '||' || AA.ETC_AUTHORITY_VALUE
+                                      || '||' || AA.ADMIN_AUTHORITY_VALUE, ',')                                       AS AUTH_MENU_LIST
+             , STRING_AGG(AA.MENU_KEY || '||' || AA.INDIVIDUAL_INFO_VALUE, ',')                                       AS MENU_INFO_LIST
+          FROM (
+                 SELECT ROW_NUMBER() OVER(PARTITION BY D.MENU_KEY ORDER BY C.PRIOR_RANK)                                                        AS PRIOR_RANK
+                      , A.COMPANY_CODE                                                                                                          AS COMPANY_CODE
+                      , A.USER_ID                                                                                                               AS USER_ID
+                      , C.GROUP_KEY                                                                                                             AS GROUP_KEY
+                      , C.MANAGER_AT                                                                                                            AS MANAGER_AT
+                      , D.MENU_KEY                                                                                                              AS MENU_KEY
+                      , MAX(C.AUTHORITY_GROUP_NAME)                                                                                             AS GROUP_NAME
+                      , MAX(D.SELECT_AUTHORITY_VALUE)                                                                                           AS SELECT_AUTHORITY_VALUE
+                      , MAX(D.SAVE_AUTHORITY_VALUE)                                                                                             AS SAVE_AUTHORITY_VALUE
+                      , MAX(D.CREATE_AUTHORITY_VALUE)                                                                                           AS CREATE_AUTHORITY_VALUE
+                      , MAX(D.UPDATE_AUTHORITY_VALUE)                                                                                           AS UPDATE_AUTHORITY_VALUE
+                      , MAX(D.DELETE_AUTHORITY_VALUE)                                                                                           AS DELETE_AUTHORITY_VALUE
+                      , MAX(D.OUTPUT_AUTHORITY_VALUE)                                                                                           AS OUTPUT_AUTHORITY_VALUE
+                      , MAX(D.ETC_AUTHORITY_VALUE)                                                                                              AS ETC_AUTHORITY_VALUE
+                      , MAX(D.ADMIN_AUTHORITY_VALUE)                                                                                            AS ADMIN_AUTHORITY_VALUE
+                      , MAX(E.INDIVIDUAL_INFO_VALUE)                                                                                            AS INDIVIDUAL_INFO_VALUE
+                   FROM COM_USER A
+                   LEFT JOIN COM_AUTH_GROUP_USER B
+                     ON A.USER_ID               = B.USER_ID
+                    AND A.COMPANY_CODE          = B.COMPANY_CODE
+                   LEFT JOIN COM_AUTH_GROUP C
+                     ON B.GROUP_KEY             = C.GROUP_KEY
+                    AND B.COMPANY_CODE          = C.COMPANY_CODE
+                   LEFT JOIN COM_AUTH_GROUP_MENU D
+                     ON C.GROUP_KEY             = D.GROUP_KEY
+                    AND C.COMPANY_CODE          = D.COMPANY_CODE
+                   LEFT JOIN COM_MENU E
+                     ON D.MENU_KEY              = E.MENU_KEY
+                    AND D.COMPANY_CODE          = E.COMPANY_CODE
+                    AND E.SOLUTION_SECTION_CODE = #{solutionSectionCode}
+                  WHERE 1 = 1
+                    AND A.COMPANY_CODE = #{companyCode}
+                    AND A.USER_ID      = #{userId}
+                    AND B.GROUP_KEY    = (
+                                          SELECT Z.GROUP_KEY
+                                            FROM COM_AUTH_GROUP_USER Z
+                                           INNER JOIN COM_AUTH_GROUP Y
+                                              ON Z.COMPANY_CODE = Y.COMPANY_CODE
+                                             AND Z.GROUP_KEY    = Y.GROUP_KEY
+                                           WHERE Z.USER_ID      = #{userId}
+                                             AND Z.COMPANY_CODE = #{companyCode}
+                                           ORDER BY Y.PRIOR_RANK
+                                           LIMIT 1
+                                         )
+                  GROUP BY PRIOR_RANK
+                         , A.COMPANY_CODE
+                         , A.USER_ID
+                         , C.GROUP_KEY
+                         , C.MANAGER_AT
+                         , D.MENU_KEY
+               ) AA
+         GROUP BY AA.COMPANY_CODE, AA.USER_ID
+                  ) AA
+    ON B.USER_ID               = AA.USER_ID
+   AND B.COMPANY_CODE          = AA.COMPANY_CODE
+ WHERE 1 = 1
+   AND A.COMPANY_CODE          = #{companyCode}
+   AND A.USER_ID               = #{userId}
+</select>
+
+<insert id="insertUserPasswordHistory">
+/* [insertUserPasswordHistory] 사용자 비밀번호 변경히스토리 정보 신규 등록 */
+INSERT INTO COM_USER_PASSWORD_HISTORY
+       ( COMPANY_CODE
+       , HISTORY_KEY
+       , USER_ID
+       , PASSWORD_ENCPT
+       , ENCPT_KEY_INFO
+       , CHANGE_DT
+       , FIRST_CREATE_USER_ID
+       , CREATE_DT
+       )
+VALUES ( #{companyCode}
+       , FN_GET_COM_UNIQUE_KEY()
+       , #{userId}
+       , #{passwordEncpt}
+       , #{encptKeyInfo}
+       , CURRENT_TIMESTAMP
+       , #{firstCreateUserId}
+       , CURRENT_TIMESTAMP
+       )
+</insert>
+
+<select id="selectCompanyCodeByDomain" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+    SELECT COMPANY_CODE
+    FROM COM_SOLUTION
+    WHERE SOLUTION_SECTION_CODE = #{solutionSectionCode}
+      AND USE_AT                = 'Y'
+      AND (CONNECT_URL          = #{connectUrl} OR
+           INNER_CONNECT_URL    = #{connectUrl})
+</select>
+
+<!-- 초기 WAS 로드 시 메모리에 상주하는 다국어 메시지 조회 (MessageDataLoader에서 사용) -->
+<select id="selectAllMessage" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectAllMessage] 초기 WAS LOAD 시 메모리에 상주하는 다국어 메시지 조회 */
+SELECT MESSAGE_ID
+     , LANGUAGE_CODE
+     , MESSAGE_CONTENTS
+     , MESSAGE_SECTION_CODE
+     , USE_AT
+  FROM COM_MESSAGE_LANG
+ WHERE USE_AT = 'Y'
+</select>
+
+</mapper>

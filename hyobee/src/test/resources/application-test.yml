@@ -1,0 +1,13 @@
+# Test profile - minimal config for unit/controller tests
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+# JWT (AichatJwtTokenServiceImpl) - min 32 chars for HS256
+SECRET_KEY: "hyobee-test-secret-key-32bytes-minimum!!"
+EXPIRE_HOURS: "24"
+
+logging:
+  level:
+    root: WARN
+    xs: WARN

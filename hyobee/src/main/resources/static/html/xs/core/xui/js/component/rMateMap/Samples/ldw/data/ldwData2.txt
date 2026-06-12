@@ -1,0 +1,12 @@
+[
+ {"code":"90000","label":"서울시청","lat":37.566524,"lng":126.977917, "sales":100 , "temperature":7, "weather":"맑음" }
+,{"code":"90000","label":"강동구청","lat":37.52995,"lng":127.123457, "sales":100  , "temperature":7, "weather":"맑음" }
+,{"code":"90000","label":"강북구청","lat":37.639778,"lng":127.025509, "sales":100 , "temperature":7, "weather":"맑음" }
+,{"code":"90000","label":"강서구청","lat":37.550875,"lng":126.849523, "sales":100 , "temperature":7, "weather":"맑음" }
+,{"code":"90000","label":"관악구청","lat":37.478053,"lng":126.951481, "sales":100 , "temperature":7, "weather":"맑음" }
+,{"code":"90000","label":"광진구청","lat":37.538501,"lng":127.082421, "sales":100 , "temperature":7, "weather":"맑음" }
+,{"code":"90000","label":"구로구청","lat":37.495391,"lng":126.887473, "sales":100 , "temperature":7, "weather":"맑음" }
+,{"code":"90000","label":"금천구청","lat":37.456859,"lng":126.895441, "sales":100 , "temperature":7, "weather":"맑음" }
+,{"code":"90000","label":"노원구청","lat":37.65404,"lng":127.056394, "sales":100  , "temperature":7, "weather":"맑음" }
+,{"code":"90000","label":"도봉구청","lat":37.668708,"lng":127.047064, "sales":100 , "temperature":7, "weather":"맑음" }
+]

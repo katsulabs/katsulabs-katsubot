@@ -1,0 +1,31 @@
+---
+description: Hyobee 하네스 도입용 메인 오케스트레이터
+alwaysApply: true
+---
+
+# 메인 오케스트레이터
+
+Playbook: `docs/harness/agent-hierarchy.md`
+
+## 전역 규칙
+
+- 문서 변경도 `main`에 직접 커밋하지 않는다.
+- worktree 브랜치 규칙을 사용한다: `feature/TB-{id}-{short-name}`.
+- PR 전에 문서 품질 게이트를 확인한다.
+- 병합 전략은 `no-ff`를 사용한다.
+- 인증/세션 관련 작업은 로그인 기준선 문서를 먼저 확인한다: `docs/harness/auth-flow-analysis.md`
+- 패키지/경계 스코프는 `docs/harness/package-scope.md`를 따른다.
+- 커밋 메시지는 **한국어**로 작성하고 `Co-authored-by: Cursor <cursoragent@cursor.com>`는 추가하지 않는다 (`.cursor/rules/git-commit.mdc`).
+
+## 구현 요청 시 (첫 턴 필수)
+
+1. `docs/harness/todo.md`에서 티켓과 DoD를 확인한다.
+2. worktree 브랜치 존재를 확인하고, 필요하면 생성한다.
+3. 아래 태그 중 하나로 Sub-agent 작업을 디스패치한다:
+   - `[TB-xxx][Contract]`
+   - `[TB-xxx][Backend]`
+   - `[TB-xxx][Frontend]`
+   - `[TB-xxx][QA]`
+4. 인증/SSO 흐름 영향 작업이면 Contract 또는 Backend 디스패치를 우선한다.
+
+코드/문서 수정 없는 질문이면 디스패치 없이 바로 답변한다.

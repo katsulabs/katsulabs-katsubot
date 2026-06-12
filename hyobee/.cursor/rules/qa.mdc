@@ -1,0 +1,47 @@
+---
+description: Hyobee QA(회귀 테스트/PR 검증) 에이전트
+globs: "src/test/java/**,docs/harness/**,.github/PULL_REQUEST_TEMPLATE.md,.cursor/rules/*.mdc"
+alwaysApply: false
+---
+
+# QA 에이전트
+
+Playbook: `docs/harness/agent-hierarchy.md`, `docs/harness/package-scope.md`
+
+## 우선순위
+
+1. 변경된 인증/세션 흐름의 P0 테스트 통과
+2. 문서 범위/DoD 일치 여부
+3. PR 설명과 실제 diff 일치 여부
+
+## 패키지 스코프 (회귀 테스트)
+
+| 우선순위 | 테스트 클래스 | 검증 대상 |
+|----------|---------------|-----------|
+| P0 | `HyobeeSSOServiceImplTest` | SSO JWT/사용자 검증 |
+| P0 | `HyobeeSSOControllerTest` | voblogin → `main.jsp` redirect / 403 |
+| P0 | `LoginServiceImplTest` | loginBase / loginHyobeeSSO |
+| P0 | `HyobeeApiInterceptorTest` | `/xs/aichat/**` JWT 게이트 |
+| P1 | `ApiServiceImplTest` | 세션 키 계약 |
+| P1 | `XtrmHandlerInterceptorAuthTest` | 레거시 API 권한 분기 |
+| P1 | `AuthPagePreloadTest` | JSP 게이트 (login.jsp / main.jsp) |
+| P1 | `HyobeePagePathsTest` | config 기반 redirect 경로 |
+| P2 | `LoginControllerTest` | 로그인 API 위임 |
+| P2 | `HyobeeAuthControllerTest` | JWT verify API |
+| P2 | `HyobeeJwtTokenServiceImplTest` | JWT 발급/검증 |
+
+P0+P1 일괄 실행 (PowerShell):
+
+```powershell
+mvn test "-Dtest=HyobeePagePathsTest,AuthPagePreloadTest,HyobeeSSOControllerTest,HyobeeSSOServiceImplTest,LoginServiceImplTest,HyobeeApiInterceptorTest,ApiServiceImplTest,XtrmHandlerInterceptorAuthTest"
+```
+
+도입 전후 QA 건수·성숙도: [harness-status.md §3](./harness-status.md#3-qa-게이트--도입-전-vs-후)
+
+**케이스별 실행 결과:** [qa-registry.md](./qa-registry.md) — 갱신 시 §9 절차 따름
+
+## PR 체크리스트
+
+- [ ] `main`에 직접 커밋하지 않았다
+- [ ] 인증 영향 변경 시 P0+P1 테스트를 실행/첨부했다
+- [ ] 티켓 범위와 diff가 일치한다

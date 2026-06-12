@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xs.webbase.login.LoginMapper">
+
+<!-- PAGING QUERY -->
+<sql id="pre-paging-sql">
+<if test="xtrmPageNo != null and xtrmPageNo != '' and xtrmRowPerPage != null and xtrmRowPerPage != ''">
+SELECT PRIME.*
+  FROM ( SELECT SUBQRY.*
+              , COUNT(1) OVER() AS XTRM_DATA_TOT_COUNT
+           FROM (
+</if>           
+</sql>
+<sql id="post-paging-sql">
+<if test="xtrmPageNo != null and xtrmPageNo != '' and xtrmRowPerPage != null and xtrmRowPerPage != ''">
+<![CDATA[
+	            ) SUBQRY
+       ) PRIME
+ WHERE PRIME.ROW_NUMBER >= ((#{xtrmPageNo}-1)*#{xtrmRowPerPage}) + 1
+   AND PRIME.ROW_NUMBER <= #{xtrmPageNo}*#{xtrmRowPerPage}
+]]>
+</if>
+</sql>
+<!-- PAGING QUERY -->
+
+
+<select id="selectComCompanyWithUrl" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectComCompanyWithUrl] 솔루션에 정의된 도메인을 활용한 회사정보 검색 */
+<![CDATA[
+SELECT A.COMPANY_CODE
+     , A.COMPANY_NAME
+     , A.USE_AT
+     , CASE WHEN A.USE_BEGIN_DATE > TO_CHAR(CURRENT_TIMESTAMP,'YYYYMMDD')
+            THEN A.USE_BEGIN_DATE
+            ELSE ''
+       END               AS USE_BEGIN_DATE
+     , CASE WHEN A.USE_END_DATE   < TO_CHAR(CURRENT_TIMESTAMP,'YYYYMMDD')
+            THEN A.USE_END_DATE
+            ELSE ''
+       END               AS USE_END_DATE
+  FROM COM_COMPANY A
+ INNER JOIN COM_SOLUTION B
+    ON A.COMPANY_CODE          = B.COMPANY_CODE
+   AND B.SOLUTION_SECTION_CODE = #{solutionSectionCode}
+   AND B.USE_AT                = 'Y' 
+ WHERE 1 = 1
+]]>
+    <!--<if test="companyCode != null and companyCode != '' ">
+        AND A.COMPANY_CODE = #{companyCode}
+    </if>-->
+    <if test="connectUrl != null and connectUrl != '' ">
+        AND (B.CONNECT_URL          = #{connectUrl} OR
+             B.INNER_CONNECT_URL    = #{connectUrl})
+    </if>
+</select>
+<!--
+   AND (B.CONNECT_URL          = #{connectUrl} OR
+        B.INNER_CONNECT_URL    = #{connectUrl})
+-->
+
+<select id="selectComCompanyCombo" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectComCompanyCombo] 회사코드 콤보박스 로드 */
+<![CDATA[
+SELECT A.COMPANY_CODE AS CODE
+     , A.COMPANY_NAME AS CODE_NAME
+  FROM COM_COMPANY A 
+ WHERE A.USE_AT                = 'Y' 
+   AND A.USE_BEGIN_DATE       <= TO_CHAR(CURRENT_TIMESTAMP,'YYYYMMDD')
+   AND A.USE_END_DATE         >= TO_CHAR(CURRENT_TIMESTAMP,'YYYYMMDD')
+]]> 
+</select>
+
+<select id="selectEaiCorpHoldings" resultType="xs.core.handler.app.XtrmCamelCaseMap">
+/* [selectEaiCorpHoldings] SAP 법인 구분 조회 */
+SELECT CORP_HOLDINGS
+  FROM XTRMEAI.UNITY_GW_CORPORATION
+ WHERE CORP_CD = #{userCorp}
+ ORDER BY PIDATE DESC, PITIME DESC
+ LIMIT 1 -- 데이터 문제로 인해 하나의 법인코드가 여러 row를 가지는 케이스가 존재하여 임의 필드로 정렬하여 한 건만 조회
+</select>
+
+</mapper>

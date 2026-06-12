@@ -1,0 +1,36 @@
+---
+description: Git 커밋 메시지 규칙 (한글·Co-authored-by)
+alwaysApply: true
+---
+
+# Git 커밋 메시지
+
+## 언어
+
+- **feature/harness/main** 및 하네스 worktree 브랜치(`feature/TB-*`) 커밋 **제목·본문은 한국어**로 작성한다.
+- Conventional prefix(`feat`, `fix`, `docs`, `refactor`, `merge`, `chore` 등)와 티켓 태그(`TB-005`)는 유지해도 된다.
+- 영어 고유명사·클래스명·API 경로·브랜치명은 그대로 둔다.
+
+## Co-authored-by
+
+- **`Co-authored-by: Cursor <cursoragent@cursor.com>`는 커밋에 추가하지 않는다.**
+- 사람 리뷰어·페어 Co-authored-by만 필요 시 사용한다.
+
+## 예시
+
+```
+feat(TB-005): 005e-1 XtrmJsonNode Jackson 기반 구축
+
+XtrmJSON wire format을 반영한 Jackson XtrmJsonNode 도입.
+```
+
+```
+docs: feature/harness/main과 rnd/main 차이 분석 문서 추가
+
+merge 후 두 브랜치 차이를 문서화하고 harness README에 링크를 추가한다.
+```
+
+## PR·push
+
+- 원격 `katsulabs` push 전 `git log`로 영문 제목·Cursor trailer 잔존 여부를 확인한다.
+- 히스토리 재작성 후 push 시 `--force-with-lease`를 사용한다.

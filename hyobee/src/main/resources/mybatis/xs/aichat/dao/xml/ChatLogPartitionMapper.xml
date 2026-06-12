@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xs.aichat.v2.mapper.ChatLogPartitionMapper">
+
+<!-- 파티션 자동 생성 (다음 달) -->
+<select id="createChatApiLogPartition" resultType="xs.aichat.dto.ChatLogPartitionResult">
+    /* [createChatApiLogPartition] 다음 달 파티션 자동 생성 */
+    SELECT * FROM create_chat_api_log_partition((CURRENT_DATE + INTERVAL '1 month')::date);
+</select>
+</mapper>

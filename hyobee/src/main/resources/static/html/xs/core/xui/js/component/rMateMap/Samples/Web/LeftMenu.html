@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>rMate HTML5 MapChart</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="description" content="rMateMapChart for HTML5, Riamore Soft 2017">
+<meta name="keywords" content="HTML5,MapChart,JavaScript,CSS,Ajax,Graph,rMateMapChart">
+
+<link href="./jQuery/jquery.mCustomScrollbar.css" rel="stylesheet">
+<link href="./menu.css" rel="stylesheet">
+
+<script type="text/javascript" src="./JS/sample_info.js"></script>
+<script type="text/javascript" src="./JS/common.js"></script>
+<script type="text/javascript" src="./JS/left_menu_util.js"></script>
+
+<!-- jQuery -->
+<script src="./jQuery/jquery-1.12.4.min.js"></script>
+<script src="./jQuery/jquery.mCustomScrollbar.js"></script>
+<script src="./jQuery/jquery.mousewheel.min.js"></script>
+
+<script type="text/javascript">
+
+var activeLi,
+	activeMenuName,
+	typeScrollBar,
+	scrollBarNames = {"chart_type_list" : "typeScrollBar"};
+
+$(document).ready(function(){
+	// create sample
+	createSample();
+
+	if(compIE()){
+		setupSampleListsHeight();
+		$(window).bind("resize", setupSampleListsHeight);
+	}
+	
+	setupEvent();// browser resize handler
+
+//	$("#chart_type_subList").mCustomScrollbar();
+});
+
+</script>
+</head>
+<body>
+	<div class="wrapper">
+		<a href="./Overview.html" target="sampleFrame"><div onclick="javascript:window.parent.document.getElementById('mainFrame').cols = '179px, 100%';subFrameOpened=false;document.getElementById('subListCircle').style.visibility='hidden';" class="title"></div></a>
+		<div id="sample_lists" class="sample_lists">
+			<div class="chart_type_list">
+				<div id="chart_type_list"></div>
+				<div class="manual_menus">
+					<span></span>
+					<span><a href="../../Docs/rMateMapChart_HTML5_5.0_사용설명서.pdf" target="_blank">MANUAL</a></span>
+					<span><a href="../Tutorial.html" target="sampleFrame">TUTORIAL</a></span>
+				</div>
+				<div class="footer">
+					<span>HTML5 <font color="#ee3334">v5.5</font></span>
+					<span>COPYRIGHT 2017 RIAMORE</span>
+					<span>ALL RIGHTS RESERVED.</span>
+				</div>
+			</div>
+			<div id="chart_type_subList" class="chart_type_subList"></div>
+		</div>
+	</div>
+</body>
+</html>

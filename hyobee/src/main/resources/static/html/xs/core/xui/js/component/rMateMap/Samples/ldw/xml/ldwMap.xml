@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rMateMapChart>
+	<!-- backFunction 하위맵 상태에서 상위맵 버튼, 지도 외부 클릭 시 불려지는 함수 설정 -->
+	<!-- clickFunction 지역 클릭 시 불려지는 함수 설정하기 -->
+	<MapChart id="mainMap1" showDataTips="true"
+		dataTipType="Type4" dataTipFill="#fff0f0" dataTipBorderColor="#fff0f0"
+		dataTipColor="#ffffff" dataTipAlpha="1"
+		drillDownEnabled="true"
+		mapChangeJsFunction="dashboard020.clickFunction"
+		
+		backToMapJsFunction="dashboard020.backFunction"
+		>
+		<series>
+			<!-- labelPosition 지역명 표시 위치 및 표시 안함 none inside bottom 등등 -->
+			<!-- localFillJsFunction 초기 색상 지정 함수 -->
+			<MapSeries id="mapseries" interactive="true" selectionMarking="line" color="#777777" labelPosition="inside"
+				displayName="Map" useGis="true" dataTipFill="#75d3d0" dataTipBorderColor="#75d3d0" dataTipColor="#ffffff" dataTipAlpha="1" hideOverSizeLabel="false"
+				rollOverFill="#00968c"
+				localFillJsFunction="dashboard020.colorFunction"
+				
+				
+				>
+				<stroke>
+					<Stroke color="#CAD7E0" weight="0.5" alpha="1"/>
+				</stroke>
+				<rollOverStroke>
+					<Stroke color="#CAD7E0" weight="0.5" alpha="1"/>
+				</rollOverStroke>
+				<localFill>
+					<SolidColor color="#EBF0F4"/>
+				</localFill>
+				
+			</MapSeries>
+			<MapPanelSeries id="panel1" titleField="label" bodyTextField="v1" 
+			horizontalCenterGapField="h" verticalCenterGapField="v" bodyColor="#555555" color="#FFFFFF" 
+			horizontalAlign="center" itemRenderer="VPanelItemRenderer" 
+			fill="#2e7dca" panelWidth="50" headerHeight="20" panelHeight="20"  strokeColor="#0BFF91" rollOverFillShadeValue="10"
+			useGis="true" labelCallOut="true"
+			>
+				<showDataEffect>
+					<SeriesInterpolate duration="1000"/>
+				</showDataEffect>
+			</MapPanelSeries>
+
+
+		</series>
+	</MapChart>
+</rMateMapChart>

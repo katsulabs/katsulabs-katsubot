@@ -1,0 +1,1813 @@
+@charset "utf-8";
+
+@font-face {
+	font-family: "Noto Sans KR";
+	src: url("../font/NotoSansKR/NotoSansKR-Regular.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Noto Sans KR";
+	src: url("../font/NotoSansKR/NotoSansKR-Medium.woff2") format("woff2");
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Noto Sans KR";
+	src: url("../font/NotoSansKR/NotoSansKR-Bold.woff2") format("woff2");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Montserrat";
+	src: url("../font/montserrat/montserrat-regular.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Montserrat";
+	src: url("../font/montserrat/montserrat-medium.woff2") format("woff2");
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Montserrat";
+	src: url("../font/montserrat/montserrat-bold.woff2") format("woff2");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+:root{
+	/* ----------------------------------------------------- *\
+	`` 1. Color
+	\* ----------------------------------------------------- */
+	--bw-black: 0, 0, 0;
+	--bw-white: 255, 255, 255;
+
+	--gray-10: 252, 252, 252;
+	--gray-50: 247, 247, 247;
+	--gray-100: 224, 224, 224;
+	--gray-200: 204, 204, 204;
+	--gray-300: 179, 179, 179;
+	--gray-400: 153, 153, 153;
+	--gray-500: 128, 128, 128;
+	--gray-600: 102, 102, 102;
+	--gray-700: 77, 77, 77;
+	--gray-800: 51, 51, 51;
+	--gray-900: 26, 26, 26;
+
+	--dm-gray-10: 26, 26, 26;
+	--dm-gray-50: 51, 51, 51;
+	--dm-gray-100: 77, 77, 77;
+	--dm-gray-200: 102, 102, 102;
+	--dm-gray-300: 128, 128, 128;
+	--dm-gray-400: 153, 153, 153;
+	--dm-gray-500: 179, 179, 179;
+	--dm-gray-600: 204, 204, 204;
+	--dm-gray-700: 224, 224, 224;
+	--dm-gray-800: 247, 247, 247;
+	--dm-gray-900: 252, 252, 252;
+
+	--cool-gray-50: 247, 247, 250;
+	--cool-gray-100: 232, 232, 237;
+	--cool-gray-200: 205, 205, 214;
+	--cool-gray-300: 179, 179, 189;
+	--cool-gray-400: 153, 153, 163;
+	--cool-gray-500: 128, 128, 138;
+	--cool-gray-600: 102, 102, 112;
+	--cool-gray-700: 80, 80, 89;
+	--cool-gray-800: 53, 53, 64;
+	--cool-gray-900: 33, 33, 46;
+
+	--dm-cool-gray-50: 33, 33, 46;
+	--dm-cool-gray-100: 53, 53, 64;
+	--dm-cool-gray-200: 80, 80, 89;
+	--dm-cool-gray-300: 102, 102, 112;
+	--dm-cool-gray-400: 128, 128, 138;
+	--dm-cool-gray-500: 153, 153, 163;
+	--dm-cool-gray-600: 179, 179, 189;
+	--dm-cool-gray-700: 205, 205, 214;
+	--dm-cool-gray-800: 232, 232, 237;
+	--dm-cool-gray-900: 247, 247, 250;
+
+	--crimson-50: 255, 242, 242;
+	--crimson-100: 255, 217, 217;
+	--crimson-200: 255, 182, 179;
+	--crimson-300: 255, 146, 140;
+	--crimson-400: 255, 122, 115;
+	--crimson-500: 255, 86, 77;
+	--crimson-600: 242, 58, 48;
+	--crimson-700: 217, 42, 33;
+	--crimson-800: 191, 28, 19;
+	--crimson-900: 166, 16, 16;
+	--crimson-950: 121, 17, 12;
+
+	--citrus-50: 255, 248, 235;
+	--citrus-100: 255, 243, 204;
+	--citrus-200: 255, 231, 166;
+	--citrus-300: 255, 221, 141;
+	--citrus-400: 255, 204, 101;
+	--citrus-500: 255, 187, 61;
+	--citrus-600: 255, 172, 18;
+	--citrus-700: 252, 160, 0;
+	--citrus-800: 247, 140, 0;
+	--citrus-900: 230, 119, 0;
+	--citrus-950: 184, 96, 30;
+
+	--yellow-50: 255, 252, 222;
+	--yellow-100: 255, 248, 185;
+	--yellow-200: 255, 241, 115;
+	--yellow-300: 255, 227, 86;
+	--yellow-400: 255, 214, 51;
+	--yellow-500: 253, 205, 47;
+	--yellow-600: 255, 189, 3;
+	--yellow-700: 252, 177, 0;
+	--yellow-800: 250, 158, 0;
+	--yellow-900: 255, 144, 0;
+	--yellow-950: 240, 115, 0;
+
+	--viridian-50: 230, 255, 250;
+	--viridian-100: 205, 255, 245;
+	--viridian-200: 171, 248, 232;
+	--viridian-300: 137, 247, 225;
+	--viridian-400: 107, 234, 208;
+	--viridian-500: 74, 216, 187;
+	--viridian-600: 43, 198, 167;
+	--viridian-700: 25, 172, 143;
+	--viridian-800: 15, 145, 119;
+	--viridian-900: 3, 120, 97;
+	--viridian-950: 0, 93, 80;
+
+	--peri-blue-50: 235, 239, 255;
+	--peri-blue-100: 217, 225, 255;
+	--peri-blue-200: 196, 206, 255;
+	--peri-blue-300: 175, 187, 255;
+	--peri-blue-400: 154, 167, 250;
+	--peri-blue-500: 132, 147, 246;
+	--peri-blue-600: 112, 127, 242;
+	--peri-blue-700: 93, 107, 240;
+	--peri-blue-800: 68, 83, 230;
+	--peri-blue-900: 45, 60, 214;
+	--peri-blue-950: 33, 46, 164;
+
+	--light-blue-50: 235, 243, 255;
+	--light-blue-100: 209, 227, 255;
+	--light-blue-200: 180, 210, 255;
+	--light-blue-300: 155, 196, 255;
+	--light-blue-400: 129, 179, 252;
+	--light-blue-500: 97, 156, 242;
+	--light-blue-600: 78, 142, 235;
+	--light-blue-700: 54, 125, 228;
+	--light-blue-800: 23, 96, 204;
+	--light-blue-900: 2, 75, 184;
+	--light-blue-950: 0, 61, 149;
+
+	--pink-100: 255, 212, 225;
+	--pink-200: 254, 182, 204;
+	--pink-300: 253, 157, 187;
+	--pink-400: 253, 126, 164;
+	--pink-50: 255, 235, 241;
+	--pink-500: 255, 91, 140;
+	--pink-600: 241, 56, 111;
+	--pink-700: 217, 33, 88;
+	--pink-800: 194, 19, 72;
+	--pink-900: 174, 17, 64;
+	--pink-950: 128, 12, 47;
+
+	--purple-gray-10: 251, 251, 252;
+	--purple-gray-50: 234, 235, 240;
+	--purple-gray-100: 223, 225, 233;
+	--purple-gray-200: 202, 205, 220;
+	--purple-gray-300: 186, 190, 209;
+	--purple-gray-400: 169, 173, 196;
+	--purple-gray-500: 136, 141, 172;
+	--purple-gray-600: 112, 116, 154;
+	--purple-gray-700: 90, 92, 139;
+	--purple-gray-800: 83, 84, 130;
+	--purple-gray-900: 74, 75, 118;
+	--purple-gray-950: 66, 65, 105;
+
+	--dm-purple-gray-10: 66, 65, 105;
+	--dm-purple-gray-50: 74, 75, 118;
+	--dm-purple-gray-100: 83, 84, 130;
+	--dm-purple-gray-200: 90, 92, 139;
+	--dm-purple-gray-300: 112, 116, 154;
+	--dm-purple-gray-400: 136, 141, 172;
+	--dm-purple-gray-500: 169, 173, 196;
+	--dm-purple-gray-600: 186, 190, 209;
+	--dm-purple-gray-700: 202, 205, 220;
+	--dm-purple-gray-800: 223, 225, 233;
+	--dm-purple-gray-900: 234, 235, 240;
+	--dm-purple-gray-950: 251, 251, 252;
+
+	--chart-multicolor1-01: 15, 145, 119;
+	--chart-multicolor1-02: 29, 151, 127;
+	--chart-multicolor1-03: 44, 159, 136;
+	--chart-multicolor1-04: 58, 165, 144;
+	--chart-multicolor1-05: 72, 171, 151;
+	--chart-multicolor1-06: 87, 178, 160;
+	--chart-multicolor1-07: 102, 185, 168;
+	--chart-multicolor1-08: 116, 191, 176;
+	--chart-multicolor1-09: 130, 197, 184;
+	--chart-multicolor1-10: 145, 205, 193;
+	--chart-multicolor1-11: 159, 211, 201;
+	--chart-multicolor1-12: 173, 217, 208;
+	--chart-multicolor1-13: 188, 225, 217;
+	--chart-multicolor1-14: 206, 233, 227;
+	--chart-multicolor1-15: 216, 237, 233;
+	--chart-multicolor1-16: 231, 244, 242;
+	--chart-multicolor2-01: 23, 110, 78;
+	--chart-multicolor2-02: 65, 166, 107;
+	--chart-multicolor2-03: 102, 194, 124;
+	--chart-multicolor2-04: 154, 217, 161;
+	--chart-multicolor2-05: 36, 65, 164;
+	--chart-multicolor2-06: 45, 107, 188;
+	--chart-multicolor2-07: 92, 147, 223;
+	--chart-multicolor2-08: 134, 180, 231;
+	--chart-multicolor2-09: 122, 59, 125;
+	--chart-multicolor2-10: 149, 66, 145;
+	--chart-multicolor2-11: 171, 104, 176;
+	--chart-multicolor2-12: 181, 138, 200;
+	--chart-multicolor2-13: 120, 29, 21;
+	--chart-multicolor2-14: 161, 48, 12;
+	--chart-multicolor2-15: 185, 81, 36;
+	--chart-multicolor2-16: 228, 115, 66;
+
+	/*
+  --bw-black: rgb(0, 0, 0);
+  --bw-white: rgb(255, 255, 255);
+
+  --gray-10: rgb(252, 252, 252);
+  --gray-50: rgb(247, 247, 247);
+  --gray-100: rgb(224, 224, 224);
+  --gray-200: rgb(204, 204, 204);
+  --gray-300: rgb(179, 179, 179);
+  --gray-400: rgb(153, 153, 153);
+  --gray-500: rgb(128, 128, 128);
+  --gray-600: rgb(102, 102, 102);
+  --gray-700: rgb(77, 77, 77);
+  --gray-800: rgb(51, 51, 51);
+  --gray-900: rgb(26, 26, 26);
+
+  --cool-gray-50: rgb(247, 247, 250);
+  --cool-gray-100: rgb(232, 232, 237);
+  --cool-gray-200: rgb(205, 205, 214);
+  --cool-gray-300: rgb(179, 179, 189);
+  --cool-gray-400: rgb(153, 153, 163);
+  --cool-gray-500: rgb(128, 128, 138);
+  --cool-gray-600: rgb(102, 102, 112);
+  --cool-gray-700: rgb(80, 80, 89);
+  --cool-gray-800: rgb(53, 53, 64);
+  --cool-gray-900: rgb(33, 33, 46);
+
+  --crimson-50: rgb(255, 242, 242);
+  --crimson-100: rgb(255, 217, 217);
+  --crimson-200: rgb(255, 182, 179);
+  --crimson-300: rgb(255, 146, 140);
+  --crimson-400: rgb(255, 122, 115);
+  --crimson-500: rgb(255, 86, 77);
+  --crimson-600: rgb(242, 58, 48);
+  --crimson-700: rgb(217, 42, 33);
+  --crimson-800: rgb(191, 28, 19);
+  --crimson-900: rgb(166, 16, 16);
+  --crimson-950: rgb(121, 17, 12);
+
+  --citrus-50: rgb(255, 248, 235);
+  --citrus-100: rgb(255, 243, 204);
+  --citrus-200: rgb(255, 231, 166);
+  --citrus-300: rgb(255, 221, 141);
+  --citrus-400: rgb(255, 204, 101);
+  --citrus-500: rgb(255, 187, 61);
+  --citrus-600: rgb(255, 172, 18);
+  --citrus-700: rgb(252, 160, 0);
+  --citrus-800: rgb(247, 140, 0);
+  --citrus-900: rgb(230, 119, 0);
+  --citrus-950: rgb(184, 96, 30);
+
+  --yellow-50: rgb(255, 252, 222);
+  --yellow-100: rgb(255, 248, 185);
+  --yellow-200: rgb(255, 241, 115);
+  --yellow-300: rgb(255, 227, 86);
+  --yellow-400: rgb(255, 214, 51);
+  --yellow-500: rgb(253, 205, 47);
+  --yellow-600: rgb(255, 189, 3);
+  --yellow-700: rgb(252, 177, 0);
+  --yellow-800: rgb(250, 158, 0);
+  --yellow-900: rgb(255, 144, 0);
+  --yellow-950: rgb(240, 115, 0);
+
+  --viridian-50: rgb(230, 255, 250);
+  --viridian-100: rgb(205, 255, 245);
+  --viridian-200: rgb(171, 248, 232);
+  --viridian-300: rgb(137, 247, 225);
+  --viridian-400: rgb(107, 234, 208);
+  --viridian-500: rgb(74, 216, 187);
+  --viridian-600: rgb(43, 198, 167);
+  --viridian-700: rgb(25, 172, 143);
+  --viridian-800: rgb(15, 145, 119);
+  --viridian-900: rgb(3, 120, 97);
+  --viridian-950: rgb(0, 93, 80);
+
+  --peri-blue-50: rgb(235, 239, 255);
+  --peri-blue-100: rgb(217, 225, 255);
+  --peri-blue-200: rgb(196, 206, 255);
+  --peri-blue-300: rgb(175, 187, 255);
+  --peri-blue-400: rgb(154, 167, 250);
+  --peri-blue-500: rgb(132, 147, 246);
+  --peri-blue-600: rgb(112, 127, 242);
+  --peri-blue-700: rgb(93, 107, 240);
+  --peri-blue-800: rgb(68, 83, 230);
+  --peri-blue-900: rgb(45, 60, 214);
+  --peri-blue-950: rgb(33, 46, 164);
+
+  --light-blue-50: rgb(235, 243, 255);
+  --light-blue-100: rgb(209, 227, 255);
+  --light-blue-200: rgb(180, 210, 255);
+  --light-blue-300: rgb(155, 196, 255);
+  --light-blue-400: rgb(129, 179, 252);
+  --light-blue-500: rgb(97, 156, 242);
+  --light-blue-600: rgb(78, 142, 235);
+  --light-blue-700: rgb(54, 125, 228);
+  --light-blue-800: rgb(23, 96, 204);
+  --light-blue-900: rgb(2, 75, 184);
+  --light-blue-950: rgb(0, 61, 149);
+
+  --pink-100: rgb(255, 212, 225);
+  --pink-200: rgb(254, 182, 204);
+  --pink-300: rgb(253, 157, 187);
+  --pink-400: rgb(253, 126, 164);
+  --pink-50: rgb(255, 235, 241);
+  --pink-500: rgb(255, 91, 140);
+  --pink-600: rgb(241, 56, 111);
+  --pink-700: rgb(217, 33, 88);
+  --pink-800: rgb(194, 19, 72);
+  --pink-900: rgb(174, 17, 64);
+  --pink-950: rgb(128, 12, 47);
+
+  --purple-gray-10: rgb(251, 251, 252);
+  --purple-gray-50: rgb(234, 235, 240);
+  --purple-gray-100: rgb(223, 225, 233);
+  --purple-gray-200: rgb(202, 205, 220);
+  --purple-gray-300: rgb(186, 190, 209);
+  --purple-gray-400: rgb(169, 173, 196);
+  --purple-gray-500: rgb(136, 141, 172);
+  --purple-gray-600: rgb(112, 116, 154);
+  --purple-gray-700: rgb(90, 92, 139);
+  --purple-gray-800: rgb(83, 84, 130);
+  --purple-gray-900: rgb(74, 75, 118);
+  --purple-gray-950: rgb(66, 65, 105);
+
+  --chart-multicolor1-01: rgb(15, 145, 119);
+  --chart-multicolor1-02: rgb(29, 151, 127);
+  --chart-multicolor1-03: rgb(44, 159, 136);
+  --chart-multicolor1-04: rgb(58, 165, 144);
+  --chart-multicolor1-05: rgb(72, 171, 151);
+  --chart-multicolor1-06: rgb(87, 178, 160);
+  --chart-multicolor1-07: rgb(102, 185, 168);
+  --chart-multicolor1-08: rgb(116, 191, 176);
+  --chart-multicolor1-09: rgb(130, 197, 184);
+  --chart-multicolor1-10: rgb(145, 205, 193);
+  --chart-multicolor1-11: rgb(159, 211, 201);
+  --chart-multicolor1-12: rgb(173, 217, 208);
+  --chart-multicolor1-13: rgb(188, 225, 217);
+  --chart-multicolor1-14: rgb(206, 233, 227);
+  --chart-multicolor1-15: rgb(216, 237, 233);
+  --chart-multicolor1-16: rgb(231, 244, 242);
+  --chart-multicolor2-01: rgb(23, 110, 78);
+  --chart-multicolor2-02: rgb(65, 166, 107);
+  --chart-multicolor2-03: rgb(102, 194, 124);
+  --chart-multicolor2-04: rgb(154, 217, 161);
+  --chart-multicolor2-05: rgb(36, 65, 164);
+  --chart-multicolor2-06: rgb(45, 107, 188);
+  --chart-multicolor2-07: rgb(92, 147, 223);
+  --chart-multicolor2-08: rgb(134, 180, 231);
+  --chart-multicolor2-09: rgb(122, 59, 125);
+  --chart-multicolor2-10: rgb(149, 66, 145);
+  --chart-multicolor2-11: rgb(171, 104, 176);
+  --chart-multicolor2-12: rgb(181, 138, 200);
+  --chart-multicolor2-13: rgb(120, 29, 21);
+  --chart-multicolor2-14: rgb(161, 48, 12);
+  --chart-multicolor2-15: rgb(185, 81, 36);
+  --chart-multicolor2-16: rgb(228, 115, 66);
+  */
+
+	/* ----------------------------------------------------- *\
+	`` 2. Dimension
+	-- border radius, spacing, size, blur, opacity 수치 기본값 정의
+	\* ----------------------------------------------------- */
+
+	/* `` 2.1. border radius */
+	--radius-r-0: 0px;
+	--radius-r-1: 1px;
+	--radius-r-2: 2px;
+	--radius-r-4: 4px;
+	--radius-r-6: 6px;
+	--radius-r-8: 8px;
+	--radius-r-12: 12px;
+	--radius-r-16: 16px;
+	--radius-r-20: 20px;
+	--radius-r-24: 24px;
+	--radius-r-40: 40px;
+	--radius-r-50: 9999px;
+
+	/* `` 2.2. spacing */
+	--spacing-sp-0: 0px;
+	--spacing-sp-1: 1px;
+	--spacing-sp-2: 2px;
+	--spacing-sp-4: 4px;
+	--spacing-sp-6: 6px;
+	--spacing-sp-8: 8px;
+	--spacing-sp-10: 10px;
+	--spacing-sp-12: 12px;
+	--spacing-sp-16: 16px;
+	--spacing-sp-20: 20px;
+	--spacing-sp-24: 24px;
+	--spacing-sp-28: 28px;
+	--spacing-sp-32: 32px;
+	--spacing-sp-36: 36px;
+	--spacing-sp-40: 40px;
+	--spacing-sp-48: 48px;
+	--spacing-sp-52: 52px;
+	--spacing-sp-56: 56px;
+	--spacing-sp-64: 64px;
+	--spacing-sp-72: 72px;
+	--spacing-sp-80: 80px;
+	--spacing-sp-92: 92px;
+	--spacing-sp-96: 96px;
+	--spacing-sp-112: 112px;
+	--spacing-sp-120: 120px;
+	--spacing-sp-128: 128px;
+	--spacing-sp-132: 132px;
+	--spacing-sp-144: 144px;
+	--spacing-sp-152: 152px;
+	--spacing-sp-160: 160px;
+	--spacing-sp-176: 176px;
+	--spacing-sp-192: 192px;
+	--spacing-sp-200: 200px;
+	--spacing-sp-240: 240px;
+	--spacing-sp-320: 320px;
+
+	/* `` 2.3. size */
+	--size-si-4: 4px;
+	--size-si-8: 8px;
+	--size-si-12: 12px;
+	--size-si-16: 16px;
+	--size-si-20: 20px;
+	--size-si-24: 24px;
+	--size-si-28: 28px;
+	--size-si-32: 32px;
+	--size-si-36: 36px;
+	--size-si-40: 40px;
+	--size-si-44: 44px;
+	--size-si-48: 48px;
+	--size-si-52: 52px;
+	--size-si-56: 56px;
+	--size-si-64: 64px;
+	--size-si-72: 72px;
+	--size-si-80: 80px;
+	--size-si-88: 88px;
+	--size-si-96: 96px;
+	--size-si-120: 120px;
+	--size-si-144: 144px;
+	--size-si-168: 168px;
+	--size-si-172: 172px;
+	--size-si-168: 168px;
+	--size-si-180: 180px;
+	--size-si-184: 184px;
+	--size-si-200: 200px;
+	--size-si-240: 240px;
+	--size-si-360: 360px;
+	--size-si-480: 480px;
+	--size-si-600: 600px;
+	--size-si-720: 720px;
+	--size-si-840: 840px;
+	--size-si-960: 960px;
+	--size-si-1080: 1080px;
+	--size-si-1200: 1200px;
+	--size-si-1440: 1440px;
+	--size-si-1920: 1920px;
+
+	/* `` 2.4. blur */
+	--blur-bl-0: 0px;
+	--blur-bl-1: 1px;
+	--blur-bl-2: 2px;
+	--blur-bl-4: 4px;
+	--blur-bl-6: 6px;
+	--blur-bl-8: 8px;
+	--blur-bl-12: 12px;
+	--blur-bl-16: 16px;
+	--blur-bl-20: 20px;
+	--blur-bl-24: 24px;
+	--blur-bl-28: 28px;
+	--blur-bl-32: 32px;
+	--blur-bl-36: 36px;
+	--blur-bl-40: 40px;
+	--blur-bl-48: 48px;
+	--blur-bl-56: 56px;
+	--blur-bl-64: 64px;
+	--blur-bl-72: 72px;
+	--blur-bl-80: 80px;
+	--blur-bl-96: 96px;
+	--blur-bl-112: 112px;
+	--blur-bl-128: 128px;
+	--blur-bl-144: 144px;
+	--blur-bl-160: 160px;
+	--blur-bl-176: 176px;
+	--blur-bl-192: 192px;
+	--blur-bl-208: 208px;
+
+	/* `` 2.5. opacity */
+	--opacity-op-0: 0px;
+	--opacity-op-4: 4px;
+	--opacity-op-8: 8px;
+	--opacity-op-12: 12px;
+	--opacity-op-16: 16px;
+	--opacity-op-20: 20px;
+	--opacity-op-24: 24px;
+	--opacity-op-28: 28px;
+	--opacity-op-32: 32px;
+	--opacity-op-36: 36px;
+	--opacity-op-40: 40px;
+	--opacity-op-44: 44px;
+	--opacity-op-48: 48px;
+	--opacity-op-56: 56px;
+	--opacity-op-64: 64px;
+	--opacity-op-72: 72px;
+	--opacity-op-80: 80px;
+	--opacity-op-96: 96px;
+	--opacity-op-100: 100px;
+
+	/* ----------------------------------------------------- *\
+	`` 3. Typography
+	\* ----------------------------------------------------- */
+
+	/* `` 3.1. 한국어 */
+	--title-03: normal normal 700 24px/32px Noto Sans KR, sans-serif;
+	--title-02: normal normal 700 22px/28px Noto Sans KR, sans-serif;
+	--title-01: normal normal 700 20px/26px Noto Sans KR, sans-serif;
+
+	--subtitle-04: normal normal 700 16px/24px Noto Sans KR, sans-serif;
+	--subtitle-03: normal normal 500 16px/24px Noto Sans KR, sans-serif;
+	--subtitle-02: normal normal 700 14px/20px Noto Sans KR, sans-serif;
+	--subtitle-01: normal normal 700 13px/18px Noto Sans KR, sans-serif;
+
+	--data-05: normal normal 400 16px/24px Noto Sans KR, sans-serif;
+	--data-04: normal normal 500 14px/20px Noto Sans KR, sans-serif;
+	--data-03: normal normal 400 14px/20px Noto Sans KR, sans-serif;
+	--data-02: normal normal 500 13px/18px Noto Sans KR, sans-serif;
+	--data-01: normal normal 400 13px/18px Noto Sans KR, sans-serif;
+
+	--small-03: normal normal 700 12px/16px Noto Sans KR, sans-serif;
+	--small-02: normal normal 500 12px/16px Noto Sans KR, sans-serif;
+	--small-01: normal normal 400 12px/16px Noto Sans KR, sans-serif;
+
+	--smaller-02: normal normal 700 11px/14px Noto Sans KR, sans-serif;
+	--smaller-01: normal normal 700 10px/14px Noto Sans KR, sans-serif;
+
+	/* `` 3.2. 숫자, 영어 - 포인트로만 쓰임 */
+	--title-03-e: normal normal 700 24px/32px Montserrat, sans-serif;
+	--title-02-e: normal normal 700 22px/28px Montserrat, sans-serif;
+	--title-01-e: normal normal 700 20px/26px Montserrat, sans-serif;
+
+	--subtitle-04-e: normal normal 700 16px/24px Montserrat, sans-serif;
+	--subtitle-03-e: normal normal 500 16px/24px Montserrat, sans-serif;
+	--subtitle-02-e: normal normal 700 14px/20px Montserrat, sans-serif;
+	--subtitle-01-e: normal normal 700 13px/18px Montserrat, sans-serif;
+
+	--data-05-e: normal normal 400 16px/24px Montserrat, sans-serif;
+	--data-04-e: normal normal 500 14px/20px Montserrat, sans-serif;
+	--data-03-e: normal normal 400 14px/20px Montserrat, sans-serif;
+	--data-02-e: normal normal 500 13px/18px Montserrat, sans-serif;
+	--data-01-e: normal normal 400 13px/18px Montserrat, sans-serif;
+
+	--small-03-e: normal normal 700 12px/16px Montserrat, sans-serif;
+	--small-02-e: normal normal 500 12px/16px Montserrat, sans-serif;
+	--small-01-e: normal normal 400 12px/16px Montserrat, sans-serif;
+
+	--smaller-02-e: normal normal 700 11px/14px Montserrat, sans-serif;
+	--smaller-01-e: normal normal 700 10px/14px Montserrat, sans-serif;
+
+	/* ----------------------------------------------------- *\
+	`` 4. Theme
+	-- 테마별로 바뀌지 않고 항상 같은 값을 가진 요소들 */
+	/* ----------------------------------------------------- */
+
+	/* `` 4.1. 뱃지 */
+	--acc-badge-type-a: var(--citrus-400);
+	--acc-badge-type-b: var(--citrus-800);
+	--acc-badge-type-c: var(--peri-blue-400);
+	--acc-badge-type-d: var(--purple-gray-500);
+	--acc-badge-type-e: var(--pink-400);
+	--acc-badge-type-f: var(--viridian-500);
+	--acc-badge-type-g: rgba(var(--viridian-950), 0.6);
+	--acc-badge-type-h: var(--light-blue-400);
+
+	--acc-badge-score-score: var(--gray-200);
+
+	--acc-badge-progress-in-progress-a: rgba(var(--viridian-950), 0.6);
+	--acc-badge-progress-in-progress-b: rgba(var(--peri-blue-950), 0.6);
+	--acc-badge-progress-prepare-bg: var(--bw-white);
+	--acc-badge-progress-prepare-stroke: var(--purple-gray-500);
+	--acc-badge-progress-prepare-text: var(--purple-gray-600);
+	--acc-badge-progress-complete-bg: var(--purple-gray-50);
+	--acc-badge-progress-complete-text: var(--gray-500);
+
+	--acc-badge-grade-grade: var(--viridian-800);
+
+	--acc-badge-negative-a-little: var(--crimson-400);
+	--acc-badge-negative-highly: var(--crimson-600);
+
+	--acc-badge-compare-a: var(--purple-gray-500);
+	--acc-badge-compare-b: var(--peri-blue-400);
+
+	--acc-badge-section-a: var(--gray-300);
+	--acc-badge-section-b: var(--peri-blue-600);
+	--acc-badge-section-c: var(--purple-gray-600);
+
+	/* `` 4.2. Scroll */
+	--acc-scroll-bg-nor-a00: rgb(var(--bw-white-a00));
+	--acc-scroll-bg-nor-gray: rgba(var(--gray-900), 0.2);
+	--acc-scroll-bg-hov: rgba(var(--semantic-gray-hov));
+	--acc-scroll-bg-prs: rgba(var(--semantic-gray-prs));
+	--acc-scroll-handle-nor: rgba(var(--gray-900), 0.15);
+	--acc-scroll-handle-hov: rgba(var(--gray-900), 0.2);
+	--acc-scroll-handle-prs: rgba(var(--gray-900), 0.25);
+}
+
+/* `` 2. lm__blue */
+[data-color-theme="lm__blue"] {
+	/* ---------------------------------------------------------------- *\
+	`` 2.1. Semantic Color
+	\* ---------------------------------------------------------------- */
+
+	/* `` 2.1.1. black & white */
+	--semantic-bw-black: var(--bw-black);
+	--semantic-bw-white: var(--bw-white);
+	--semantic-bw-white-a00: var(--bw-white), 0;
+	/* `` 2.1.2.gray */
+	--semantic-gray-10: var(--gray-10);
+	--semantic-gray-50: var(--gray-50);
+	--semantic-gray-100: var(--gray-100);
+	--semantic-gray-200: var(--gray-200);
+	--semantic-gray-300: var(--gray-300);
+	--semantic-gray-400: var(--gray-400);
+	--semantic-gray-500: var(--gray-500);
+	--semantic-gray-600: var(--gray-600);
+	--semantic-gray-700: var(--gray-700);
+	--semantic-gray-800: var(--gray-800);
+	--semantic-gray-900: var(--gray-900);
+	--semantic-gray-hov: var(--gray-900), 0.05;
+	--semantic-gray-prs: var(--gray-900), 0.1;
+	/* `` 2.1.3. accent-main */
+	--semantic-accent-main-50: var(--light-blue-50);
+	--semantic-accent-main-100: var(--light-blue-100);
+	--semantic-accent-main-200: var(--light-blue-200);
+	--semantic-accent-main-300: var(--light-blue-300);
+	--semantic-accent-main-400: var(--light-blue-400);
+	--semantic-accent-main-500: var(--light-blue-500);
+	--semantic-accent-main-600: var(--light-blue-600);
+	--semantic-accent-main-700: var(--light-blue-700);
+	--semantic-accent-main-800: var(--light-blue-800);
+	--semantic-accent-main-900: var(--light-blue-900);
+	--semantic-accent-main-950: var(--light-blue-950);
+	--semantic-accent-main-hov: var(--light-blue-700), 0.05;
+	--semantic-accent-main-prs: var(--light-blue-700), 0.12;
+	/* `` 2.1.4. accent-sub */
+	--semantic-accent-sub-50: var(--light-blue-50);
+	--semantic-accent-sub-100: var(--light-blue-100);
+	--semantic-accent-sub-200: var(--light-blue-200);
+	--semantic-accent-sub-300: var(--light-blue-300);
+	--semantic-accent-sub-400: var(--light-blue-400);
+	--semantic-accent-sub-500: var(--light-blue-500);
+	--semantic-accent-sub-600: var(--light-blue-600);
+	--semantic-accent-sub-700: var(--light-blue-700);
+	--semantic-accent-sub-800: var(--light-blue-800);
+	--semantic-accent-sub-900: var(--light-blue-900);
+	--semantic-accent-sub-950: var(--light-blue-950);
+	--semantic-accent-sub-hov: var(--light-blue-950), 0.05;
+	--semantic-accent-sub-prs: var(--light-blue-950), 0.12;
+	/* `` 2.1.5.secondary */
+	--semantic-secondary-10: var(--purple-gray-50);
+	--semantic-secondary-50: var(--purple-gray-50);
+	--semantic-secondary-100: var(--purple-gray-100);
+	--semantic-secondary-200: var(--purple-gray-200);
+	--semantic-secondary-300: var(--purple-gray-300);
+	--semantic-secondary-400: var(--purple-gray-400);
+	--semantic-secondary-500: var(--purple-gray-500);
+	--semantic-secondary-600: var(--purple-gray-600);
+	--semantic-secondary-700: var(--purple-gray-700);
+	--semantic-secondary-800: var(--purple-gray-800);
+	--semantic-secondary-900: var(--purple-gray-900);
+	--semantic-secondary-950: var(--purple-gray-950);
+	--semantic-secondary-hov: var(--purple-gray-950), 0.05;
+	--semantic-secondary-prs: var(--purple-gray-950), 0.12;
+	/* `` 2.1.6. attention */
+	--semantic-attention-50: var(--pink-50);
+	--semantic-attention-100: var(--pink-100);
+	--semantic-attention-200: var(--pink-200);
+	--semantic-attention-300: var(--pink-300);
+	--semantic-attention-400: var(--pink-400);
+	--semantic-attention-500: var(--pink-500);
+	--semantic-attention-600: var(--pink-600);
+	--semantic-attention-700: var(--pink-700);
+	--semantic-attention-800: var(--pink-800);
+	--semantic-attention-900: var(--pink-900);
+	--semantic-attention-950: var(--pink-950);
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.2. 주요 UI 요소별 정리
+	\* ---------------------------------------------------------------- */
+
+	/* `` 2.2.1. Button */
+	/* `` 2.2.1.0. 버튼 공통 */
+	--button-all-bg-line-dis: rgb(var(--semantic-bw-white-a00));
+	--button-all-bg-solid-dis: rgb(var(--semantic-gray-100));
+	--button-all-stroke-dis: rgb(var(--semantic-gray-200));
+	--button-all-text-dis: rgb(var(--semantic-gray-300));
+	/* `` 2.2.1.1. Default Type */
+	--button-default-bg-nor: rgba(var(--semantic-bw-white), 0.8);
+	--button-default-bg-hov: rgb(var(--semantic-gray-hov));
+	--button-default-bg-prs: rgb(var(--semantic-gray-prs));
+	--button-default-stroke: rgb(var(--semantic-gray-300));
+	--button-default-text: rgb(var(--semantic-gray-600));
+	/* `` 2.2.1.2. Accent Solid Type */
+	--button-accent-solid-bg-nor: rgb(var(--semantic-accent-main-800));
+	--button-accent-solid-bg-hov: rgb(var(--semantic-accent-main-700));
+	--button-accent-solid-bg-prs: rgb(var(--semantic-accent-main-900));
+	--button-accent-solid-text: rgb(var(--semantic-bw-white));
+	/* `` 2.2.1.3. Accent Line Type */
+	--button-accent-line-bg-nor: rgba(var(--semantic-bw-white), 0.8);
+	--button-accent-line-bg-hov: rgb(var(--semantic-accent-main-hov));
+	--button-accent-line-bg-prs: rgb(var(--semantic-accent-main-prs));
+	--button-accent-line-stroke: rgb(var(--semantic-accent-main-800));
+	--button-accent-line-text: rgb(var(--semantic-accent-main-900));
+	/* `` 2.2.1.4. Secondary Accent Type */
+	--button-secondary-accent-bg-nor: rgb(var(--semantic-bw-white-a00));
+	--button-secondary-accent-bg-hov: rgb(var(--semantic-secondary-hov));
+	--button-secondary-accent-bg-prs: rgb(var(--semantic-secondary-prs));
+	--button-secondary-accent-stroke: rgb(var(--semantic-secondary-500));
+	--button-secondary-accent-text: rgb(var(--semantic-secondary-700));
+	/* `` 2.2.1.5. Flat : 라인없고 투명, 혹은 흰색처럼 보이다가 호버하면 bg컬러 보임 */
+	/* `` 2.2.1.5.1. 그레이 계열 */
+	--button-flat-gray-bg-nor: rgb(var(--semantic-bw-white-a00));
+	--button-flat-gray-bg-hov: rgb(var(--semantic-gray-hov));
+	--button-flat-gray-bg-prs: rgb(var(--semantic-gray-prs));
+	--button-flat-gray-bg-dis: rgb(var(--semantic-bw-white-a00));
+	--button-flat-gray-text: rgb(var(--semantic-gray-500));
+	--button-flat-gray-text-dis: rgb(var(--semantic-gray-200));
+	/* `` 2.2.1.5.2. 액센트 컬러 계열 */
+	--button-flat-accent-sub-bg-nor: rgb(var(--semantic-bw-white-a00));
+	--button-flat-accent-sub-bg-hov: rgb(var(--semantic-accent-sub-hov));
+	--button-flat-accent-sub-bg-prs: rgb(var(--semantic-accent-sub-prs));
+	--button-flat-accent-sub-bg-dis: rgb(var(--semantic-bw-white-a00));
+	--button-flat-accent-sub-text: rgb(var(--semantic-accent-sub-800));
+	--button-flat-accent-sub-text-dis: rgb(var(--semantic-gray-200));
+	/* `` 2.2.1.6. 팝업에 사용되는 버튼 */
+	--button-popup-bg-nor: rgb(var(--semantic-secondary-700));
+	--button-popup-bg-hov: rgb(var(--semantic-secondary-600));
+	--button-popup-bg-prs: rgb(var(--semantic-secondary-900));
+	--button-popup-text: rgb(var(--semantic-bw-white));
+
+	/* `` 2.2.2. Button ETC */
+	/* `` 2.2.2.1. AIBot 우측 사이드바 닫기, 접기 버튼 */
+	--button-misc-drawer-bg-nor: rgb(var(--semantic-gray-100));
+	--button-misc-drawer-bg-hov: rgb(var(--semantic-gray-hov));
+	--button-misc-drawer-bg-prs: rgb(var(--semantic-gray-prs));
+	--button-misc-drawer-ico: rgb(var(--semantic-gray-500));
+	/* `` 2.2.2.2. 키워드가 버튼 형태로 들어갈 때 */
+	--button-misc-keyword-bg-nor: rgb(var(--semantic-bw-white-a00));
+	--button-misc-keyword-bg-hov: rgb(var(--semantic-gray-hov));
+	--button-misc-keyword-bg-prs: rgb(var(--semantic-gray-prs));
+	--button-misc-keyword-accent: rgb(var(--semantic-accent-sub-800));
+	--button-misc-keyword-text: rgb(var(--semantic-gray-900));
+	/* `` 2.2.2.3. 페이지네이션에 사용되는 숫자, 이전, 다음페이지 버튼 */
+	--button-misc-pagination-bg-nor: rgb(var(--semantic-bw-white-a00));
+	--button-misc-pagination-bg-hov: rgb(var(--semantic-gray-hov));
+	--button-misc-pagination-bg-prs: rgb(var(--semantic-gray-prs));
+	--button-misc-pagination-text: rgb(var(--semantic-gray-600));
+	--button-misc-pagination-text-sel: rgb(var(--semantic-gray-700));
+	--button-misc-pagination-text-dis: rgb(var(--semantic-gray-300));
+	/* `` 2.2.2.4. 텍스트 형태의 버튼, 호버는 underline 처리 */
+	--button-misc-text-gray: rgb(var(--semantic-gray-500));
+	--button-misc-text-accent: rgb(var(--semantic-accent-sub-800));
+	/* `` 2.2.2.5. 그 외 */
+	--button-misc-black-ico-text: rgb(var(--semantic-gray-900));
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.2.3. Listview
+	\* ---------------------------------------------------------------- */
+	--listview-all-bg-nor: rgb(var(--semantic-bw-white-a00));
+	--listview-all-bg-hov: rgb(var(--semantic-gray-hov));
+	--listview-all-bg-prs: rgb(var(--semantic-gray-prs));
+	--listview-all-btn: rgb(var(--semantic-gray-500));
+	--listview-all-ico: rgb(var(--semantic-gray-300));
+	--listview-all-text: rgb(var(--semantic-gray-900));
+	--listview-portlet-bg-knowledge-hov: rgb(var(--semantic-accent-main-hov));
+	--listview-portlet-bg-knowledge-prs: rgb(var(--semantic-accent-main-prs));
+	--listview-portlet-date: rgb(var(--semantic-gray-500));
+	--listview-portlet-num-general: rgb(var(--semantic-gray-500));
+	--listview-portlet-num-knowledge: rgb(var(--semantic-accent-main-700));
+	--listview-portlet-video-stroke: rgb(var(--semantic-gray-100));
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.2.4. Tab
+	\* ---------------------------------------------------------------- */
+	--tab-bar: rgb(var(--semantic-secondary-700));
+	--tab-bg: rgb(var(--semantic-bw-white-a00));
+	--tab-text-hov-sel: rgb(var(--semantic-gray-900));
+	--tab-text-nor: rgb(var(--semantic-gray-600));
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.2.5. Text Field
+	\* ---------------------------------------------------------------- */
+	--textfield-bg: rgb(var(--semantic-bw-white));
+	--textfield-bg-dis: rgb(var(--semantic-gray-50));
+	--textfield-cursor: rgb(var(--semantic-secondary-700));
+	--textfield-ico-dis: rgb(var(--semantic-gray-200));
+	--textfield-ico-nor: rgb(var(--semantic-secondary-700));
+	--textfield-placeholder: rgb(var(--semantic-gray-300));
+	--textfield-stroke: rgb(var(--semantic-gray-200));
+	--textfield-stroke-dis: rgb(var(--semantic-gray-200));
+	--textfield-stroke-hov-sel: rgb(var(--semantic-secondary-800));
+	--textfield-text: rgb(var(--semantic-gray-900));
+	--textfield-text-dis: rgb(var(--semantic-gray-300));
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.2.6. Radio Button
+	\* ---------------------------------------------------------------- */
+	--radio-text: rgb(var(--semantic-gray-900));
+	--radio-off-bg: rgb(var(--semantic-bw-white));
+	--radio-off-stroke: rgb(var(--semantic-gray-300));
+	--radio-off-dis-bg: rgb(var(--semantic-gray-100));
+	--radio-off-dis-stroke: rgb(var(--semantic-gray-200));
+	--radio-on-bg: rgb(var(--semantic-accent-sub-800));
+	--radio-on-inner: rgb(var(--semantic-bw-white));
+	--radio-on-stroke: rgb(var(--semantic-accent-sub-800));
+	--radio-on-dis-bg: rgb(var(--semantic-gray-200));
+	--radio-on-dis-inner: rgb(var(--semantic-bw-white));
+	--radio-on-dis-stroke: rgb(var(--semantic-gray-200));
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.2.7. Check Box
+	\* ---------------------------------------------------------------- */
+	--checkbox-text: rgb(var(--semantic-gray-900));
+	--checkbox-indeterminate-bg: rgb(var(--semantic-accent-sub-800));
+	--checkbox-indeterminate-inner: rgb(var(--semantic-bw-white));
+	--checkbox-indeterminate-stroke: rgb(var(--semantic-accent-sub-800));
+	--checkbox-indeterminate-dis-bg: rgb(var(--semantic-gray-200));
+	--checkbox-indeterminate-dis-inner: rgb(var(--semantic-bw-white));
+	--checkbox-indeterminate-dis-stroke: rgb(var(--semantic-gray-200));
+	--checkbox-off-bg: rgb(var(--semantic-bw-white));
+	--checkbox-off-stroke: rgb(var(--semantic-gray-300));
+	--checkbox-off-dis-bg: rgb(var(--semantic-gray-100));
+	--checkbox-off-dis-stroke: rgb(var(--semantic-gray-200));
+	--checkbox-on-bg: rgb(var(--semantic-accent-sub-800));
+	--checkbox-on-inner: rgb(var(--semantic-bw-white));
+	--checkbox-on-stroke: rgb(var(--semantic-accent-sub-800));
+	--checkbox-on-dis-bg: rgb(var(--semantic-gray-200));
+	--checkbox-on-dis-inner: rgb(var(--semantic-bw-white));
+	--checkbox-on-dis-stroke: rgb(var(--semantic-gray-200));
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.2.8. Toggle
+	\* ---------------------------------------------------------------- */
+	--toggle-misc-text: rgb(var(--semantic-gray-900));
+	--toggle-misc-add-fav-off: rgb(var(--semantic-gray-300));
+	--toggle-misc-add-fav-on: rgb(var(--semantic-accent-sub-700));
+	--toggle-misc-live-bg-off: rgb(var(--semantic-gray-300));
+	--toggle-misc-live-bg-on: rgb(var(--semantic-attention-500));
+	--toggle-off-bg: rgb(var(--semantic-bw-white));
+	--toggle-off-handle: rgb(var(--semantic-secondary-500));
+	--toggle-off-inner: rgb(var(--semantic-secondary-500));
+	--toggle-off-stroke: rgb(var(--semantic-gray-300));
+	--toggle-off-dis-bg: rgb(var(--semantic-gray-50));
+	--toggle-off-dis-handle: rgb(var(--semantic-gray-200));
+	--toggle-off-dis-inner: rgb(var(--semantic-gray-200));
+	--toggle-off-dis-stroke: rgb(var(--semantic-gray-200));
+	--toggle-on-bg: rgb(var(--semantic-accent-sub-800));
+	--toggle-on-handle: rgb(var(--semantic-bw-white));
+	--toggle-on-inner: rgb(var(--semantic-bw-white));
+	--toggle-on-stroke: rgb(var(--semantic-accent-sub-800));
+	--toggle-on-dis-bg: rgb(var(--semantic-gray-200));
+	--toggle-on-dis-handle: rgb(var(--semantic-gray-100));
+	--toggle-on-dis-inner: rgb(var(--semantic-gray-100));
+	--toggle-on-dis-stroke: rgb(var(--semantic-gray-200));
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.2.9. Header : TNB, GNB, LNB, 서브메뉴
+	\* ---------------------------------------------------------------- */
+	--header-base-bg: rgba(var(--semantic-bw-white), 0.5);
+	/* `` 2.2.9.1. TNB */
+	--header-tnb-button-bg-nor: rgb(var(--semantic-bw-white-a00));
+	--header-tnb-button-bg-hov: rgb(var(--semantic-gray-hov));
+	--header-tnb-button-bg-prs: rgb(var(--semantic-gray-prs));
+	--header-tnb-left-btn-dropdown: rgb(var(--semantic-secondary-950));
+	--header-tnb-left-label: rgb(var(--semantic-gray-800));
+	--header-tnb-left-title: rgb(var(--semantic-gray-900));
+	--header-tnb-right-btn-stroke: rgb(var(--semantic-gray-500));
+	--header-tnb-right-ico-text: rgb(var(--semantic-gray-500));
+	/* `` 2.2.9.2. GNB */
+	--header-gnb-base-bg: rgb(var(--semantic-bw-white));
+	--header-gnb-button-bg-nor: rgb(var(--semantic-bw-white-a00));
+	--header-gnb-button-bg-hov: rgb(var(--semantic-gray-hov));
+	--header-gnb-button-bg-prs: rgb(var(--semantic-gray-prs));
+	--header-gnb-button-drop-shadow: rgb(var(--semantic-bw-white-a00));
+	--header-gnb-button-inner-shadow: rgba(var(--semantic-secondary-600), 0);
+	--header-gnb-button-text: rgb(var(--semantic-gray-900));
+	--header-gnb-search-bg: rgb(var(--semantic-bw-white));
+	--header-gnb-search-btn: rgb(var(--semantic-accent-main-900));
+	--header-gnb-search-ico-help: rgb(var(--semantic-gray-300));
+	--header-gnb-search-placeholder: rgb(var(--semantic-gray-400));
+	--header-gnb-search-stroke: rgb(var(--semantic-accent-main-800));
+	--header-gnb-search-text: rgb(var(--semantic-gray-900));
+	--header-gnb-sitemap-base-bg-hov: rgb(247, 250, 255);
+	--header-gnb-sitemap-base-bg-nor: rgb(var(--semantic-bw-white));
+	--header-gnb-sitemap-base-bg-sel: rgb(var(--semantic-accent-main-700));
+	--header-gnb-sitemap-base-left-divider: rgb(var(--semantic-gray-100));
+	--header-gnb-sitemap-depth01-divider-nor: rgb(var(--semantic-gray-100));
+	--header-gnb-sitemap-depth01-divider-hov: rgb(var(--semantic-accent-main-800));
+	--header-gnb-sitemap-depth01-divider-sel: rgb(var(--semantic-bw-white));
+	--header-gnb-sitemap-depth01-text-nor: rgb(var(--semantic-accent-main-950));
+	--header-gnb-sitemap-depth01-text-hov: rgb(var(--semantic-accent-main-950));
+	--header-gnb-sitemap-depth01-text-sel: rgb(var(--semantic-bw-white));
+	--header-gnb-sitemap-depth02-text-nor: rgb(var(--semantic-accent-main-700));
+	--header-gnb-sitemap-depth02-text-hov: rgb(var(--semantic-accent-main-700));
+	--header-gnb-sitemap-depth02-text-sel: rgba(var(--semantic-bw-white), 0.7);
+	--header-gnb-sitemap-depth03-bg-nor: rgb(var(--semantic-bw-white-a00));
+	--header-gnb-sitemap-depth03-bg-hov: rgba(var(--semantic-accent-main-950), 0.1);
+	--header-gnb-sitemap-depth03-bg-prs: rgba(var(--semantic-accent-main-950), 0.2);
+	--header-gnb-sitemap-depth03-text-sel: rgb(var(--semantic-bw-white));
+	--header-gnb-sitemap-depth03-text-unsel: rgb(var(--semantic-gray-900));
+	/* `` 2.2.9.3. Sub menu */
+	--header-sub-menu-base-bg: rgb(var(--semantic-bw-white));
+	--header-sub-menu-base-dot: rgb(var(--semantic-secondary-300));
+	--header-sub-menu-favorite-bg-nor: rgb(var(--semantic-bw-white-a00));
+	--header-sub-menu-favorite-bg-hov: rgb(var(--semantic-gray-hov));
+	--header-sub-menu-favorite-bg-prs: rgb(var(--semantic-gray-prs));
+	--header-sub-menu-favorite-text: rgb(var(--semantic-gray-800));
+	--header-sub-menu-fixed-menu-general-bg-nor: rgb(var(--semantic-bw-white-a00));
+	--header-sub-menu-fixed-menu-general-bg-hov: rgb(var(--semantic-gray-hov));
+	--header-sub-menu-fixed-menu-general-bg-prs: rgb(var(--semantic-gray-prs));
+	--header-sub-menu-fixed-menu-general-text: rgb(var(--semantic-gray-900));
+	--header-sub-menu-fixed-menu-knowledge-bg-nor: rgb(var(--semantic-bw-white-a00));
+	--header-sub-menu-fixed-menu-knowledge-bg-hov: rgb(var(--semantic-accent-main-hov));
+	--header-sub-menu-fixed-menu-knowledge-bg-prs: rgb(var(--semantic-accent-main-prs));
+	--header-sub-menu-fixed-menu-knowledge-text: rgb(var(--semantic-accent-main-800));
+	/* `` 2.2.9.4. LNB */
+	--header-lnb-base-bg: rgb(34, 86, 161);
+	--header-lnb-base-text-category: rgb(var(--semantic-bw-white));
+	--header-lnb-menu-bg-nor: rgb(var(--semantic-bw-white-a00));
+	--header-lnb-menu-bg-hov: rgb(var(--semantic-gray-hov));
+	--header-lnb-menu-bg-sel: rgb(var(--semantic-accent-main-700));
+	--header-lnb-menu-text-nor-hov: rgb(var(--semantic-bw-white));
+	--header-lnb-menu-text-sel: rgb(var(--semantic-bw-white));
+	--header-lnb-menu-ico-nor-hov: rgb(var(--semantic-bw-white));
+	--header-lnb-menu-ico-sel: rgb(var(--semantic-bw-white));
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.2.10. Grid, Tree, Table
+	\* ---------------------------------------------------------------- */
+
+	/* `` 2.2.10.1. Title */
+	--grid-tree-table-content-title-bg: rgb(var(--semantic-bw-white-a00));
+	--grid-tree-table-content-title-title: rgb(var(--semantic-gray-800));
+	--grid-tree-table-content-title-search-label: rgb(var(--semantic-secondary-700));
+	/* `` 2.2.10.2. Grid */
+	/* `` 2.2.10.2.1. Grid Header */
+	--grid-tree-table-grid-header-bg: rgb(var(--semantic-bw-white-a00));
+	--grid-tree-table-grid-header-text: rgb(var(--semantic-gray-900));
+	--grid-tree-table-grid-header-dvider-gray: rgb(var(--semantic-gray-400));
+	--grid-tree-table-grid-header-divider-accent: rgb(var(--semantic-accent-main-800));
+	--grid-tree-table-grid-header-divider-last: rgb(var(--semantic-secondary-400));
+	/* `` 2.2.10.2.2. Grid Row */
+	--grid-tree-table-grid-row-bg-nor: rgb(var(--semantic-bw-white-a00));
+	--grid-tree-table-grid-row-bg-hov: rgb(var(--semantic-accent-main-hov));
+	--grid-tree-table-grid-row-bg-prs: rgb(var(--semantic-accent-main-prs));
+	--grid-tree-table-grid-row-text: rgb(var(--semantic-gray-900));
+	--grid-tree-table-grid-row-link: rgb(var(--semantic-gray-700));
+	--grid-tree-table-grid-row-divider: rgb(var(--semantic-gray-100));
+	--grid-tree-table-grid-row-divider-locked: rgb(var(--semantic-secondary-300));
+	--grid-tree-table-grid-row-ico: rgb(var(--semantic-gray-500));
+	/* `` 2.2.10.2.3. Grid Pagination */
+	--grid-tree-table-grid-pagination-bg: rgb(var(--semantic-bw-white-a00));
+	--grid-tree-table-grid-pagination-count: rgb(var(--semantic-gray-800));
+	/* `` 2.2.10.3. Tree */
+	/* `` 2.2.10.3.1. Tree Control */
+	--grid-tree-table-tree-control-bg: rgb(var(--semantic-gray-100));
+	--grid-tree-table-tree-control-ico-gray: rgb(var(--semantic-gray-400));
+	--grid-tree-table-tree-control-ico-white: rgb(var(--semantic-bw-white));
+	--grid-tree-table-tree-control-divider-accent: rgb(var(--semantic-accent-main-800));
+	--grid-tree-table-tree-control-divider-gray: rgb(var(--semantic-gray-200));
+	/* `` 2.2.10.3.2. Tree Row */
+	--grid-tree-table-tree-row-bg-hov: rgb(var(--semantic-accent-main-hov));
+	--grid-tree-table-tree-row-bg-prs: rgb(var(--semantic-accent-main-prs));
+	--grid-tree-table-tree-row-text: rgb(var(--semantic-gray-900));
+	--grid-tree-table-tree-row-num-gray: rgb(var(--semantic-gray-500));
+	--grid-tree-table-tree-row-num-accent: rgb(var(--semantic-accent-main-700));
+	--grid-tree-table-tree-row-ico: rgb(var(--semantic-gray-400));
+	/* `` 2.2.10.4. Table */
+	/* `` 2.2.10.4.1. Description */
+	--grid-tree-table-description-table-text: rgb(var(--semantic-gray-900));
+	--grid-tree-table-description-table-bg-label: rgb(var(--semantic-gray-50));
+	--grid-tree-table-description-table-bg-data: rgb(var(--semantic-bw-white));
+	--grid-tree-table-description-table-divider-top: rgb(var(--semantic-gray-500));
+	--grid-tree-table-description-table-divider-gray: rgb(var(--semantic-gray-200));
+	--grid-tree-table-description-table-bullet-essential: rgb(var(--semantic-attention-600));
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.2.11. 그 외 Conetents
+	\* ---------------------------------------------------------------- */
+	--contents-title-bg: rgb(var(--semantic-bw-white));
+	--contents-title-title: rgb(var(--semantic-gray-900));
+	--contents-breadcrumb-ico: rgb(var(--semantic-gray-400));
+	--contents-breadcrumb-directory: rgb(var(--semantic-gray-500));
+	--contents-breadcrumb-sub-directory: rgb(var(--semantic-gray-700));
+	--contents-search-option-bg: rgba(var(--semantic-gray-900), 0.06);
+	--contents-search-option-label: rgb(var(--semantic-gray-900));
+
+	--contents-results-base-text-attached: rgb(var(--semantic-gray-700));
+	--contents-results-base-text-block: rgb(var(--semantic-accent-sub-50));
+	--contents-results-base-text-highlighted: rgb(var(--semantic-accent-sub-950));
+	--contents-results-base-text-result: rgb(var(--semantic-gray-900));
+	--contents-results-base-total-count: rgb(var(--semantic-secondary-900));
+	--contents-results-meta-data-bullet: rgb(var(--semantic-secondary-400));
+	--contents-results-meta-data-icon: rgb(var(--semantic-secondary-500));
+	--contents-results-meta-data-text: rgb(var(--semantic-secondary-600));
+
+	--popup-base-bg: rgb(var(--semantic-bw-white));
+	--popup-base-sub-title: rgb(var(--semantic-gray-500));
+	--popup-base-title: rgb(var(--semantic-gray-900));
+	--popup-paragraph-bg: rgba(var(--semantic-gray-900), 0.06);
+	--popup-paragraph-data: rgb(var(--semantic-gray-700));
+	--popup-paragraph-label: rgb(var(--semantic-gray-700));
+	--popup-popup-grid-bg-empty: rgb(var(--semantic-gray-50));
+	--popup-popup-grid-row-divider: rgb(var(--semantic-gray-100));
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.2.12. 기타
+	\* ---------------------------------------------------------------- */
+
+	/* `` 2.2.12.1. Portlet */
+	--acc-portlet-bg: rgb(var(--semantic-bw-white));
+	--acc-portlet-storke: rgb(var(--semantic-gray-100));
+	/* `` 2.2.12.2. KMS Memo  */
+	--acc-memo-bg-01: rgb(var(--semantic-bw-white));
+	--acc-memo-bg-02: rgb(var(--semantic-bw-white));
+	--acc-memo-bg-03: rgb(var(--semantic-bw-white));
+	--acc-memo-bg-04: rgb(var(--semantic-bw-white));
+	--acc-memo-bg-05: rgb(var(--semantic-bw-white));
+	--acc-memo-bg-06: rgb(var(--semantic-bw-white));
+	--acc-memo-bg-07: rgb(var(--semantic-bw-white));
+	--acc-memo-stroke: rgb(var(--semantic-gray-200));
+	/* `` 2.2.12.3. 뱃지 */
+	--acc-badge-ico-text: rgb(var(--semantic-bw-white));
+	/* `` 2.2.12.3.1. 타입별 뱃지, 고정컬러는 xui-theme */
+	--acc-badge-type-bg-knowledge: rgb(var(--semantic-accent-main-600));
+	--acc-badge-type-bg-general: rgb(var(--semantic-gray-300));
+	/* `` 2.2.12.3.2. 숫자뱃지 */
+	--acc-badge-number-bg-noti: rgba(var(--semantic-attention-600), 0.8);
+	--acc-badge-number-bg-white: rgb(var(--semantic-bw-white));
+	--acc-badge-number-bg-accent-main: rgb(var(--semantic-accent-main-700));
+	--acc-badge-number-bg-accent-sub: rgb(var(--semantic-accent-sub-600));
+	--acc-badge-number-num-accent-main: rgb(var(--semantic-accent-main-800));
+	--acc-badge-number-num-accent-sub: rgb(var(--semantic-accent-sub-700));
+	--acc-badge-number-num-white: rgb(var(--semantic-bw-white));
+	--acc-badge-number-drop-shadow-accent-main: rgba(var(--semantic-accent-main-700), 0.4);
+	--acc-badge-number-drop-shadow-accent-sub: rgba(var(--semantic-accent-sub-700), 0.25);
+	/* `` 2.2.12.3.3.클릭가능한 숫자 뱃지 */
+	--acc-badge-score-clickable-nor: rgb(var(--semantic-gray-200));
+	--acc-badge-score-clickable-hov: rgb(var(--semantic-gray-300));
+	--acc-badge-score-clickable-prs: rgb(var(--semantic-gray-400));
+	/* `` 2.2.12.3.4. 키워드 뱃지 */
+	--acc-badge-keyword-ai: rgba(var(--semantic-accent-main-500), 0.25);
+	--acc-badge-keyword-ai-text: rgb(var(--semantic-accent-main-950));
+	--acc-badge-keyword-non-ai: rgb(var(--semantic-secondary-100));
+	--acc-badge-keyword-non-ai-text: rgb(var(--semantic-secondary-800));
+	/* `` 2.2.12.3.5. 임시진행상황 뱃지 */
+	--acc-badge-progress-temporary-bg: rgb(var(--semantic-bw-white));
+	--acc-badge-progress-temporary-stroke: rgb(var(--semantic-gray-200));
+	--acc-badge-progress-temporary-text: rgb(var(--semantic-gray-500));
+	/* `` 2.2.12.4. Tooltip */
+	--acc-tooltip-bg-default-err: rgb(var(--semantic-bw-white));
+	--acc-tooltip-bg-err: rgb(var(--semantic-attention-500));
+	--acc-tooltip-text-default: rgb(var(--semantic-accent-main-950));
+	--acc-tooltip-text-err: rgb(var(--semantic-attention-600));
+	--acc-tooltip-text-warning: rgb(var(--semantic-bw-white));
+	/* `` 2.2.12.5. DHTMLX */
+	--acc-dhtmlx-cal-act: rgb(var(--semantic-accent-sub-600));
+	--acc-dhtmlx-cal-hov: rgb(var(--semantic-accent-sub-hov));
+	--acc-dhtmlx-cal-prs: rgb(var(--semantic-accent-sub-prs));
+	--acc-dhtmlx-cal-saturday: rgb(var(--semantic-accent-sub-800));
+	--acc-dhtmlx-cal-sunday: rgb(var(--semantic-attention-600));
+	/* `` 2.2.12.6. Elevation */
+	--acc-elevation-02-bg: rgba(var(--semantic-secondary-800), 0.12);
+	--acc-elevation-04-bg: rgba(var(--semantic-secondary-800), 0.12);
+	--acc-elevation-06-bg: rgba(var(--semantic-secondary-800), 0.12);
+	--acc-elevation-08-bg: rgba(var(--semantic-secondary-800), 0.12);
+	--acc-elevation-10-bg: rgba(var(--semantic-secondary-800), 0.4);
+	--acc-elevation-12-bg: rgba(var(--semantic-secondary-800), 0.4);
+	/* `` 2.2.12.7. 그 외 */
+	--acc-misc-bullet: rgb(var(--semantic-accent-main-900));
+	--acc-misc-divider: rgb(var(--semantic-gray-200));
+	--acc-misc-format: rgb(var(--semantic-bw-white));
+	--acc-misc-format-empty: rgb(var(--semantic-gray-50));
+	--acc-misc-text: rgb(var(--semantic-gray-900));
+	--acc-misc-text-ico-info: rgb(var(--semantic-gray-500));
+	--acc-misc-text-ico-info-accent: rgb(var(--semantic-accent-main-800));
+	--acc-misc-text-ico-info-attention: rgb(var(--semantic-attention-600));
+	--acc-base-bg: rgb(var(--semantic-bw-white));
+	--acc-base-format-bg: hsl(0, 0%, 99%);
+	--acc-base-format-border: hsl(0, 0%, 93%);
+	--acc-base-text: rgb(var(--semantic-bw-black));
+	--acc-base-sub-text: rgb(var(--semantic-gray-600));
+	/* `` 2.2.13. Advisor */
+	--advisor-chat-bot-comment: rgb(var(--semantic-gray-900));
+	--advisor-chat-bot-date: rgb(var(--semantic-gray-300));
+	--advisor-chat-bot-hov: rgb(var(--semantic-gray-50));
+	--advisor-chat-bot-nor: rgb(var(--semantic-bw-white));
+	--advisor-chat-bot-prs: rgb(var(--semantic-gray-100));
+	--advisor-chat-user-comment: rgb(var(--semantic-bw-white));
+	--advisor-chat-user-date: rgb(var(--semantic-gray-100));
+	--advisor-chat-user-hov: rgb(var(--semantic-accent-main-700));
+	--advisor-chat-user-nor: rgb(var(--semantic-accent-main-700));
+	--advisor-chat-user-prs: rgb(var(--semantic-accent-main-700));
+
+	/* `` 2.3. 컴포넌트 정의 */
+	/* `` 2.3.1. Elevation */
+	--acc-elevation-02: 0 2px 8px var(--acc-elevation-02-bg);
+	--acc-elevation-04: 0 2px 16px var(--acc-elevation-04-bg);
+	--acc-elevation-06: 0 4px 24px var(--acc-elevation-06-bg);
+	--acc-elevation-08: 0 4px 32px var(--acc-elevation-08-bg);
+	--acc-elevation-10: 0 4px 40px var(--acc-elevation-10-bg);
+	--acc-elevation-12: 0 4px 48px var(--acc-elevation-12-bg);
+}
+
+/* 2. mode-xs */
+[data-size-theme="mode-xs"] {
+	/* ---------------------------------------------------------------- *\
+	`` 2.1. border radius
+	\* ---------------------------------------------------------------- */
+	--semantic-radius-base-angled: var(--radius-r-0);
+	--semantic-radius-base-s1: var(--radius-r-1);
+	--semantic-radius-base-s2: var(--radius-r-2);
+	--semantic-radius-base-m1: var(--radius-r-4);
+	--semantic-radius-base-s3: var(--radius-r-4);
+	--semantic-radius-base-m2: var(--radius-r-8);
+	--semantic-radius-base-s4: var(--radius-r-8);
+	--semantic-radius-base-m3: var(--radius-r-12);
+	--semantic-radius-base-m4: var(--radius-r-16);
+	--semantic-radius-base-l1: var(--radius-r-16);
+	--semantic-radius-base-l2: var(--radius-r-20);
+	--semantic-radius-base-xl1: var(--radius-r-40);
+	--semantic-radius-base-rounded: var(--radius-r-50);
+	--semantic-radius-button-angled: var(--semantic-radius-base-angled);
+	--semantic-radius-button-xs: var(--semantic-radius-base-s2);
+	--semantic-radius-button-s: var(--semantic-radius-base-s3);
+	--semantic-radius-button-m: var(--semantic-radius-base-m2);
+	--semantic-radius-listview-angled: var(--semantic-radius-base-angled);
+	--semantic-radius-listview-s: var(--semantic-radius-base-s2);
+	--semantic-radius-listview-m: var(--semantic-radius-base-m2);
+	--semantic-radius-textfield-angled: var(--semantic-radius-base-angled);
+	--semantic-radius-textfield-s: var(--semantic-radius-base-s2);
+	--semantic-radius-textfield-m: var(--semantic-radius-base-m2);
+	--semantic-radius-textfield-rounded: var(--semantic-radius-base-rounded);
+	--semantic-radius-selection-angled: var(--semantic-radius-base-rounded);
+	--semantic-radius-selection-s1: var(--semantic-radius-base-s1);
+	--semantic-radius-selection-s2: var(--semantic-radius-base-s2);
+	--semantic-radius-selection-m: var(--semantic-radius-base-s3);
+	--semantic-radius-selection-rounded: var(--semantic-radius-base-rounded);
+	--semantic-radius-format-angled: var(--semantic-radius-base-angled);
+	--semantic-radius-format-xs: var(--semantic-radius-base-s2);
+	--semantic-radius-format-s: var(--semantic-radius-base-m1);
+	--semantic-radius-format-m: var(--semantic-radius-base-m3);
+	--semantic-radius-format-l1: var(--semantic-radius-base-l1);
+	--semantic-radius-format-l2: var(--semantic-radius-base-l2);
+	--semantic-radius-format-xl: var(--semantic-radius-base-xl1);
+	--semantic-radius-format-rounded: var(--semantic-radius-base-rounded);
+	--semantic-radius-misc-angled: var(--semantic-radius-base-angled);
+	--semantic-radius-misc-rounded: var(--semantic-radius-base-rounded);
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.2. spacing
+	\* ---------------------------------------------------------------- */
+	--semantic-spacing-base-zero: var(--spacing-sp-0);
+	--semantic-spacing-base-xs1: var(--spacing-sp-1);
+	--semantic-spacing-base-xs2: var(--spacing-sp-2);
+	--semantic-spacing-base-xs3: var(--spacing-sp-4);
+	--semantic-spacing-base-xs4: var(--spacing-sp-6);
+	--semantic-spacing-base-s1: var(--spacing-sp-8);
+	--semantic-spacing-base-s2: var(--spacing-sp-12);
+	--semantic-spacing-base-s3: var(--spacing-sp-16);
+	--semantic-spacing-base-m1: var(--spacing-sp-20);
+	--semantic-spacing-base-m2: var(--spacing-sp-24);
+	--semantic-spacing-base-m3: var(--spacing-sp-28);
+	--semantic-spacing-base-m4: var(--spacing-sp-32);
+	--semantic-spacing-base-m5: var(--spacing-sp-36);
+	--semantic-spacing-base-l1: var(--spacing-sp-40);
+	--semantic-spacing-base-l2: var(--spacing-sp-48);
+	--semantic-spacing-base-l3: var(--spacing-sp-52);
+	--semantic-spacing-base-l3: var(--spacing-sp-64);
+	--semantic-spacing-base-xl1: var(--spacing-sp-72);
+	--semantic-spacing-base-xl2: var(--spacing-sp-80);
+	--semantic-spacing-base-xl3: var(--spacing-sp-92);
+	--semantic-spacing-base-xl3: var(--spacing-sp-96);
+	--semantic-spacing-base-xxl1: var(--spacing-sp-112);
+	--semantic-spacing-base-xxl2: var(--spacing-sp-120);
+	--semantic-spacing-base-xxl3: var(--spacing-sp-132);
+	--semantic-spacing-base-xxl4: var(--spacing-sp-152);
+	--semantic-spacing-button-xs: var(--semantic-spacing-base-xs2);
+	--semantic-spacing-button-s: var(--semantic-spacing-base-xs3);
+	--semantic-spacing-button-m: var(--semantic-spacing-base-s1);
+	--semantic-spacing-button-l: var(--semantic-spacing-base-s3);
+	--semantic-spacing-popup-m: var(--semantic-spacing-base-m3);
+	--semantic-spacing-badge-xs: var(--semantic-spacing-base-xs4);
+	--semantic-spacing-listview-s1: var(--semantic-spacing-base-xs3);
+	--semantic-spacing-listview-s2: var(--semantic-spacing-base-s1);
+	--semantic-spacing-listview-m1: var(--semantic-spacing-base-s2);
+	--semantic-spacing-listview-m2: var(--semantic-spacing-base-s3);
+	--semantic-spacing-listview-l1: var(--semantic-spacing-base-m1);
+	--semantic-spacing-listview-l2: var(--semantic-spacing-base-l1);
+	--semantic-spacing-tree-level01: var(--semantic-spacing-base-s2);
+	--semantic-spacing-tree-level02: var(--semantic-spacing-base-m4);
+	--semantic-spacing-tree-level03: var(--semantic-spacing-base-l3);
+	--semantic-spacing-tree-level04: var(--semantic-spacing-base-xl1);
+	--semantic-spacing-tree-level05: var(--semantic-spacing-base-xl3);
+	--semantic-spacing-tree-level06: var(--semantic-spacing-base-xxl1);
+	--semantic-spacing-tree-level07: var(--semantic-spacing-base-xxl3);
+	--semantic-spacing-tree-level08: var(--semantic-spacing-base-xxl4);
+	--semantic-spacing-tree-s: var(--semantic-spacing-base-s1);
+	--semantic-spacing-tree-xs: var(--semantic-spacing-base-xs3);
+	--semantic-spacing-selection-xs2: var(--semantic-spacing-base-xs2);
+	--semantic-spacing-selection-xs1: var(--semantic-spacing-base-xs3);
+	--semantic-spacing-selection-s: var(--semantic-spacing-base-s1);
+	--semantic-spacing-selection-m1: var(--semantic-spacing-base-s3);
+	--semantic-spacing-selection-m2: var(--semantic-spacing-base-m1);
+	--semantic-spacing-textfield-xs2: var(--semantic-spacing-base-xs2);
+	--semantic-spacing-textfield-xs1: var(--semantic-spacing-base-xs3);
+	--semantic-spacing-textfield-s: var(--semantic-spacing-base-s1);
+	--semantic-spacing-textfield-m1: var(--semantic-spacing-base-s3);
+	--semantic-spacing-textfield-m2: var(--semantic-spacing-base-m1);
+	--semantic-spacing-textfield-m3: var(--semantic-spacing-base-m3);
+	--semantic-spacing-format-xs: var(--semantic-spacing-base-xs2);
+	--semantic-spacing-format-s: var(--semantic-spacing-base-xs3);
+	--semantic-spacing-format-m: var(--semantic-spacing-base-s1);
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.3. size
+	\* ---------------------------------------------------------------- */
+	--semantic-size-base-xs2: var(--size-si-4);
+	--semantic-size-base-xs1: var(--size-si-8);
+	--semantic-size-base-s4: var(--size-si-12);
+	--semantic-size-base-s3: var(--size-si-16);
+	--semantic-size-base-s2: var(--size-si-20);
+	--semantic-size-base-s1: var(--size-si-24);
+	--semantic-size-base-m1: var(--size-si-28);
+	--semantic-size-base-m2: var(--size-si-32);
+	--semantic-size-base-m3: var(--size-si-36);
+	--semantic-size-base-m4: var(--size-si-40);
+	--semantic-size-base-m5: var(--size-si-44);
+	--semantic-size-base-l1: var(--size-si-40);
+	--semantic-size-base-l2: var(--size-si-48);
+	--semantic-size-base-l3: var(--size-si-56);
+	--semantic-size-base-l4: var(--size-si-64);
+	--semantic-size-base-xl1: var(--size-si-88);
+	--semantic-size-button-s: var(--semantic-size-base-s1);
+	--semantic-size-button-m: var(--semantic-size-base-m1);
+	--semantic-size-button-l1: var(--semantic-size-base-m2);
+	--semantic-size-button-l2: var(--semantic-size-base-l1);
+	--semantic-size-button-xl1: var(--semantic-size-base-l4);
+	--semantic-size-description-m: var(--semantic-size-base-m5);
+	--semantic-size-grid-s1: var(--semantic-size-base-m3);
+	--semantic-size-grid-s2: var(--semantic-size-base-m3);
+	--semantic-size-grid-l1: var(--semantic-size-base-m5);
+	--semantic-size-grid-m: var(--semantic-size-base-m5);
+	--semantic-size-icon-s2: var(--semantic-size-base-s4);
+	--semantic-size-icon-s1: var(--semantic-size-base-s3);
+	--semantic-size-icon-m: var(--semantic-size-base-s2);
+	--semantic-size-icon-l1: var(--semantic-size-base-s1);
+	--semantic-size-icon-l2: var(--semantic-size-base-m1);
+	--semantic-size-icon-l3: var(--semantic-size-base-m2);
+	--semantic-size-listview-s2: var(--semantic-size-base-m1);
+	--semantic-size-listview-s1: var(--semantic-size-base-m2);
+	--semantic-size-listview-m: var(--semantic-size-base-m3);
+	--semantic-size-listview-l1: var(--semantic-size-base-m4);
+	--semantic-size-textfield-s: var(--semantic-size-base-s1);
+	--semantic-size-textfield-m: var(--semantic-size-base-m1);
+	--semantic-size-textfield-l1: var(--semantic-size-base-m2);
+	--semantic-size-textfield-l2: var(--semantic-size-base-m4);
+	--semantic-size-label-l1: var(--semantic-size-base-l4);
+	--semantic-size-label-xl1: var(--semantic-size-base-xl1);
+	--semantic-size-badge-m: var(--semantic-size-base-s2);
+	--semantic-size-tree-m: var(--semantic-size-base-m2);
+	--semantic-size-selection-m1: var(--semantic-size-base-s3);
+	--semantic-size-selection-m2: var(--semantic-size-base-s2);
+	--semantic-size-selection-m3: var(--semantic-size-base-s1);
+	--semantic-size-selection-l2: var(--semantic-size-base-m5);
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.4. blur
+	\* ---------------------------------------------------------------- */
+	--semantic-blur-base-sharpen: var(--blur-bl-0);
+	--semantic-blur-base-xs1: var(--blur-bl-1);
+	--semantic-blur-base-xs2: var(--blur-bl-2);
+	--semantic-blur-base-xs3: var(--blur-bl-4);
+	--semantic-blur-base-xs4: var(--blur-bl-6);
+	--semantic-blur-base-s1: var(--blur-bl-8);
+	--semantic-blur-base-s2: var(--blur-bl-16);
+	--semantic-blur-base-s3: var(--blur-bl-24);
+	--semantic-blur-base-m1: var(--blur-bl-32);
+	--semantic-blur-base-m2: var(--blur-bl-40);
+	--semantic-blur-base-m3: var(--blur-bl-48);
+	--semantic-blur-base-m4: var(--blur-bl-56);
+	--semantic-blur-base-l1: var(--blur-bl-64);
+	--semantic-blur-base-l2: var(--blur-bl-72);
+	--semantic-blur-base-l3: var(--blur-bl-96);
+
+	/* ---------------------------------------------------------------- *\
+	`` 2.5. opacity
+	\* ---------------------------------------------------------------- */
+	--semantic-opacaity-base-invisible: var(--opacity-op-0);
+	--semantic-opacaity-base-xs1: var(--opacity-op-4);
+	--semantic-opacaity-base-xs2: var(--opacity-op-8);
+	--semantic-opacaity-base-xs3: var(--opacity-op-12);
+	--semantic-opacaity-base-xs4: var(--opacity-op-16);
+	--semantic-opacaity-base-s1: var(--opacity-op-20);
+	--semantic-opacaity-base-s2: var(--opacity-op-24);
+	--semantic-opacaity-base-s3: var(--opacity-op-28);
+	--semantic-opacaity-base-m1: var(--opacity-op-32);
+	--semantic-opacaity-base-m2: var(--opacity-op-36);
+	--semantic-opacaity-base-m3: var(--opacity-op-44);
+	--semantic-opacaity-base-m4: var(--opacity-op-56);
+	--semantic-opacaity-base-l1: var(--opacity-op-64);
+	--semantic-opacaity-base-l2: var(--opacity-op-72);
+	--semantic-opacaity-base-l3: var(--opacity-op-80);
+	--semantic-opacaity-base-visible: var(--opacity-op-100);
+}
+
+
+
+
+/* Login Index
+
+0. Common
+1. Background
+
+2. Format
+2.1. Login format
+2.1.1. Logo
+2.1.2. Form Group
+2.2.2. Form Group
+2.3.2. Form Group
+
+2.1.2.1. Text input
+2.2.2.1. Text input
+2.3.2.1. Text input
+
+2.1.2.2. Checkbox & Reset
+2.1.2.2.1. Checkbox
+2.1.2.2.2. Reset
+
+2.1.3. Button
+2.2.3. Button
+2.3.3. Button
+
+2.2. Change password format
+2.2.1. 비밀번호 변경 Title
+2.3.1. OTP 발급·재발급 Title
+
+2.3. get OTP
+2.3.2.1.1 Information text - Refer to xui-style.css
+
+3. Information text
+4. Copyright - Refer to xui-style.css
+*/
+
+/* ---------------------------------------------------------------- *\
+`` 0. Common
+\* ---------------------------------------------------------------- */
+* {
+	margin: 0;
+	overflow: hidden;
+}
+
+/* ---------------------------------------------------------------- *\
+`` 1. Background
+\* ---------------------------------------------------------------- */
+.index-bg {
+	position: relative;
+	width: auto;
+	height: 100vh;
+	background: linear-gradient(180deg, #f4f6f8 0%, #fbf4ef 100%);
+	overflow-y: hidden;
+}
+.bg-container {
+	z-index: 1;
+}
+.index-bg-gradient-s {
+	position: absolute;
+	left: -442px;
+	bottom: -643px;
+}
+.index-bg-gradient-l {
+	position: absolute;
+	/* left: 30%; */
+	/* top: -101px; */
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+.login-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: calc(100vh - 96px);
+	flex-direction: column;
+	gap: 20px;
+}
+
+/* ---------------------------------------------------------------- *\
+`` 2. Format
+\* ---------------------------------------------------------------- */
+
+/* `` 2.1. Login format */
+.format {
+	display: none;
+	flex-direction: column;
+	gap: 36px;
+	align-items: center;
+	position: relative;
+	width: 424px;
+	padding: 52px 60px 56px;
+	background-color: white;
+	box-shadow: var(--acc-elevation-10);
+	border-radius: 40px;
+	box-sizing: border-box;
+}
+.format--active {
+	display: flex;
+}
+/* `` 2.1.1. Logo */
+.title-logo {
+	width: 264px;
+	height: 24px;
+	background: url(/html/xs/webbase/login/img/logo_login_title.svg) no-repeat center center;
+}
+/* `` 2.1.2. Form Group */
+/* `` 2.2.2. Form Group */
+/* `` 2.3.2. Form Group */
+.input-group {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: 100%;
+}
+/* `` 2.1.2.1. Text input */
+/* `` 2.2.2.1. Text input */
+/* `` 2.3.2.1. Text input */
+.input {
+	/* login에서만 쓰이는 사이즈이므로 important 처리함 */
+	height: 36px !important;
+}
+.input-group__input-row {
+	display: flex;
+	flex-direction: row;
+	gap: 4px;
+}
+.get-otp-btn {
+	/* login에서만 쓰이는 사이즈이므로 important 처리함 */
+	height: 36px !important;
+	flex-shrink: 0;
+}
+/* `` 2.1.2.2. Checkbox & Reset */
+.input-group__sub-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-left: -2px;
+}
+/* `` 2.1.2.2.1. Checkbox */
+.input-group__checkbox-group {
+	display: flex;
+	align-items: center;
+	/* login에서만 쓰이는 간격이므로 important 처리함 */
+	gap: 8px !important;
+}
+/* `` 2.1.2.2.2. Reset */
+.input-group__text-btn-group {
+	display: flex;
+}
+.text-btn {
+	position: relative;
+	background-color: transparent;
+	font: var(--data-03);
+	text-decoration: none;
+	color: var(--button-misc-text-gray);
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	padding: 0;
+	margin-left: 8px;
+	overflow: visible;
+}
+.text-btn:not(:first-child)::before {
+	display: inline-block;
+	position: absolute;
+	left: -8px;
+	top: 50%;
+	content: "";
+	height: 16px;
+	border-left: 1px solid var(--acc-misc-divider);
+	/* 세로 중앙 정렬 */
+	transform: translateY(-45%);
+}
+.text-btn:hover {
+	text-decoration: underline;
+}
+/* `` 2.1.3. Button */
+/* `` 2.2.3. Button */
+/* `` 2.3.3 Button */
+.format__btn {
+	width: 100%;
+}
+
+/* ---------------------------------------------------------------- *\
+`` 2.2. Change password format
+\* ---------------------------------------------------------------- */
+
+/* `` 2.2.1. 비밀번호 변경 Title */
+/* `` 2.3.1. OTP 발급·재발급 Title */
+.title {
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+	font: var(--title-02);
+	color: var(--popup-base-title);
+}
+
+/* ---------------------------------------------------------------- *\
+`` 2.3. get OTP format
+\* ---------------------------------------------------------------- */
+
+/* # 2.3.2.1.1 Information text - Refer to xui-style.css */
+.noti-message {
+	color: var(--acc-misc-text-ico-info-attention);
+	font: var(--data-03);
+}
+
+/* ---------------------------------------------------------------- *\
+`` 3. Information text
+\* ---------------------------------------------------------------- */
+.information {
+	font: var(--small-01);
+	color: var(--acc-misc-text);
+	width: 424px;
+	z-index: 999999;
+}
+.text-link--accent {
+	color: var(--button-misc-text-accent);
+	text-decoration: none;
+}
+.text-link:hover {
+	text-decoration: underline;
+}
+
+/* ---------------------------------------------------------------- *\
+`` 4. Copyright - Refer to xui-style.css
+\* ---------------------------------------------------------------- */
+
+
+.footer-area{
+	display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    border-top: 1px #CCCCCC solid;
+	margin: 0 auto 0 auto;
+    width: 83%;
+}
+
+
+.footer {
+	display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+	font: var(--small-01);
+	color: var(--acc-misc-text-ico-info);
+}
+/* `` 1.1 Login layout */
+.footer--login {
+    gap: 34px;
+    height: 96px;
+    z-index: 100;
+}
+
+.footer__logo {
+	background-image: url(../img/logo_footer.svg);
+	background-size: cover;
+    background-position: center; /* 이미지를 중앙에 배치 */
+    background-repeat: no-repeat; /* 이미지 반복 방지 */
+    width:165px;
+    height:22px;
+    /* 텍스트 숨김 */
+    font-size: 0;
+    color: transparent;
+    margin-bottom: 1px;
+}
+
+.footer__link {
+	color: inherit;
+	text-decoration: none;
+} 
+
+.footer__copylight {
+    padding-bottom: 0;
+}
+
+.xui-input-label:not(.filled) {
+    height: auto;
+    width: 100%;
+}
+
+button {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: var(--semantic-radius-button-s);
+    border: none;
+    gap: 4px;
+}
+
+input[type="checkbox"].checkbox-input {
+    border-radius: var(--semantic-radius-selection-m);
+    border: 1px solid var(--checkbox-off-stroke);
+    background-color: var(--checkbox-off-bg);
+}
+
+input[type="checkbox"].checkbox-input:checked {
+    border: var(--semantic-spacing-selection-xs1) solid var(--checkbox-on-stroke);
+    background-color: var(--checkbox-on-bg);
+}
+
+label[class*="radio"] input, label[class*="check"] input, label[class*="toggle"] input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: var(--semantic-size-selection-m1);
+    min-width: var(--semantic-size-selection-m1);
+    height: var(--semantic-size-selection-m1);
+    padding: var(--semantic-spacing-selection-xs2);
+    margin: var(--semantic-spacing-selection-xs2);
+    cursor: pointer;
+    transition: 0.05s;
+}
+
+label[class*="radio"] span, label[class*="check"] span, label[class*="toggle"] span {
+    width: 100%;
+    font: var(--data-02);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+label[class*="radio"], label[class*="check"], label[class*="toggle"] {
+    display: flex
+;
+    align-items: center;
+    overflow: hidden;
+    gap: var(--semantic-spacing-selection-xs2);
+    position: relative;
+}
+
+.xui-checkbox-label > input {
+    left: 0px;
+    width:16px;
+    height:16px;
+}
+
+input[type="checkbox"].checkbox-input + span {
+    color: var(--checkbox-text);
+ }
+
+.xui-checkbox-label > input + span::before {
+    all: unset; /* 모든 상속 제거 */
+}
+
+.xui-checkbox-label > input + span::after {
+    all: unset; /* 모든 상속 제거 */
+}
+
+.xui-checkbox-label > input + span {
+    padding-left: 22px;
+}
+
+.xui-checkbox-label {
+    all: unset; /* 모든 상속 제거 */
+}
+
+
+
+input[type="checkbox"].checkbox-input:checked:after {
+    content: "";
+    z-index: 1;
+    display: block;
+    position: absolute;
+    left: -55%;
+    top: 54%;
+    margin-top: -9px;
+    box-sizing: content-box;
+    width: 7px;
+    height: 4px;
+    border: 3px solid var(--checkbox-on-inner);
+    border-right-width: 0;
+    border-top-width: 0;
+    border-radius: var(--semantic-spacing-selection-xs2);
+    transform: translate(3px, 4px) rotate(-45deg);
+}
+
+textarea, input {
+    --semantic-accent-sub-700: var(--light-blue-700);
+    caret-color: var(--textfield-cursor);
+}
+
+.btn-l2 {
+    min-width: 80px;
+    height: var(--semantic-size-button-l2);
+    font: var(--subtitle-04);
+}
+
+.accent-solid {
+    background-color: var(--button-accent-solid-bg-nor);
+    color: var(--button-accent-solid-text);
+}
+
+.accent-solid.hover, .accent-solid:hover {
+    background-color: var(--button-accent-solid-bg-hov);
+}
+
+label input[type="number"], label input[type="text"], label input[type="password"] {
+padding: 0 var(--semantic-spacing-textfield-s) 1px !important;
+}
+
+label input[type="number"].hover, label input[type="number"]:hover, label input[type="number"].focus, label input[type="number"]:focus, label input[type="text"].hover, label input[type="text"]:hover, label input[type="text"].focus, label input[type="text"]:focus, label input[type="password"].hover, label input[type="password"]:hover, label input[type="password"].focus, label input[type="password"]:focus {
+    border-color: var(--textfield-stroke-hov-sel) !important;
+}
+
+
+label::before {
+    font-family: "xuiFontIcon";
+    position: absolute;
+    justify-content: right;
+    font-size: var(--semantic-size-icon-s1);
+    color: var(--textfield-ico-nor) !important;
+    top: calc(50% - 8px);
+    right: 6px;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.default {
+    background-color: var(--button-default-bg-nor);
+    color: var(--button-default-text);
+    border: 1px solid var(--button-default-stroke);
+}
+
+.button-group--l {
+    gap: 8px;
+}
+
+.button-group--full {
+    width: 100%;
+}
+
+.button-group {
+    display: inline-flex;
+}
+
+.line-image {
+    width: 100%;
+    height: 100%;
+	position: absolute;
+	top: 46%;
+	left: 50%;
+	transform: translate(-50%, -55%);
+	opacity: 20%;
+	mix-blend-mode: screen;
+	pointer-events: none; /* Makes the element not interactable */
+	transition: transform 0.2s linear;
+	background-image: url(../img/bg_line.png);
+    background-size: cover; /* 화면 크기에 맞게 이미지 확대/축소 */
+    background-repeat: no-repeat; /* 이미지 반복 금지 */
+    background-position: center; /* 이미지를 중앙에 위치 */
+	/* transition: transform 0.1s ease; */
+}

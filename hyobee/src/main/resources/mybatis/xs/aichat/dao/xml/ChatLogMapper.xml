@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xs.aichat.v2.mapper.ChatLogMapper">
+
+<!-- 외부 API 로그 등록 -->
+<insert id="insertChatApiLog">
+    /* [insertChatApiLog] 외부 API 송수신 로그 등록 */
+    INSERT INTO CHAT_API_LOG
+           ( COMPANY_CODE
+           , LOG_KEY
+           , VENDOR
+           , HTTP_METHOD
+           , API_PATH
+           , API_BASE_URL
+           , API_FULL_URL
+           , REQUEST_DT
+           , REQUEST_HEADER
+           , REQUEST_QUERY_STRING
+           , REQUEST_BODY
+           , RESPONSE_DT
+           , RESPONSE_STATUS_CODE
+           , RESPONSE_HEADER
+           , RESPONSE_BODY
+           , RESPONSE_BODY_SIZE
+           , RESPONSE_TIME_MS
+           , CALL_STATUS
+           , SUCCESS_YN
+           , ERROR_YN
+           , ERROR_MESSAGE
+           , TIMEOUT_YN
+           , FIRST_CREATE_USER_ID
+           , CREATE_DT
+           )
+    VALUES ( #{companyCode}
+           , #{logKey}
+           , #{vendor}
+           , #{httpMethod}
+           , #{apiPath}
+           , #{apiBaseUrl}
+           , #{apiFullUrl}
+           , TO_TIMESTAMP(#{requestDt}, 'YYYY-MM-DD HH24:MI:SS')
+           , <choose>
+               <when test="requestHeader != null and requestHeader != ''">
+                   #{requestHeader}::jsonb
+               </when>
+               <otherwise>
+                   NULL
+               </otherwise>
+           </choose>
+           , #{requestQueryString}
+           , <choose>
+               <when test="requestBody != null and requestBody != ''">
+                   #{requestBody}::jsonb
+               </when>
+               <otherwise>
+                   NULL
+               </otherwise>
+           </choose>
+           , TO_TIMESTAMP(#{responseDt}, 'YYYY-MM-DD HH24:MI:SS')
+           , #{responseStatusCode}
+           , <choose>
+               <when test="responseHeader != null and responseHeader != ''">
+                   #{responseHeader}::jsonb
+               </when>
+               <otherwise>
+                   NULL
+               </otherwise>
+           </choose>
+           , <choose>
+               <when test="responseBody != null and responseBody != ''">
+                   #{responseBody}::jsonb
+               </when>
+               <otherwise>
+                   NULL
+               </otherwise>
+           </choose>
+           , #{responseBodySize}
+           , #{responseTimeMs}
+           , #{callStatus}
+           , #{successYn}
+           , #{errorYn}
+           , #{errorMessage}
+           , #{timeoutYn}
+           , #{firstCreateUserId}
+           , NOW()::timestamptz
+           )
+</insert>
+
+<!-- 외부 API 로그 파일 정보 등록 -->
+<insert id="insertChatApiFileLog">
+    /* [insertChatApiFileLog] 외부 API 송수신 로그 파일 정보 등록 */
+    INSERT INTO CHAT_API_FILE_LOG
+           ( COMPANY_CODE
+           , LOG_KEY
+           , FILE_LOG_KEY
+           , FILE_NAME
+           , FILE_SIZE
+           , FILE_TYPE
+           , MIME_TYPE
+           , SUCCESS_YN
+           , ERROR_MESSAGE
+           , CREATE_DT
+           )
+    VALUES ( #{companyCode}
+           , #{logKey}
+           , #{fileLogKey}
+           , #{fileName}
+           , #{fileSize}
+           , #{fileType}
+           , #{mimeType}
+           , #{successYn}
+           , #{errorMessage}
+           , NOW()::timestamptz
+           )
+</insert>
+
+<!-- 외부 API 로그 파일 정보 업데이트 (성공/실패 여부) -->
+<update id="updateChatApiFileLog">
+    /* [updateChatApiFileLog] 외부 API 송수신 로그 파일 정보 업데이트 */
+    UPDATE CHAT_API_FILE_LOG
+       SET SUCCESS_YN = #{successYn}
+         , ERROR_MESSAGE = #{errorMessage}
+     WHERE COMPANY_CODE = #{companyCode}
+       AND FILE_LOG_KEY = #{fileLogKey}
+</update>
+
+<!-- 외부 API 로그 파일 정보 logKey 업데이트 -->
+<update id="updateChatApiFileLogKey">
+    /* [updateChatApiFileLogKey] 외부 API 송수신 로그 파일 정보 logKey 업데이트 */
+    UPDATE CHAT_API_FILE_LOG
+       SET LOG_KEY = #{logKey}
+     WHERE COMPANY_CODE = #{companyCode}
+       AND FILE_LOG_KEY = #{fileLogKey}
+       AND LOG_KEY = ''
+</update>
+</mapper>

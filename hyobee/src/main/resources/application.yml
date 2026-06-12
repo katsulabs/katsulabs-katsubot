@@ -1,0 +1,94 @@
+server:
+  tomcat:
+    additional-tld-skip-patterns: "*.jar"
+    threads:
+      max: 30
+      min-spare: 15
+    uri-encoding: UTF-8
+    max-http-form-post-size: 1024MB
+  max-http-header-size: 64KB
+  port: 8080
+#  sso test시 주석해제
+#  port: 443
+#  ssl:
+#    enabled: true
+#    key-store: classpath:ssl/keystore.p12
+#    key-store-password: ssl@2026#
+#    key-store-type: PKCS12
+  error:
+    include-exception: true    # 오류 응답에 내용 exception 포함여부
+    include-stacktrace: always # 오류 응답에 내용 stacktrace 포함여부(always, never, on_trace_param)
+  servlet:
+# jjh 20250114 웹 취약점
+#    context-parameters:
+#      httpStrictTransportSecurity: "max-age=31536000; includeSubDomains"
+    session:
+      timeout: 120m    # 세션 타임아웃 시간 설정 ( 단위 : 분 )
+# jjh 20250114 웹 취약점 http-only, same-site, secure, server-header 설정 추가
+      cookie:
+        http-only: true
+#        secure: true        # sso test시 주석해제( HTTPS 에서만 쿠키가 전달됨으로 개발서버에서는 활성화하지 말것 )
+#        same-site: None     # sso test시 주석해제
+#        domain: ai-chatdev.hyosung.com
+  server-header: ""
+#  headers:
+#    strict-transport-security:
+#      max-age: 31536000  # 1년 동안 HTTPS 사용
+#      include-sub-domains: true
+#      preload: true
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  profiles:
+    active: local
+# jjh 20250114 웹 취약점 X-Content-Type-Options, content-security-policy 헤더 설정 추가
+  security:
+    headers:
+      content-type-options: enabled
+#  mvc:
+#    pathmatch:
+#      matching-strategy: ant-path-matcher
+#  documentation:
+#    open-api:
+#      path: /v3/api-docs
+#  jpa:
+#    database-platform: org.hibernate.dialect.Oracle10gDialect
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#    hibernate:
+#      ddl-auto: update
+#      use-new-id-generator-mappings: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        show_sql: true
+#        highlight_sql: true
+#        ddl-auto: create-drop
+#        initialization-mode: always
+#    defer-datasource-initialization: true
+
+logging:
+  config: classpath:log4j2.xml
+#  pattern:
+#    console: "[%d{yyyy-MM-dd HH:mm:ss}:%-3relative] %-5level %logger{35} - %msg%n"
+#  level:
+#    root: info
+#    "[xs]": debug
+#    "[org.springframework]": info
+#    "[jdbc.connection]": info
+#    "[jdbc.sqltiming]": warn
+#    "[jdbc.sqlonly]": info
+#    "[jdbc.audit]": warn
+#    "[jdbc.resultset]": warn
+#    "[jdbc.resultsettable]": warn
+#    "[org.apache.ibatis]": debug
+#    "[org.quartz.core.QuartzSchedulerThread]": error
+#    "[sun.rmi.transport.tcp]": error
+#    "[javax.management.remote.rmi]": error
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized

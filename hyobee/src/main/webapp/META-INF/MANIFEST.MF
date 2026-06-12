@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Created-By: 11.0
+Main-Class: xs.XtrmMainApplication
+Class-Path: 
+Implementation-Title: Hyobee
+Implementation-Version: 2.0.0-RELEASE

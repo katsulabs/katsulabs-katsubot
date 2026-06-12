@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+    <path data-name="img area" style="fill:none" d="M0 0h64v64H0z"/>
+    <g style="stroke-linecap:round;stroke-miterlimit:10;fill:#fff">
+        <path d="M679 541.5h-40c-.827 0-1.5-.673-1.5-1.5v-26.254l20.547-15.83.005-.005.005-.004a1.503 1.503 0 0 1 1.886 0l.005.004.005.004 20.547 15.831V540c0 .827-.673 1.5-1.5 1.5z" style="stroke:none" transform="translate(-627 -486)"/>
+        <path d="M659 498.073c-.228 0-.451.08-.628.223l-.02.015L638 513.991V540c0 .551.449 1 1 1h40c.551 0 1-.449 1-1v-26.008l-20.372-15.696a1.001 1.001 0 0 0-.628-.223m0-1c.446 0 .891.149 1.258.446L681 513.5V540a2 2 0 0 1-2 2h-40a2 2 0 0 1-2-2v-26.5l20.742-15.981a1.994 1.994 0 0 1 1.258-.446z" style="fill:#000;stroke:none" transform="translate(-627 -486)"/>
+    </g>
+    <path d="M1 0h26a1 1 0 0 1 1 1v28H0V1a1 1 0 0 1 1-1z" transform="translate(18 8)" style="fill:#9aa7fa"/>
+    <path d="m678 516-3 6.5h-32l-3-6.5" transform="translate(-627 -486)" style="stroke:#000;stroke-linecap:round;stroke-miterlimit:10;fill:none"/>
+    <path d="M1395 5862a1 1 0 1 1 0-2h9a1 1 0 1 1 0 2zm0-5a1 1 0 1 1 0-2h16a1 1 0 0 1 0 2zm0-5a1 1 0 1 1 0-2h16a1 1 0 0 1 0 2z" transform="translate(-1371 -5835)" style="stroke:transparent;fill:#fff"/>
+</svg>

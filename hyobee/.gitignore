@@ -1,0 +1,62 @@
+# IntelliJ IDEA 관련 파일
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Eclipse 관련 파일
+#*.project
+#*.classpath
+#.settings/
+
+# 빌드 디렉토리
+/out/
+target/
+build/
+
+# OS별 파일
+.DS_Store
+Thumbs.db
+
+# 로그 파일
+#*.log
+
+# Maven
+.mvn/
+#log/
+target/
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# Gradle
+#.gradle/
+#build/
+
+# Node.js 관련 파일
+#node_modules/
+
+# Java 프로젝트의 일반적인 설정
+#*.class
+#*.jar
+#*.war
+#*.ear
+
+# 환경 설정 파일
+*.env
+#*.properties
+
+# 기타 파일
+*.swp
+*.swo
+#*.bak
+*.tmp
+
+# JAR 패키징 시 사용되는 파일
+#*.jar
+
+# Linux, macOS에서 생성되는 파일
+**/.DS_Store
+**/._*
+
+# VS Code
+.vscode/

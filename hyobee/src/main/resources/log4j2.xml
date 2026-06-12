@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%thread] %logger.%M - %msg%n%throwable" />
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <logger name="xs" level="debug" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="xs.core" level="info" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="org.springframework" level="info" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="_org.springframework.web.servlet.HandlerMapping" level="info" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="jdbc.connection" level="warn" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="jdbc.sqltiming" level="warn" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="jdbc.sqlonly" level="info" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="jdbc.audit" level="warn" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="jdbc.resultset" level="warn" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="jdbc.resultsettable" level="warn" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="org.apache.ibatis" level="debug" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="org.apache.http" level="warn" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="org.mybatis.spring.SqlSessionFactoryBean" level="warn" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="org.quartz.core.QuartzSchedulerThread" level="warn" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="sun.rmi.transport.tcp" level="warn" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="io.netty.util.internal" level="warn" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="org.hibernate" level="info" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="org.thymeleaf" level="info" additivity="false">
+            <AppenderRef ref="console" />
+        </logger>
+        <Root level="debug">
+            <AppenderRef ref="console" />
+        </Root>
+    </Loggers>
+</Configuration>

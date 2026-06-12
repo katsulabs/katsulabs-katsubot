@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+    <defs>
+        <linearGradient id="5ynq1wthra" x1=".5" x2=".5" y2="1" gradientUnits="objectBoundingBox">
+            <stop offset="0" stop-color="#e0e0e0"/>
+            <stop offset="1" stop-color="#f7f7f7"/>
+        </linearGradient>
+    </defs>
+    <path d="M-5108 15109.656v18" transform="translate(5148.5 -15064.656)" style="stroke-width:2px;stroke:#ccc;fill:none"/>
+    <path data-name="line" d="m-5129 15124 21-31.128 22 31.128" transform="translate(5148 -15064)" style="stroke-width:2px;stroke:#ccc;fill:none"/>
+    <path data-name="* area" style="fill:none" d="M0 0h80v80H0z"/>
+    <g transform="translate(21 11)" style="fill:url(#5ynq1wthra);stroke-width:3px;stroke:#ccc">
+        <circle cx="19" cy="19" r="19" style="stroke:none"/>
+        <circle cx="19" cy="19" r="20.5" style="fill:none"/>
+    </g>
+    <g transform="translate(11 53)" style="fill:url(#5ynq1wthra);stroke-width:2px;stroke:#ccc">
+        <circle cx="7.5" cy="7.5" r="7.5" style="stroke:none"/>
+        <circle cx="7.5" cy="7.5" r="8.5" style="fill:none"/>
+    </g>
+    <g transform="translate(33 60)" style="fill:url(#5ynq1wthra);stroke-width:2px;stroke:#ccc">
+        <circle cx="7.5" cy="7.5" r="7.5" style="stroke:none"/>
+        <circle cx="7.5" cy="7.5" r="8.5" style="fill:none"/>
+    </g>
+    <g transform="translate(55 53)" style="fill:url(#5ynq1wthra);stroke-width:2px;stroke:#ccc">
+        <circle cx="7.5" cy="7.5" r="7.5" style="stroke:none"/>
+        <circle cx="7.5" cy="7.5" r="8.5" style="fill:none"/>
+    </g>
+</svg>

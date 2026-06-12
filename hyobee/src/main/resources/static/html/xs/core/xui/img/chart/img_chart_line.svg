@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+    <defs>
+        <linearGradient id="5zjj8qznca" x1=".5" x2=".5" y2="1" gradientUnits="objectBoundingBox">
+            <stop offset="0" stop-color="#e7e7e7"/>
+            <stop offset=".413" stop-color="#f7f7f7"/>
+            <stop offset="1" stop-color="#f7f7f7"/>
+        </linearGradient>
+    </defs>
+    <path data-name="* area" style="fill:none" d="M0 0h80v80H0z"/>
+    <path d="m340 367-23-10-22 19-23-12v25h68z" transform="translate(-266 -318)" style="fill:url(#5zjj8qznca)"/>
+    <path d="m272 364 23 12 22-19 23 10" transform="translate(-266 -318)" style="stroke:#ccc;stroke-width:2px;fill:none"/>
+    <path transform="translate(6 70)" style="fill:#e0e0e0" d="M0 0h68v2H0z"/>
+    <path d="M6023-15922a4 4 0 0 1 4-4 4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4zm45-9a4 4 0 0 1 4-4 4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4zm-68-3a4 4 0 0 1 4-4 4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4zm45-7a4 4 0 0 1 4-4 4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4z" transform="translate(-5998 15980)" style="fill:#ccc"/>
+</svg>

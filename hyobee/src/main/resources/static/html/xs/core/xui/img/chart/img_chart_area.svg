@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+    <defs>
+        <linearGradient id="pbyq2we2wa" x1=".5" y1="1" x2=".5" gradientUnits="objectBoundingBox">
+            <stop offset="0" stop-color="#ccc"/>
+            <stop offset="1" stop-color="#b3b3b3"/>
+        </linearGradient>
+    </defs>
+    <path data-name="* area" style="fill:none" d="M0 0h80v80H0z"/>
+    <path d="M325.762 342.9 311.8 360.156l-26.964-20.1-12.836 20.1V389h68v-30.844z" transform="translate(-266 -319)" style="fill:url(#pbyq2we2wa)"/>
+    <path data-name="area" d="M325.762 347.9 311.8 363.156l-26.964-16.1-12.836 14.1V389h68v-29.844z" transform="translate(-266 -319)" style="fill:#ccc"/>
+    <path data-name="area" d="m325.762 360.9-13.962 7.256-26.964-9.1-12.84 7.1V389h68v-24.844z" transform="translate(-266 -319)" style="fill:#e0e0e0"/>
+    <path data-name="area" d="m325.762 371.9-13.962 4.256-26.964-6.1-12.84 4.1V389h68v-16.844z" transform="translate(-266 -319)" style="fill:#f7f7f7"/>
+    <path transform="translate(6 70)" style="fill:#e0e0e0" d="M0 0h68v2H0z"/>
+</svg>

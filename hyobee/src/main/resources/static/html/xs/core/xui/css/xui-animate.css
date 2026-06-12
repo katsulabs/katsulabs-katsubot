@@ -1,0 +1,119 @@
+@-webkit-keyframes rippleDrop {
+	from {
+		-webkit-transform: scale(1);
+		transform: scale(1);
+		opacity: 0.4;
+    }
+    to {
+    	-webkit-transform: scale(5);
+      	transform: scale(5);
+		opacity: 0;
+    }
+}
+@keyframes rippleDrop {
+	from {
+		-webkit-transform: scale(1);
+		transform: scale(1);
+		opacity: 0.4;
+    }
+    to {
+    	-webkit-transform: scale(5);
+      	transform: scale(5);
+		opacity: 0;
+    }
+}
+@-webkit-keyframes icon-spin {
+	0% {
+		-webkit-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	100% {
+		-webkit-transform: rotate(359deg);
+		transform: rotate(359deg);
+	}
+}
+@keyframes icon-spin {
+	0% {
+		-webkit-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	100% {
+		-webkit-transform: rotate(359deg);
+		transform: rotate(359deg);
+	}
+}
+@-webkit-keyframes icon-spin-reverse {
+	0% {
+		-webkit-transform: rotate(359deg);
+		transform: rotate(359deg);
+	}
+	100% {
+		-webkit-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+}
+@keyframes icon-spin-reverse {
+	0% {
+		-webkit-transform: rotate(359deg);
+		transform: rotate(359deg);
+	}
+	100% {
+		-webkit-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+}
+@keyframes progress-circle-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    12.5% {
+        transform: rotate(180deg);
+        animation-timing-function: linear;
+    }
+    25% {
+        transform: rotate(630deg);
+    }
+    37.5% {
+        transform: rotate(810deg);
+        animation-timing-function: linear;
+    }
+    50% {
+        transform: rotate(1260deg);
+    }
+    62.5% {
+        transform: rotate(1440deg);
+        animation-timing-function: linear;
+    }
+    75% {
+        transform: rotate(1890deg);
+    }
+    87.5% {
+        transform: rotate(2070deg);
+        animation-timing-function: linear;
+    }
+    100% {
+        transform: rotate(2520deg);
+    }
+}
+@keyframes progress-circle-spin-pseudo {
+    0% {
+        transform: rotate(-30deg);
+    }
+    29.4% {
+        border-left-color: transparent;
+    }
+    29.41% {
+        border-left-color: currentColor;
+    }
+    64.7% {
+        border-bottom-color: transparent;
+    }
+    64.71% {
+        border-bottom-color: currentColor;
+    }
+    100% {
+        border-left-color: currentColor;
+        border-bottom-color: currentColor;
+        transform: rotate(225deg);
+    }
+}
