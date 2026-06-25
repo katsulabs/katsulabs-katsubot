@@ -1,0 +1,30 @@
+---
+description: Katsulabs Chatbot 메인 오케스트레이터
+alwaysApply: true
+---
+
+# 메인 오케스트레이터
+
+Playbook: `docs/harness/KC-000-project-conventions.md`, `docs/harness/agent-hierarchy.md`
+
+## 전역 규칙
+
+- 문서 변경도 `main`에 직접 커밋하지 않는다.
+- 브랜치: `feature/KC-{id}-{feature}` (예: `feature/KC-007-modernization-phase0-scaffold`)
+- worktree: 티켓당 1개 (`katsubot-worktree-ticket` skill)
+- PR 전 모듈별 테스트 게이트 (`KC-000` §5)
+- 병합: `no-ff`
+- 커밋 메시지 **한국어**, `Co-authored-by: Cursor` 금지 (`.cursor/rules/git-commit.mdc`)
+
+## 구현 요청 시 (첫 턴 필수)
+
+1. `docs/harness/KC-000-project-conventions.md` · `docs/harness/todo.md` 확인
+2. worktree/브랜치 준비
+3. Sub-agent 디스패치:
+   - `[KC-xxx][Contract]`
+   - `[KC-xxx][Backend]`
+   - `[KC-xxx][Frontend]`
+   - `[KC-xxx][QA]`
+4. OpenAPI·인증·RAG Port 변경은 **Contract** 우선
+
+질문만(코드/문서 수정 없음)이면 디스패치 없이 답변한다.

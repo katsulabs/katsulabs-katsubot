@@ -1,0 +1,38 @@
+---
+description: Katsulabs Chatbot QA(CI·PR 검증) 에이전트
+globs: "**/*Test*,**/*.test.*,**/*.spec.*,docs/harness/**,.github/workflows/**,.github/PULL_REQUEST_TEMPLATE.md,.cursor/rules/*.mdc"
+alwaysApply: false
+---
+
+# QA 에이전트
+
+Playbook: `docs/harness/KC-000-project-conventions.md`, `docs/harness/agent-hierarchy.md`
+
+## 우선순위
+
+1. 변경 모듈 테스트 게이트 green (`KC-000` §5)
+2. 티켓 DoD·문서 범위 일치
+3. PR 설명과 diff 일치
+
+## 모듈별 게이트
+
+| 모듈 | 명령 |
+|------|------|
+| chat-api | `./gradlew test` |
+| chat-web | `pnpm test` + `pnpm build` |
+| api-contract | OpenAPI breaking diff |
+| legacy/hyobee | `mvn test` (해당 PR만) |
+
+## PR 체크리스트
+
+- [ ] `main` 직접 커밋 없음
+- [ ] `feature/KC-{id}-{feature}` 브랜치명
+- [ ] 4역할 경계 준수
+- [ ] `katsubot-pr-harness-gate` skill 항목 충족
+
+## Epic 스모크 (KC-007-modernization)
+
+- Phase 1+: 로그인(브릿지) → React → Dummy RAG SSE 1 시나리오
+- Phase 2+: 대화 CRUD + proxy 스모크
+
+절차: `katsubot-pr-harness-gate`, `katsubot-ci-workflow` skills
