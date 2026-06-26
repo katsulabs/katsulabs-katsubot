@@ -3,6 +3,7 @@
 | 항목 | 값 |
 |------|-----|
 | 티켓 | KC-007-modernization — Phase 2 대화·Strangler |
+| 상태 | **완료** — PR [#2](https://github.com/katsulabs/katsulabs-chatbot-api/pull/2) 머지 (2026-06-26) |
 | 브랜치 | `feature/KC-007-modernization-phase2-strangler` |
 | worktree | `../katsubot-KC-007-phase2` |
 | 선행 | Phase 1 DoD (`c225546`) — OpenAPI MVP, auth-bridge, REST/SSE, React UI |
@@ -66,7 +67,7 @@
 ## QA (2-Q1 ~ 2-Q2)
 
 - [x] **2-Q1** `scripts/smoke-phase2.sh` — CRUD + proxy 경로
-- [ ] **2-Q2** G4 매트릭스 리뷰 · G5 SSE 5분 연결 스모크 (수동: `SSE_LONG_SECONDS=300`)
+- [x] **2-Q2** G4/G5 — [phase2-smoke-results.md](./phase2-smoke-results.md)
 
 ## 게이트
 
@@ -82,8 +83,6 @@
 - `services/chat-api/**` vs `apps/chat-web/**` 비중첩 병렬 가능
 - OpenAPI·Port는 Contract 머지/확정 후 Backend·Frontend 착수
 
-## 즉시 액션 (Main)
+## 즉시 액션
 
-1. `[KC-007-modernization][Contract]` — 2-C1 OpenAPI 초안 + parity 매트릭스
-2. Contract 확정 후 `[Backend]` 2-B1 삭제 API부터 수직 슬라이스
-3. `[Frontend]` — 목록 UI는 list API 안정화 후 착수
+Phase 2 완료. 다음: [KC-007-phase3-kickoff.md](./KC-007-phase3-kickoff.md)

@@ -7,7 +7,7 @@
 
 | 티켓 | 담당 | 상태 | DoD |
 |--------|-------|--------|-----|
-| KC-007-modernization | Main/Contract/Backend/Frontend/QA | **IN PROGRESS — Phase 2** | [KC-007-modernization-plan.md](../KC-007-modernization-plan.md) §5 Phase 2 |
+| KC-007-modernization | Main/Contract/Backend/Frontend/QA | **Phase 2 완료 → Phase 3 대기** | [KC-007-modernization-plan.md](../KC-007-modernization-plan.md) §5 Phase 3+ |
 
 ## Phase 0 (완료 · main)
 
@@ -24,37 +24,24 @@
 
 참고: [KC-007-phase1-kickoff.md](./KC-007-phase1-kickoff.md) · [phase1-local-smoke.md](./phase1-local-smoke.md)
 
-## Phase 2 (진행 중)
+## Phase 2 (완료 · main)
 
-브랜치: `feature/KC-007-modernization-phase2-strangler`  
-worktree: `../katsubot-KC-007-phase2`  
-킥오프: [KC-007-phase2-kickoff.md](./KC-007-phase2-kickoff.md)
+- [x] v2 parity API, board-auth Port, strangler proxy, Testcontainers, chat-web 목록 UI
+- [x] G4/G5 스모크 — [phase2-smoke-results.md](./phase2-smoke-results.md)
+- [x] PR [#2](https://github.com/katsulabs/katsulabs-chatbot-api/pull/2) 머지 (2026-06-26)
 
-**Contract**
+참고: [KC-007-phase2-kickoff.md](./KC-007-phase2-kickoff.md) · [phase2-proxy-smoke.md](./phase2-proxy-smoke.md)
 
-- [x] 2-C1 OpenAPI — delete, messages, feedback (v0.2.0)
-- [x] 2-C2 `BoardAuthPort` + board-auth 브릿지 문서
-- [x] 2-C3 v2 parity 매트릭스 확정
+## Phase 3+ (다음 · 별도 승인)
 
-**Backend**
+킥오프: [KC-007-phase3-kickoff.md](./KC-007-phase3-kickoff.md)
 
-- [x] 2-B1 대화 삭제 Use Case·API
-- [x] 2-B2 메시지 히스토리 조회
-- [x] 2-B3 피드백 PUT/DELETE
-- [x] 2-B4 board-auth Stub Adapter
-- [x] 2-B5 Testcontainers 통합 테스트
+- [ ] Epic 승인 (RAG 고도화·운영 전환)
+- [ ] 운영 RAG `RAG_SERVICE_BASE_URL` 전환
+- [ ] OpenTelemetry (RAG ↔ chat-api)
+- [ ] (선택) 파일 업로드·HiCloud·레거시 board-auth 브릿지
 
-**Frontend**
-
-- [x] 2-F1 대화 목록 UI
-- [x] 2-F2 히스토리 로드
-- [x] 2-F3 에러 UX
-
-**Infra / QA**
-
-- [x] 2-I1 Reverse proxy (`/api/v1/**` → chat-api)
-- [x] 2-Q1 smoke-phase2.sh
-- [ ] 2-Q2 G4/G5 (G5: `SSE_LONG_SECONDS=300` 수동)
+브랜치 예: `feature/KC-007-modernization-phase3-rag-ops`
 
 ## 보류
 
