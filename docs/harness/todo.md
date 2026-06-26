@@ -7,52 +7,54 @@
 
 | 티켓 | 담당 | 상태 | DoD |
 |--------|-------|--------|-----|
-| KC-007-modernization | Main/Contract/Backend/Frontend/QA | **IN PROGRESS — Phase 1** | Phase 1 DoD (아래) |
+| KC-007-modernization | Main/Contract/Backend/Frontend/QA | **IN PROGRESS — Phase 2** | [KC-007-modernization-plan.md](../KC-007-modernization-plan.md) §5 Phase 2 |
 
-## Phase 0 (완료)
+## Phase 0 (완료 · main)
 
-- [x] 0-1 모노레포 디렉터리 스캐폴딩
-- [x] 0-2 `src/` → `legacy/hyobee/` 이동
-- [x] 0-3 chat-api Boot 4.1 skeleton
-- [x] 0-4 chat-web Vite+React+TS
-- [x] 0-5 docker-compose (Postgres + dummy-rag)
-- [x] 0-6 GitHub Actions 3종
-- [x] 0-7 JDK 25 Gradle / Node 22 로컬 검증
+- [x] 모노레포 스캐폴딩, legacy 이동, CI 3종
 - [x] RAG 외부 클라이언트 Port (`docs/rag-external-client.md`)
 
-브랜치: `feature/KC-007-modernization-phase0-scaffold` → `6d1ded7`
+**머지:** PR [#1](https://github.com/katsulabs/katsulabs-chatbot-api/pull/1) → `c225546`
 
-## Phase 1 (진행 중)
+## Phase 1 (완료 · main)
 
-브랜치: `feature/KC-007-modernization-phase1-mvp`  
-킥오프: [KC-007-phase1-kickoff.md](./KC-007-phase1-kickoff.md)
+- [x] OpenAPI, auth-bridge, MVP 채팅 REST/SSE, React UI
+- [x] JWT 보강, Flyway V1 + JPA 프로필, smoke 스크립트
+- [x] PR [#1](https://github.com/katsulabs/katsulabs-chatbot-api/pull/1) 머지 (2026-06-26)
+
+참고: [KC-007-phase1-kickoff.md](./KC-007-phase1-kickoff.md) · [phase1-local-smoke.md](./phase1-local-smoke.md)
+
+## Phase 2 (진행 중)
+
+브랜치: `feature/KC-007-modernization-phase2-strangler`  
+worktree: `../katsubot-KC-007-phase2`  
+킥오프: [KC-007-phase2-kickoff.md](./KC-007-phase2-kickoff.md)
 
 **Contract**
 
-- [x] 1-C1 `packages/api-contract/openapi.yaml`
-- [x] 1-C2 `docs/auth-bridge.md`
-- [x] 1-C3 `RagCompletionPort` + `docs/rag-external-client.md`
+- [x] 2-C1 OpenAPI — delete, messages, feedback (v0.2.0)
+- [x] 2-C2 `BoardAuthPort` + board-auth 브릿지 문서
+- [x] 2-C3 v2 parity 매트릭스 확정
 
 **Backend**
 
-- [x] `CreateConversationUseCase`, `SendMessageUseCase`
-- [x] REST `/api/v1/conversations`, SSE messages
-- [x] Bearer 필터 (dev-bypass)
-- [x] Use Case·401 MockMvc 테스트
-- [x] **보강** 레거시 HS512 JWT 검증 (`KATSUBOT_AUTH_JWT_SECRET`)
-- [x] **보강** Flyway V1 + JPA (`SPRING_PROFILES_ACTIVE=jpa`)
-- [x] **보강** 요청 검증(400), SSE 비동기 전송
-- [x] **보강** `scripts/smoke-phase1.sh`, [phase1-local-smoke.md](./phase1-local-smoke.md)
+- [x] 2-B1 대화 삭제 Use Case·API
+- [x] 2-B2 메시지 히스토리 조회
+- [x] 2-B3 피드백 PUT/DELETE
+- [x] 2-B4 board-auth Stub Adapter
+- [x] 2-B5 Testcontainers 통합 테스트
 
 **Frontend**
 
-- [x] 채팅 UI + SSE `fetch` 스트림
-- [x] Vite `/api` 프록시
+- [x] 2-F1 대화 목록 UI
+- [x] 2-F2 히스토리 로드
+- [x] 2-F3 에러 UX
 
-**DoD 잔여**
+**Infra / QA**
 
-- [x] 로컬 E2E: [phase1-local-smoke.md](./phase1-local-smoke.md) (`smoke-phase1.sh` PASS)
-- [ ] PR 생성 (`katsubot-pr-harness-gate`)
+- [x] 2-I1 Reverse proxy (`/api/v1/**` → chat-api)
+- [x] 2-Q1 smoke-phase2.sh
+- [ ] 2-Q2 G4/G5 (G5: `SSE_LONG_SECONDS=300` 수동)
 
 ## 보류
 

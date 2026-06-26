@@ -1,6 +1,9 @@
 package com.katsulabs.chatbot.interfaces.rest;
 
 import com.katsulabs.chatbot.application.ConversationNotFoundException;
+import com.katsulabs.chatbot.application.FeedbackNotFoundException;
+import com.katsulabs.chatbot.application.ForbiddenException;
+import com.katsulabs.chatbot.application.MessageNotFoundException;
 import com.katsulabs.chatbot.interfaces.rest.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> notFound(ConversationNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse("NOT_FOUND", ex.getMessage()));
+    }
+
+    @ExceptionHandler({MessageNotFoundException.class, FeedbackNotFoundException.class})
+    public ResponseEntity<ErrorResponse> resourceNotFound(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse("NOT_FOUND", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> forbidden(ForbiddenException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse("FORBIDDEN", ex.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

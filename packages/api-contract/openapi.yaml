@@ -1,9 +1,9 @@
 openapi: 3.1.0
 info:
   title: Katsulabs Chatbot API
-  version: 0.1.0
+  version: 0.2.0
   description: |
-    chat-api BFF — browser ↔ chat-api 계약.
+    chat-api BFF — browser ↔ chat-api 계약 (Phase 2).
     RAG 호출은 chat-api 내부 Port이며 본 스펙에 포함되지 않음 (`docs/rag-external-client.md`).
 servers:
   - url: http://localhost:8081
@@ -48,7 +48,53 @@ paths:
                   $ref: '#/components/schemas/Conversation'
         '401':
           $ref: '#/components/responses/Unauthorized'
+    delete:
+      operationId: deleteConversations
+      summary: 대화 일괄 삭제
+      description: |
+        사용자는 JWT `sub`로 식별한다. 본인 소유 대화만 삭제 가능.
+        레거시 `DELETE /xs/aichat/v2/conversations` 대응.
+      tags: [conversations]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteConversationsRequest'
+      responses:
+        '200':
+          description: 삭제 결과
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteConversationsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /api/v1/conversations/{conversationId}/messages:
+    get:
+      operationId: listMessages
+      summary: 대화 메시지 히스토리
+      description: 레거시 `GET /xs/aichat/v2/messages` 대응. 커서 기반 페이지네이션.
+      tags: [messages]
+      parameters:
+        - $ref: '#/components/parameters/ConversationId'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: 메시지 페이지
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessagesPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       operationId: sendMessage
       summary: 메시지 전송 (SSE 스트림)
@@ -81,6 +127,79 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+  /api/v1/conversations/{conversationId}/messages/{messageId}/feedback:
+    put:
+      operationId: upsertMessageFeedback
+      summary: 메시지 피드백 저장·수정
+      description: 레거시 `PUT .../feedback` 대응. `like` / `dislike`.
+      tags: [feedback]
+      parameters:
+        - $ref: '#/components/parameters/ConversationId'
+        - $ref: '#/components/parameters/MessageId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertFeedbackRequest'
+      responses:
+        '200':
+          description: 저장됨
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feedback'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/conversations/{conversationId}/messages/{messageId}/feedback/{feedbackId}:
+    delete:
+      operationId: deleteMessageFeedback
+      summary: 메시지 피드백 취소
+      description: 레거시 `DELETE .../feedback/{feedback_id}` 대응 (논리 삭제).
+      tags: [feedback]
+      parameters:
+        - $ref: '#/components/parameters/ConversationId'
+        - $ref: '#/components/parameters/MessageId'
+        - $ref: '#/components/parameters/FeedbackId'
+      responses:
+        '200':
+          description: 취소됨
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feedback'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/board-auth:
+    get:
+      operationId: listBoardAuth
+      summary: 접근 가능 게시판 목록
+      description: |
+        레거시 `GET /xs/aichat/v2/board-auth` 대응.
+        Phase 2는 `BoardAuthPort` + 레거시 브릿지 (`docs/modernization/board-auth-bridge.md`).
+      tags: [board-auth]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: 게시판 목록
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoardAuthPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 components:
   securitySchemes:
     bearerAuth:
@@ -96,6 +215,46 @@ components:
       schema:
         type: string
         format: uuid
+    MessageId:
+      name: messageId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    FeedbackId:
+      name: feedbackId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: 메시지 목록 시작 오프셋 (0-based)
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    PageSize:
+      name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
   schemas:
     CreateConversationRequest:
       type: object
@@ -116,6 +275,38 @@ components:
         created_at:
           type: string
           format: date-time
+    DeleteConversationsRequest:
+      type: object
+      required: [conversation_ids]
+      properties:
+        conversation_ids:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            format: uuid
+    DeleteConversationsResponse:
+      type: object
+      required: [deleted_count, results]
+      properties:
+        deleted_count:
+          type: integer
+          minimum: 0
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeleteConversationResult'
+    DeleteConversationResult:
+      type: object
+      required: [conversation_id, deleted]
+      properties:
+        conversation_id:
+          type: string
+          format: uuid
+        deleted:
+          type: boolean
+        error:
+          type: string
     SendMessageRequest:
       type: object
       required: [content]
@@ -125,6 +316,92 @@ components:
           minLength: 1
           maxLength: 8000
           example: 안녕하세요
+    Message:
+      type: object
+      required: [id, role, content, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        feedback:
+          $ref: '#/components/schemas/MessageFeedbackSummary'
+    MessageFeedbackSummary:
+      type: object
+      required: [feedback_id, feedback_type]
+      properties:
+        feedback_id:
+          type: string
+          format: uuid
+        feedback_type:
+          $ref: '#/components/schemas/FeedbackType'
+    MessagesPage:
+      type: object
+      required: [messages, has_more, next_cursor]
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        has_more:
+          type: boolean
+        next_cursor:
+          type: integer
+          minimum: 0
+          nullable: true
+    UpsertFeedbackRequest:
+      type: object
+      required: [feedback_type]
+      properties:
+        feedback_type:
+          $ref: '#/components/schemas/FeedbackType'
+    FeedbackType:
+      type: string
+      enum: [like, dislike]
+    Feedback:
+      type: object
+      required: [feedback_id, message_id, feedback_type]
+      properties:
+        feedback_id:
+          type: string
+          format: uuid
+        message_id:
+          type: string
+          format: uuid
+        feedback_type:
+          $ref: '#/components/schemas/FeedbackType'
+    BoardAuthPage:
+      type: object
+      required: [items, total_elements, page_number, page_size, has_next]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoardAuthItem'
+        total_elements:
+          type: integer
+          minimum: 0
+        page_number:
+          type: integer
+          minimum: 0
+        page_size:
+          type: integer
+          minimum: 0
+        has_next:
+          type: boolean
+    BoardAuthItem:
+      type: object
+      required: [board_name]
+      properties:
+        board_name:
+          type: string
     ErrorResponse:
       type: object
       required: [code, message]
@@ -143,6 +420,15 @@ components:
           example:
             code: UNAUTHORIZED
             message: Authorization Bearer 토큰이 필요합니다
+    Forbidden:
+      description: 리소스 소유자 불일치
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: FORBIDDEN
+            message: 대화에 접근할 권한이 없습니다
     NotFound:
       description: 리소스 없음
       content:
@@ -152,3 +438,12 @@ components:
           example:
             code: NOT_FOUND
             message: 대화를 찾을 수 없습니다
+    BadRequest:
+      description: 요청 검증 실패
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: BAD_REQUEST
+            message: 요청이 유효하지 않습니다

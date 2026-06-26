@@ -36,4 +36,35 @@ public class JpaConversationRepository implements ConversationRepository {
                 .map(ConversationPersistenceMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public DeleteResult deleteByUserIdAndIds(String userId, List<String> conversationIds) {
+        var results = new java.util.ArrayList<DeleteItem>();
+        int deletedCount = 0;
+
+        for (String conversationId : conversationIds) {
+            UUID id;
+            try {
+                id = UUID.fromString(conversationId);
+            } catch (IllegalArgumentException ex) {
+                results.add(new DeleteItem(conversationId, false, "유효하지 않은 대화 ID입니다"));
+                continue;
+            }
+
+            var entity = repository.findById(id);
+            if (entity.isEmpty()) {
+                results.add(new DeleteItem(conversationId, false, "대화를 찾을 수 없습니다"));
+                continue;
+            }
+            if (!entity.get().getUserId().equals(userId)) {
+                results.add(new DeleteItem(conversationId, false, "삭제 권한이 없습니다"));
+                continue;
+            }
+            repository.deleteById(id);
+            deletedCount++;
+            results.add(new DeleteItem(conversationId, true, null));
+        }
+
+        return new DeleteResult(deletedCount, results);
+    }
 }
