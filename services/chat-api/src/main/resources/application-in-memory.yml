@@ -1,15 +1,6 @@
 spring:
-  application:
-    name: chat-api-test
-  profiles:
-    active: in-memory
   autoconfigure:
     exclude:
       - org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
       - org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration
       - org.springframework.boot.flyway.autoconfigure.FlywayAutoConfiguration
-
-katsubot:
-  auth:
-    dev-bypass: true
-    dev-token: dev-token

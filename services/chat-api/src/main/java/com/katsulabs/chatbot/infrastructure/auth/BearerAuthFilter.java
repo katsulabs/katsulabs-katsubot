@@ -16,9 +16,11 @@ import java.nio.charset.StandardCharsets;
 public class BearerAuthFilter extends OncePerRequestFilter {
 
     private final AuthProperties authProperties;
+    private final JwtTokenValidator jwtTokenValidator;
 
-    public BearerAuthFilter(AuthProperties authProperties) {
+    public BearerAuthFilter(AuthProperties authProperties, JwtTokenValidator jwtTokenValidator) {
         this.authProperties = authProperties;
+        this.jwtTokenValidator = jwtTokenValidator;
     }
 
     @Override
@@ -44,6 +46,13 @@ public class BearerAuthFilter extends OncePerRequestFilter {
 
         if (authProperties.devBypass() && authProperties.devToken().equals(token)) {
             request.setAttribute(AuthContext.USER_ID_ATTRIBUTE, "dev-user");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        var authenticated = jwtTokenValidator.validate(token);
+        if (authenticated.isPresent()) {
+            request.setAttribute(AuthContext.USER_ID_ATTRIBUTE, authenticated.get().userId());
             filterChain.doFilter(request, response);
             return;
         }

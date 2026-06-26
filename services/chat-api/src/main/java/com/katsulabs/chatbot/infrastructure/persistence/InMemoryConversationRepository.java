@@ -2,6 +2,7 @@ package com.katsulabs.chatbot.infrastructure.persistence;
 
 import com.katsulabs.chatbot.domain.model.Conversation;
 import com.katsulabs.chatbot.domain.port.ConversationRepository;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
+@Profile("in-memory")
 public class InMemoryConversationRepository implements ConversationRepository {
 
     private final Map<String, Conversation> store = new ConcurrentHashMap<>();

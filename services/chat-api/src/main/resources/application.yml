@@ -1,6 +1,8 @@
 spring:
   application:
     name: chat-api
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:in-memory}
 
 server:
   port: 8081
@@ -21,3 +23,4 @@ katsubot:
   auth:
     dev-bypass: ${KATSUBOT_AUTH_DEV_BYPASS:true}
     dev-token: ${KATSUBOT_AUTH_DEV_TOKEN:dev-token}
+    jwt-secret: ${KATSUBOT_AUTH_JWT_SECRET:}

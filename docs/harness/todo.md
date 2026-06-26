@@ -39,6 +39,10 @@
 - [x] REST `/api/v1/conversations`, SSE messages
 - [x] Bearer 필터 (dev-bypass)
 - [x] Use Case·401 MockMvc 테스트
+- [x] **보강** 레거시 HS512 JWT 검증 (`KATSUBOT_AUTH_JWT_SECRET`)
+- [x] **보강** Flyway V1 + JPA (`SPRING_PROFILES_ACTIVE=jpa`)
+- [x] **보강** 요청 검증(400), SSE 비동기 전송
+- [x] **보강** `scripts/smoke-phase1.sh`, [phase1-local-smoke.md](./phase1-local-smoke.md)
 
 **Frontend**
 
@@ -47,7 +51,7 @@
 
 **DoD 잔여**
 
-- [ ] 로컬 E2E: dummy-rag + chat-api + chat-web 수동 스모크
+- [ ] 로컬 E2E: [phase1-local-smoke.md](./phase1-local-smoke.md) 수행
 - [ ] PR 생성 (`katsubot-pr-harness-gate`)
 
 ## 보류

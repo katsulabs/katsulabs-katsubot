@@ -22,6 +22,12 @@
 - [x] 1-C1 `packages/api-contract/openapi.yaml`
 - [x] 1-C2 `docs/auth-bridge.md`
 
+**보강 (Phase 1)**
+
+- [x] 레거시 HS512 JWT (`LegacyJwtTokenValidator`)
+- [x] Flyway V1 + JPA (`SPRING_PROFILES_ACTIVE=jpa`)
+- [x] 요청 검증 · SSE 비동기 · smoke 스크립트
+
 ## 게이트
 
 - G2 OpenAPI breaking 없음 (초안 — 리뷰 시 diff)

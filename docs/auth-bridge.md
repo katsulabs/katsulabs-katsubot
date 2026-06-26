@@ -39,8 +39,15 @@ chat-api는 **동일 SECRET_KEY·클레임 구조**를 재사용하거나, Phase
 
 | 설정 | 기본 | 설명 |
 |------|------|------|
-| `katsubot.auth.dev-bypass` | `false` | `true` 시 `Bearer dev-token` 허용 (로컬 E2E) |
-| `katsubot.auth.jwt-secret` | (없음) | 설정 시 HMAC JWT 직접 검증 (레거시 `SECRET_KEY`와 동일 값) |
+| `katsubot.auth.dev-bypass` | `true` (로컬) | `true` 시 `Bearer dev-token` 허용 |
+| `katsubot.auth.jwt-secret` | (없음) | 레거시 `SECRET_KEY` **UTF-8 문자열** — HMAC **HS512** 검증 |
+| `SPRING_PROFILES_ACTIVE` | `in-memory` | `jpa` 시 Postgres + Flyway V1 영속화 |
+
+### JWT 알고리즘 (레거시 호환)
+
+- 서명: **HS512**
+- 키: `SECRET_KEY` 프로퍼티 값의 **UTF-8 바이트** (`Keys.hmacShaKeyFor`)
+- 클레임: `sub`(userId), `corpCode`, `teamCode` (선택: `pgCode`, `puCode`)
 
 ### HTTP 계약
 
