@@ -46,6 +46,7 @@ public class BearerAuthFilter extends OncePerRequestFilter {
 
         if (authProperties.devBypass() && authProperties.devToken().equals(token)) {
             request.setAttribute(AuthContext.USER_ID_ATTRIBUTE, "dev-user");
+            request.setAttribute(AuthContext.BEARER_TOKEN_ATTRIBUTE, token);
             filterChain.doFilter(request, response);
             return;
         }
@@ -53,6 +54,7 @@ public class BearerAuthFilter extends OncePerRequestFilter {
         var authenticated = jwtTokenValidator.validate(token);
         if (authenticated.isPresent()) {
             request.setAttribute(AuthContext.USER_ID_ATTRIBUTE, authenticated.get().userId());
+            request.setAttribute(AuthContext.BEARER_TOKEN_ATTRIBUTE, token);
             filterChain.doFilter(request, response);
             return;
         }

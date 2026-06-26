@@ -1,0 +1,19 @@
+# 스테이징 — 운영 RAG URL·관측성 (Phase 3)
+katsubot:
+  rag:
+    base-url: ${RAG_SERVICE_BASE_URL}
+  auth:
+    dev-bypass: false
+
+management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318/v1/traces}
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

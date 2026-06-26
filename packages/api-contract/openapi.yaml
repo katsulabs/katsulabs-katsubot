@@ -4,7 +4,8 @@ info:
   version: 0.2.0
   description: |
     chat-api BFF — browser ↔ chat-api 계약 (Phase 2).
-    RAG 호출은 chat-api 내부 Port이며 본 스펙에 포함되지 않음 (`docs/rag-external-client.md`).
+    RAG 호출은 chat-api 내부 Port이며 본 스펙에 포함되지 않음.
+    Phase 3 운영 RAG·OTel: `docs/modernization/rag-ops-contract.md`, `docs/rag-external-client.md`.
 servers:
   - url: http://localhost:8081
     description: 로컬 chat-api
