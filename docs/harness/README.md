@@ -1,18 +1,20 @@
 # 하네스 엔지니어링
 
-Katsulabs Chatbot(`katsubot`) Agent 협업 규칙과 운영 문서입니다.
+Katsulabs Chatbot(`katsubot`) Agent 협업 규칙입니다.
 
-| 순서 | 문서 | 내용 |
-|:---:|------|------|
-| **0** | **[KC-000-project-conventions.md](./KC-000-project-conventions.md)** | **티켓·모듈·4역할·게이트 (필독)** |
-| 1 | [getting-started.md](./getting-started.md) | 온보딩 |
-| 2 | [reference-baseline.md](./reference-baseline.md) | 기술 기준선 |
-| 3 | [agent-hierarchy.md](./agent-hierarchy.md) | Contract / Backend / Frontend / QA |
-| 4 | [workflow.md](./workflow.md) | worktree, PR, CI |
-| 5 | [todo.md](./todo.md) | 활성 티켓·DoD |
-| — | [../modernization/README.md](../modernization/README.md) | KC-007-modernization Epic |
+| 문서 | 내용 |
+|------|------|
+| **[KC-000-project-conventions.md](./KC-000-project-conventions.md)** | 티켓·모듈·4역할·게이트 (필독) |
+| **[../KC-007-modernization-plan.md](../KC-007-modernization-plan.md)** | **현대화 작업계획서 (승인용)** |
+| [agent-hierarchy.md](./agent-hierarchy.md) | Contract / Backend / Frontend / QA |
+| [workflow.md](./workflow.md) | worktree, PR, CI |
+| [todo.md](./todo.md) | 활성 티켓·DoD |
 
 ## Cursor
 
 - **Rules:** `.cursor/rules/*.mdc`
 - **Skills:** `.cursor/skills/katsubot-*/SKILL.md`
+
+## 읽기 순서
+
+1. KC-000 → 2. **KC-007-modernization-plan** (승인) → 3. todo.md → 4. workflow / agent-hierarchy

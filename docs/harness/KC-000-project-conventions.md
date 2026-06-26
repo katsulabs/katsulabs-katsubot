@@ -20,8 +20,8 @@ feature/KC-{번호}-{feature}   # Git 브랜치
 |------|------|
 | `KC-000` | 본 규칙 문서 (변경 드묾) |
 | `KC-007-modernization` | 챗봇 현대화 Epic |
-| `feature/KC-007-phase0-scaffold` | Phase 0 worktree 브랜치 |
-| `[KC-007][Backend]` | Backend Sub-agent 태그 |
+| `feature/KC-007-modernization-phase0-scaffold` | Phase 0 worktree 브랜치 |
+| `[KC-007-modernization][Backend]` | Backend Sub-agent 태그 |
 
 ### 번호 대역
 
@@ -39,7 +39,7 @@ feature/KC-{번호}-{feature}   # Git 브랜치
 | `services/chat-api/` | Spring Boot 4.1, Clean Architecture | Backend |
 | `packages/api-contract/` | OpenAPI 3.1 (계약 단일 소스) | Contract |
 | `legacy/hyobee/` | 전환기 WAR — **신규 기능 금지** | (터치 시 QA만) |
-| `docs/modernization/` | Epic 설계 문서 | Contract |
+| `docs/KC-007-modernization-plan.md` | 현대화 Epic (승인용 단일 문서) |
 | `docs/harness/` | 운영·워크플로 | Main |
 
 ## 3. 에이전트 4역할
@@ -85,8 +85,8 @@ infrastructure/ → JPA, WebClient, DummyRagAdapter, AuthAdapter
 ## 7. 문서 읽기 순서
 
 1. **본 문서** (`KC-000`)
-2. `docs/harness/todo.md`
-3. 활성 Epic (`docs/modernization/KC-007-*.md`)
+2. **[KC-007-modernization-plan.md](../KC-007-modernization-plan.md)** — 승인·실행 계획
+3. `docs/harness/todo.md`
 4. `packages/api-contract/openapi.yaml` (존재 시)
 5. `docs/harness/workflow.md`
 

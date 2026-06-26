@@ -28,7 +28,7 @@
 
 ## API·인증 계약 변경 시
 
-- `packages/api-contract/**`, `docs/modernization/auth-bridge.md`
+- `packages/api-contract/**`, `docs/auth-bridge.md`
 - OpenAPI breaking change 검토
 - 401/403·SSE 취소 동작 회귀 확인
 

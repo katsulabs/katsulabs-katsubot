@@ -32,8 +32,17 @@ buildNumber.properties
 #.gradle/
 #build/
 
-# Node.js 관련 파일
-#node_modules/
+# Node.js
+node_modules/
+apps/chat-web/dist/
+
+# Gradle
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+**/build/
+
+# Maven (legacy)
+legacy/hyobee/target/
 
 # Java 프로젝트의 일반적인 설정
 #*.class
