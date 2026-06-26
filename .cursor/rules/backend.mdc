@@ -1,5 +1,5 @@
 ---
-description: Katsulabs Chatbot Backend(chat-api) 에이전트
+description: Katsubot Backend(chat-api) 에이전트
 globs: "services/chat-api/**,docs/harness/**,.cursor/rules/*.mdc"
 alwaysApply: false
 ---

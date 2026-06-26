@@ -1,5 +1,5 @@
 ---
-description: Katsulabs Chatbot Contract(OpenAPI·도메인 계약) 에이전트
+description: Katsubot Contract(OpenAPI·도메인 계약) 에이전트
 globs: "docs/**/*.md,.cursor/rules/*.mdc,.github/PULL_REQUEST_TEMPLATE.md,packages/api-contract/**,services/chat-api/**/interfaces/**,services/chat-api/**/domain/**"
 alwaysApply: false
 ---

@@ -1,6 +1,6 @@
 ---
 name: katsubot-pr-harness-gate
-description: Katsulabs Chatbot PR 하네스 Hard Gates, KC 티켓 범위, 4역할 경계, 모듈별 테스트 증적. PR 생성·머지 전 사용.
+description: Katsubot PR 하네스 Hard Gates, KC 티켓 범위, 4역할 경계, 모듈별 테스트 증적. PR 생성·머지 전 사용.
 ---
 
 # Katsubot PR 하네스 게이트

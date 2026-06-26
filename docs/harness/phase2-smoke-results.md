@@ -1,7 +1,7 @@
 # Phase 2 스모크 결과
 
 > 일자: 2026-06-26  
-> 머지: PR [#2](https://github.com/katsulabs/katsulabs-chatbot-api/pull/2)
+> 머지: PR [#2](https://github.com/katsulabs/katsulabs-katsubot/pull/2)
 
 ## G4 — v2 parity 매트릭스
 

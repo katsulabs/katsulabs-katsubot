@@ -1,9 +1,10 @@
-# KC-000 — Katsulabs Chatbot 프로젝트 규칙
+# KC-000 — Katsubot 프로젝트 규칙
 
 | 항목 | 값 |
 |------|-----|
 | 티켓 | **KC-000** (헌법 — 기능 티켓 아님) |
-| 제품 | Katsulabs Chatbot (`katsubot`) |
+| 제품 | **Katsubot** (`katsubot`) |
+| 저장소 | `katsulabs/katsulabs-katsubot` |
 | 상태 | ACTIVE |
 
 ## 1. 티켓·브랜치 명명

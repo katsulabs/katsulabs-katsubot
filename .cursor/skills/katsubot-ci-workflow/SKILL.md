@@ -1,6 +1,6 @@
 ---
 name: katsubot-ci-workflow
-description: Katsulabs Chatbot GitHub Actions CI — chat-api(Gradle), chat-web(pnpm), legacy(Maven) 분리 워크플로 생성·유지. Phase 0 CI 작업 시 사용.
+description: Katsubot GitHub Actions CI — chat-api(Gradle), chat-web(pnpm), legacy(Maven) 분리 워크플로 생성·유지. Phase 0 CI 작업 시 사용.
 ---
 
 # Katsubot CI Workflow

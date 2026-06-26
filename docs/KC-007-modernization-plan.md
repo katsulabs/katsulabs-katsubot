@@ -4,7 +4,7 @@
 | 항목    | 값                                                                        |
 | ----- | ------------------------------------------------------------------------ |
 | 티켓    | `KC-007-modernization`                                                   |
-| 제품    | Katsulabs Chatbot (`katsubot`)                                           |
+| 제품    | **Katsubot** (`katsubot`)                                                |
 | 상태    | **승인됨 (APPROVED)** — 2026-06-26 |
 | 작성일   | 2026-06-25                                                               |
 | 예상 기간 | Phase 0–2: **8–10주** (1 FTE, 병렬 시 단축)                                    |
@@ -65,7 +65,7 @@
 ## 1. 배경·현황 (As-Is)
 
 ```text
-ㄴkatsulabs-chatbot-api/          # Phase 0 이후
+└─ katsulabs-katsubot/          # 모노레포 루트
 ├── pom.xml                     # Boot 2.7.18, Java 21, Maven, WAR
 ├── src/main/java/xs/           # 채팅 v2 API, SSO, 로그인, 레거시 VOB
 ├── src/main/webapp/            # JSP (login.jsp, main.jsp)
@@ -112,7 +112,7 @@ Epic 완료 시:
 ### 3.2 To-Be 트리 (구조안 B)
 
 ```text
-katsulabs-chatbot-api/
+katsulabs-katsubot/
 ├── settings.gradle.kts
 ├── legacy/hyobee/              # Maven WAR (전환기 동결)
 ├── services/chat-api/          # Boot 4.1, JDK 25

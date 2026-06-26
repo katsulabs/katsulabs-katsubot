@@ -1,6 +1,6 @@
 # 하네스 엔지니어링
 
-Katsulabs Chatbot(`katsubot`) Agent 협업 규칙입니다.
+Katsubot(`katsubot`) Agent 협업 규칙입니다.
 
 | 문서 | 내용 |
 |------|------|

@@ -1,5 +1,5 @@
 ---
-description: Katsulabs Chatbot QA(CI·PR 검증) 에이전트
+description: Katsubot QA(CI·PR 검증) 에이전트
 globs: "**/*Test*,**/*.test.*,**/*.spec.*,docs/harness/**,.github/workflows/**,.github/PULL_REQUEST_TEMPLATE.md,.cursor/rules/*.mdc"
 alwaysApply: false
 ---

@@ -12,6 +12,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "katsulabs-chatbot-api"
+rootProject.name = "katsulabs-katsubot"
 
 include("services:chat-api")

@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Katsulabs Chatbot API
+  title: Katsubot API
   version: 0.2.0
   description: |
     chat-api BFF — browser ↔ chat-api 계약 (Phase 2).

@@ -1,6 +1,6 @@
 ---
 name: katsubot-worktree-ticket
-description: Katsulabs Chatbot 티켓용 git worktree 생성(KC 티켓당 1 worktree). feature/KC-{id}-{feature} 브랜치 격리 시 사용.
+description: Katsubot 티켓용 git worktree 생성(KC 티켓당 1 worktree). feature/KC-{id}-{feature} 브랜치 격리 시 사용.
 ---
 
 # Katsubot 티켓당 Worktree
