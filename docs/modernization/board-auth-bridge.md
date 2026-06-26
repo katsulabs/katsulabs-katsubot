@@ -17,7 +17,7 @@
 | 항목 | 값 |
 |------|-----|
 | OpenAPI | `GET /api/v1/board-auth` |
-| Port | `com.katsulabs.chatbot.domain.port.BoardAuthPort` |
+| Port | `com.katsulabs.katsubot.domain.port.BoardAuthPort` |
 | 응답 | `BoardAuthPage` — `items[].board_name` |
 
 ```mermaid

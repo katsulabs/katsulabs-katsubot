@@ -1,6 +1,6 @@
 ---
 name: katsubot-secrets-prep
-description: Katsulabs Chatbot Secrets 체크리스트 — repo secret 금지, env 분리, DB·RAG·Auth 키. 배포 전·todo.md Secrets 항목 시 사용.
+description: Katsubot Secrets 체크리스트 — repo secret 금지, env 분리, DB·RAG·Auth 키. 배포 전·todo.md Secrets 항목 시 사용.
 ---
 
 # Katsubot Secrets 준비

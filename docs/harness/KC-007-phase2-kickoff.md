@@ -3,7 +3,7 @@
 | 항목 | 값 |
 |------|-----|
 | 티켓 | KC-007-modernization — Phase 2 대화·Strangler |
-| 상태 | **완료** — PR [#2](https://github.com/katsulabs/katsulabs-chatbot-api/pull/2) 머지 (2026-06-26) |
+| 상태 | **완료** — PR [#2](https://github.com/katsulabs/katsulabs-katsubot/pull/2) 머지 (2026-06-26) |
 | 브랜치 | `feature/KC-007-modernization-phase2-strangler` |
 | worktree | `../katsubot-KC-007-phase2` |
 | 선행 | Phase 1 DoD (`c225546`) — OpenAPI MVP, auth-bridge, REST/SSE, React UI |

@@ -3,7 +3,7 @@
 | 항목 | 값 |
 |------|-----|
 | 티켓 | KC-007-modernization — Phase 3+ RAG·운영 전환 |
-| 선행 | Phase 2 DoD — PR [#2](https://github.com/katsulabs/katsulabs-chatbot-api/pull/2) 머지 |
+| 선행 | Phase 2 DoD — PR [#2](https://github.com/katsulabs/katsulabs-katsubot/pull/2) 머지 |
 | 브랜치 | `feature/KC-007-modernization-phase3-rag-ops` |
 | DoD | 운영 RAG 연동 스캐폴딩 · 관측성 · 레거시 브릿지(선택) |
 

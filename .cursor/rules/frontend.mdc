@@ -1,5 +1,5 @@
 ---
-description: Katsulabs Chatbot Frontend(chat-web) 에이전트
+description: Katsubot Frontend(chat-web) 에이전트
 globs: "apps/chat-web/**,docs/**/*.md,.cursor/rules/*.mdc,.github/PULL_REQUEST_TEMPLATE.md"
 alwaysApply: false
 ---

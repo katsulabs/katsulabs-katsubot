@@ -1,6 +1,6 @@
 ---
 name: katsubot-ticket-kickoff
-description: Katsulabs Chatbot 티켓 킥오프 — KC-000·todo.md·Epic DoD 확인, feature/KC-{id}-{feature} 브랜치, 4역할 Sub-agent 태그 분배. 구현 요청 첫 턴 시 사용.
+description: Katsubot 티켓 킥오프 — KC-000·todo.md·Epic DoD 확인, feature/KC-{id}-{feature} 브랜치, 4역할 Sub-agent 태그 분배. 구현 요청 첫 턴 시 사용.
 ---
 
 # Katsubot 티켓 킥오프

@@ -2,8 +2,8 @@
 
 | 항목 | 값 |
 |------|-----|
-| Phase 3 | PR [#4](https://github.com/katsulabs/katsulabs-chatbot-api/pull/4) → `975313c` |
-| Phase 4 | PR [#5](https://github.com/katsulabs/katsulabs-chatbot-api/pull/5) → `fb44cc6` |
+| Phase 3 | PR [#4](https://github.com/katsulabs/katsulabs-katsubot/pull/4) → `975313c` |
+| Phase 4 | PR [#5](https://github.com/katsulabs/katsulabs-katsubot/pull/5) → `fb44cc6` |
 | main | Strangler cutover + RAG ops 스캐폴딩 |
 
 ## Phase 3 (머지 완료)

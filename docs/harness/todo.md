@@ -11,12 +11,12 @@
 
 ## Phase 0–2 (완료 · main)
 
-- [x] PR [#1](https://github.com/katsulabs/katsulabs-chatbot-api/pull/1) · [#2](https://github.com/katsulabs/katsulabs-chatbot-api/pull/2)
+- [x] PR [#1](https://github.com/katsulabs/katsulabs-katsubot/pull/1) · [#2](https://github.com/katsulabs/katsulabs-katsubot/pull/2)
 
 ## Phase 3 (완료 · main)
 
 - [x] RAG ops·OTel·legacy-bridge·JWT handoff·G6
-- [x] PR [#4](https://github.com/katsulabs/katsulabs-chatbot-api/pull/4) 머지 (2026-06-26)
+- [x] PR [#4](https://github.com/katsulabs/katsulabs-katsubot/pull/4) 머지 (2026-06-26)
 
 참고: [KC-007-phase3-kickoff.md](./KC-007-phase3-kickoff.md) · [phase3-smoke-results.md](./phase3-smoke-results.md)
 
@@ -24,7 +24,7 @@
 
 - [x] Strangler cutover (SPA + API), G8, decommission runbook
 - [x] HiCloud `cloudAttach` KC-007 범위 외
-- [x] PR [#5](https://github.com/katsulabs/katsulabs-chatbot-api/pull/5) 머지 (2026-06-26)
+- [x] PR [#5](https://github.com/katsulabs/katsulabs-katsubot/pull/5) 머지 (2026-06-26)
 
 참고: [KC-007-phase4-kickoff.md](./KC-007-phase4-kickoff.md) · [phase4-cutover-smoke.md](./phase4-cutover-smoke.md)
 

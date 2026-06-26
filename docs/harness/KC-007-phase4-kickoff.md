@@ -3,7 +3,7 @@
 | 항목 | 값 |
 |------|-----|
 | 티켓 | KC-007-modernization — Phase 4 레거시 Decommission |
-| 선행 | Phase 3 — PR [#4](https://github.com/katsulabs/katsulabs-chatbot-api/pull/4) (RAG·관측성) |
+| 선행 | Phase 3 — PR [#4](https://github.com/katsulabs/katsulabs-katsubot/pull/4) (RAG·관측성) |
 | 브랜치 | `feature/KC-007-modernization-phase4-decommission` |
 | DoD | Strangler cutover · chat-web 단일 진입 · legacy read-only |
 

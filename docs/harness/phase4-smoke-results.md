@@ -19,4 +19,4 @@
 ## 비고
 
 - legacy `:8080` **미기동** — dev-token으로 검증
-- Phase 3 PR [#4](https://github.com/katsulabs/katsulabs-chatbot-api/pull/4) 선행 머지 권장
+- Phase 3 PR [#4](https://github.com/katsulabs/katsulabs-katsubot/pull/4) 선행 머지 권장

@@ -1,6 +1,6 @@
 ---
 name: katsubot-kpi-weekly
-description: Katsulabs Chatbot 하네스 주간 KPI — PR lead time, CI red rate, reopen, handoff failure. 주간 리뷰 시 사용.
+description: Katsubot 하네스 주간 KPI — PR lead time, CI red rate, reopen, handoff failure. 주간 리뷰 시 사용.
 ---
 
 # Katsubot Harness KPI (주간)

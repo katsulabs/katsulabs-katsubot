@@ -4,7 +4,7 @@ plugins {
     java
 }
 
-group = "com.katsulabs.chatbot"
+group = "com.katsulabs.katsubot"
 version = "0.1.0-SNAPSHOT"
 
 java {

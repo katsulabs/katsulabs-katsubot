@@ -184,7 +184,7 @@ export function ChatPage() {
 
       <main className="chat">
         <header className="chat__header">
-          <h1>Katsulabs Chatbot</h1>
+          <h1>Katsubot</h1>
           <p>KC-007 Phase 2 — 대화 목록·히스토리</p>
         </header>
 
