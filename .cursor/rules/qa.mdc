@@ -32,7 +32,7 @@ Playbook: `docs/harness/KC-000-project-conventions.md`, `docs/harness/agent-hier
 
 ## Epic 스모크 (KC-007-modernization)
 
-- Phase 1+: 로그인(브릿지) → React → Dummy RAG SSE 1 시나리오
+- Phase 1+: 로그인(브릿지) → React → 외부 RAG SSE 1 시나리오
 - Phase 2+: 대화 CRUD + proxy 스모크
 
 절차: `katsubot-pr-harness-gate`, `katsubot-ci-workflow` skills

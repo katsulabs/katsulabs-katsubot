@@ -13,3 +13,8 @@ management:
   endpoint:
     health:
       show-details: when_authorized
+
+katsubot:
+  rag:
+    # 외부 RAG 서비스 (별도 배포). 로컬: infra/dummy-rag 스텁
+    base-url: ${RAG_SERVICE_BASE_URL:http://localhost:8090}

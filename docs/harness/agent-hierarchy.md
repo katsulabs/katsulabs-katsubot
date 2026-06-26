@@ -37,6 +37,6 @@
 | Role | 책임 |
 |------|------|
 | Contract | OpenAPI, Auth 브릿지, RAG Port |
-| Backend | Clean Architecture, Dummy RAG Adapter |
+| Backend | Clean Architecture, RagHttpClient (외부 RAG) |
 | Frontend | SSE 스트리밍 UI, TanStack Query |
 | QA | 모듈별 CI green, E2E 스모크 |

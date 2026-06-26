@@ -28,7 +28,7 @@
 | Frontend | React + TypeScript + Vite                                       |
 | Backend  | Spring Boot 4.1, JDK 25, Gradle (`services/chat-api`)           |
 | DB       | PostgreSQL (신규 `chat` 스키마, 레거시와 분리)                             |
-| RAG      | Phase 0–2 **Dummy RAG** → Phase 3+ WRTN/Agentic RAG (Port 뒤 교체) |
+| RAG      | **별도 서비스** — `RagCompletionPort` + HTTP 클라이언트 (`RAG_SERVICE_BASE_URL`) |
 | ORM      | **JPA Optional** — 대화 메타만 JPA, 스트림·레거시 조회는 Adapter              |
 | CI/CD    | GitHub Actions 3종 (chat-api / chat-web / legacy)                |
 | 레거시      | `legacy/hyobee` 동결·축소, SSO는 전환기 브릿지                             |
@@ -39,7 +39,7 @@
 - [x] **STRUCT** 구조안 B(모노레포) 확정 — A(멀티레포)/C(Big Bang) 아님
 - [x] **STACK** React · Boot 4.1 · JDK 25 · Gradle 확정
 - [x] **SCOPE** Phase 0 착수 승인 (스캐폴딩·CI, 기능 변경 최소)
-- [x] **RAG** Dummy → 실 RAG 전환은 Phase 3 별도 승인에 동의
+- [x] **RAG** 별도 RAG 서비스 + Port/HTTP 클라이언트 (로컬은 dummy-rag 스텁)
 - [x] **LEGACY** Strangler 전환·레거시 동결 정책 이해
 
 ### 승인란
@@ -65,7 +65,7 @@
 ## 1. 배경·현황 (As-Is)
 
 ```text
-ㄴㅂkatsulabs-chatbot-api/          # 현재 (Phase 0 전)
+ㄴkatsulabs-chatbot-api/          # Phase 0 이후
 ├── pom.xml                     # Boot 2.7.18, Java 21, Maven, WAR
 ├── src/main/java/xs/           # 채팅 v2 API, SSO, 로그인, 레거시 VOB
 ├── src/main/webapp/            # JSP (login.jsp, main.jsp)
@@ -88,7 +88,7 @@
 
 Epic 완료 시:
 
-1. `apps/chat-web` — React 채팅 UI, Dummy RAG(및 선택적 WRTN) SSE E2E
+1. `apps/chat-web` — React 채팅 UI, 외부 RAG(SSE) E2E
 2. `services/chat-api` — Clean Architecture, Boot 4.1, JDK 25, PostgreSQL, REST/SSE
 3. `legacy/hyobee` — SSO·운영 경로 유지, Strangler proxy 준비
 4. `packages/api-contract` — OpenAPI 단일 계약
@@ -128,7 +128,7 @@ katsulabs-chatbot-api/
 | 모듈                      | 빌드     | 책임                           |
 | ----------------------- | ------ | ---------------------------- |
 | `legacy/hyobee`         | Maven  | SSO, JSP, v2 API (축소 대상)     |
-| `services/chat-api`     | Gradle | BFF, Use Case, RAG/Auth Port |
+| `services/chat-api`     | Gradle | BFF, Use Case, **RagCompletionPort** → 외부 HTTP |
 | `apps/chat-web`         | pnpm   | 채팅 SPA                       |
 | `packages/api-contract` | —      | OpenAPI · 생성 클라이언트           |
 
@@ -139,7 +139,7 @@ katsulabs-chatbot-api/
 interfaces/      → REST, SSE
 application/     → Use Case
 domain/          → Entity, Port (프레임워크 무의존)
-infrastructure/  → JPA, WebClient, DummyRagAdapter, AuthAdapter
+infrastructure/  → JPA, RagHttpClient, AuthAdapter
 ```
 
 ### 3.5 Strangler 라우팅
@@ -157,7 +157,8 @@ flowchart LR
   GW -->|/api/v1/**| API
   GW -->|SSO /xs/vob/aichat/**| Legacy
   API --> Postgres[(PostgreSQL)]
-  API --> DummyRAG[Dummy RAG]
+  API --> ExternalRAG[외부 RAG 서비스]
+  ExternalRAG -.->|로컬 스텁| DummyRAG[infra/dummy-rag]
   Legacy --> WRTN[WRTN]
 ```
 
@@ -184,7 +185,7 @@ flowchart LR
 | Backend  | Spring Boot **4.1**, JDK **25** | **신규 모듈만**             |
 | Build    | Gradle (멀티모듈)                   | 레거시는 Maven 유지          |
 | DB       | PostgreSQL                      | Flyway, 스키마 `chat`     |
-| RAG      | Dummy API → Port 교체             | Phase 1 Docker Compose |
+| RAG      | **외부 HTTP** (`RagCompletionPort`) | [rag-external-client.md](./rag-external-client.md) |
 | CI       | GitHub Actions                  | path filter 3 workflow |
 
 
@@ -208,14 +209,18 @@ flowchart LR
 | 레거시 테이블       | JDBC Adapter (Phase 2+, ACL) |
 
 
-### 4.4 Dummy RAG (최소 계약)
+### 4.4 RAG — 외부 클라이언트 (별도 서비스)
 
-```http
-POST /v1/completions
-{ "query": "...", "conversation_id": "...", "stream": true }
-```
+RAG는 **chat-api에 내장하지 않는다.** `RagCompletionPort` 뒤에서 `RagHttpClient`가 `katsubot.rag.base-url`로 HTTP/SSE 호출한다 (레거시 `HyobeeChatApiClient` → WRTN 패턴).
 
-→ SSE `data: {"delta":"..."}` · Phase 3에서 `WrtnRagAdapter`로 교체
+상세 계약: **[rag-external-client.md](./rag-external-client.md)**
+
+| 구분 | 역할 |
+|------|------|
+| `infra/dummy-rag` | 로컬·CI용 **스텁** (별도 프로세스) |
+| 운영 RAG | 별도 팀/서비스 — URL만 `RAG_SERVICE_BASE_URL`로 교체 |
+
+Phase 3+ 에이전트·하이브리드 검색은 **RAG 서비스 내부**에서 진화; chat-api는 계약 유지.
 
 ### 4.5 CI/CD (Phase 0)
 
@@ -229,9 +234,8 @@ POST /v1/completions
 
 ### 4.6 아키텍처 트렌드 (Phase 3+ 참고)
 
-- **Phase 1–2:** SSE + REST, Dummy RAG, OpenAPI contract
-- **Phase 3+:** Router Agent → bounded Agentic RAG (`max_iter` 3–4, timeout 12s)
-- 오케스트레이션 후보: Spring AI 또는 Port + 자체 Router POC
+- **Phase 1–2:** SSE + REST, `RagCompletionPort` + 외부 RAG 스텁, OpenAPI contract
+- **Phase 3+:** RAG 서비스 측 Router/Agentic (chat-api는 HTTP 계약 유지)
 - 관측성: OpenTelemetry, 구조화 로그 (`conversation_id` 상관)
 
 ---
@@ -257,12 +261,12 @@ Phase 4  레거시 decommission  요구 시
 | 0-2 | `src/` → `legacy/hyobee/` 이동 | git history preserve                         |
 | 0-3 | chat-api Boot 4.1 skeleton   | `/actuator/health`                           |
 | 0-4 | chat-web Vite+React+TS       | dev server                                   |
-| 0-5 | docker-compose               | Postgres + dummy-rag                         |
+| 0-5 | docker-compose               | Postgres + **RAG 스텁** (dummy-rag)          |
 | 0-6 | GitHub Actions 3종            | CI green                                     |
 | 0-7 | JDK 25 / Node 22 CI 검증       | —                                            |
 
 
-**DoD:** legacy `mvn test` green · chat-api health 200 · chat-web build · Dummy RAG SSE · README 갱신
+**DoD:** legacy `mvn test` green · chat-api health 200 · chat-web build · RAG 스텁 SSE · README 갱신
 
 **게이트:** G0 빌드 분리 무손상 · G1 CI 3종 green
 
@@ -275,14 +279,14 @@ Phase 4  레거시 decommission  요구 시
 | ---- | ------------------------------------------------------------------- |
 | 1-C1 | `packages/api-contract/openapi.yaml` — conversations, messages(SSE) |
 | 1-C2 | `docs/auth-bridge.md` — JWT vs 레거시 세션                               |
-| 1-C3 | RAG Port 인터페이스 정의                                                   |
+| 1-C3 | `RagCompletionPort` + [rag-external-client.md](./rag-external-client.md) |
 
 
-**Backend:** Use Case (`CreateConversation`, `SendMessage`), `DummyRagAdapter`, Flyway V1, JPA 엔티티(optional), 단위 테스트
+**Backend:** Use Case (`CreateConversation`, `SendMessage`), `RagHttpClient` → 외부 RAG, Flyway V1, JPA(optional), Port Mock 단위 테스트
 
 **Frontend:** 로그인 redirect(레거시), 채팅 UI, SSE hook, OpenAPI 클라이언트
 
-**DoD:** 로그인 → React → Dummy RAG 스트리밍 1건 · Use Case 테스트 · Contract로 BE/FE 병렬 가능
+**DoD:** 로그인 → React → **외부 RAG** 스트리밍 1건 · Use Case(Port Mock) 테스트
 
 **게이트:** G2 OpenAPI breaking 없음 · G3 401/403 계약 테스트
 
@@ -298,18 +302,13 @@ Phase 4  레거시 decommission  요구 시
 
 **게이트:** G4 매트릭스 리뷰 · G5 SSE 5분 연결 스모크
 
-### Phase 3+ — RAG 고도화 (별도 승인)
+### Phase 3+ — RAG 서비스 고도화 (별도 승인 · chat-api 밖)
 
-
-| 작업               | 비고                        |
-| ---------------- | ------------------------- |
-| `WrtnRagAdapter` | HyobeeChatApiClient 로직 이전 |
-| Router Agent     | 단순/복잡 질의 분기               |
-| 하이브리드 검색         | pgvector 등                |
-| OpenTelemetry    | 대시보드                      |
-
-
-**착수 조건:** Phase 2 DoD + 운영 배포 승인 + WRTN 계약
+| 작업 | 비고 |
+|------|------|
+| 운영 RAG 서비스 배포 | Agentic·벡터 검색은 RAG 팀/서비스 |
+| `RAG_SERVICE_BASE_URL` 전환 | chat-api는 Port/HTTP 계약 유지 |
+| OpenTelemetry | RAG ↔ chat-api trace 연동 |
 
 ---
 

@@ -24,7 +24,7 @@
 ## Phase 1 (다음)
 
 - [ ] OpenAPI + auth-bridge
-- [ ] MVP 채팅 + Dummy RAG SSE E2E
+- [ ] MVP 채팅 + 외부 RAG(SSE) E2E
 
 ## 보류
 
