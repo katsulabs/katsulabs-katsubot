@@ -1,0 +1,99 @@
+:root {
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #1a1a1a;
+  background: #f6f7f9;
+}
+
+body {
+  margin: 0;
+}
+
+.chat {
+  max-width: 720px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.chat__header h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.5rem;
+}
+
+.chat__header p {
+  margin: 0;
+  color: #5c6570;
+}
+
+.chat__messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+  overflow-y: auto;
+}
+
+.chat__empty {
+  color: #5c6570;
+}
+
+.chat__bubble {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 8%);
+}
+
+.chat__bubble--user {
+  align-self: flex-end;
+  background: #e8f0ff;
+}
+
+.chat__bubble--assistant {
+  align-self: flex-start;
+}
+
+.chat__bubble strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.85rem;
+}
+
+.chat__bubble p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.chat__error {
+  color: #b42318;
+}
+
+.chat__composer {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chat__composer input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+}
+
+.chat__composer button {
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  background: #175cd3;
+  color: #fff;
+  cursor: pointer;
+}
+
+.chat__composer button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

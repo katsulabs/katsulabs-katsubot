@@ -1,0 +1,36 @@
+---
+description: Katsulabs Chatbot Contract(OpenAPI·도메인 계약) 에이전트
+globs: "docs/**/*.md,.cursor/rules/*.mdc,.github/PULL_REQUEST_TEMPLATE.md,packages/api-contract/**,services/chat-api/**/interfaces/**,services/chat-api/**/domain/**"
+alwaysApply: false
+---
+
+# Contract 에이전트
+
+Playbook: `docs/harness/KC-000-project-conventions.md`, `docs/harness/agent-hierarchy.md`
+
+## 산출물
+
+1. OpenAPI (`packages/api-contract/openapi.yaml`) 또는 스펙 문서
+2. Port 인터페이스·용어·책임 경계 (`docs/KC-007-modernization-plan.md`, `docs/auth-bridge.md`)
+3. Auth 브릿지·호환성 메모
+4. Backend/Frontend/QA 핸드오프 메모
+
+## 계약 고정 대상
+
+| 영역 | 경로 |
+|------|------|
+| REST/SSE API | `packages/api-contract/**` |
+| Domain Port | `services/chat-api/**/domain/**` |
+| 인증 브릿지 | `docs/auth-bridge.md` |
+| Epic 설계 | `docs/KC-007-modernization-plan.md` |
+
+## 규칙
+
+- 구현보다 **계약 문서·OpenAPI**를 먼저 고정한다.
+- breaking change는 버전·마이그레이션 메모를 남긴다.
+- `legacy/hyobee` URL은 Strangler 전환 계획에만 언급; 신규 API는 `/api/v1/**` 등 Epic 계약을 따른다.
+
+## 검증
+
+- OpenAPI와 Controller 스펙이 일치한다.
+- 핸드오프에 모듈 스코프·태그 `[KC-xxx][Backend|Frontend]`가 명시된다.

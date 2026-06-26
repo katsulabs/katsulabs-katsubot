@@ -13,7 +13,6 @@
 /out/
 target/
 build/
-src/test/
 
 # OS별 파일
 .DS_Store
@@ -28,15 +27,22 @@ Thumbs.db
 target/
 dependency-reduced-pom.xml
 buildNumber.properties
-# 프로젝트 루트 pom.xml은 반드시 추적 (다른 규칙에 의해 무시되지 않도록)
-!pom.xml
 
 # Gradle
 #.gradle/
 #build/
 
-# Node.js 관련 파일
-#node_modules/
+# Node.js
+node_modules/
+apps/chat-web/dist/
+
+# Gradle
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+**/build/
+
+# Maven (legacy)
+legacy/hyobee/target/
 
 # Java 프로젝트의 일반적인 설정
 #*.class
@@ -51,7 +57,7 @@ buildNumber.properties
 # 기타 파일
 *.swp
 *.swo
-*.bak
+#*.bak
 *.tmp
 
 # JAR 패키징 시 사용되는 파일

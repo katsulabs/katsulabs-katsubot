@@ -1,0 +1,35 @@
+---
+description: Git 커밋 메시지 규칙 (한글·Co-authored-by)
+alwaysApply: true
+---
+
+# Git 커밋 메시지
+
+## 언어
+
+- `feature/KC-*` 브랜치 커밋 **제목·본문은 한국어**로 작성한다.
+- Conventional prefix(`feat`, `fix`, `docs`, `refactor`, `chore` 등)와 티켓 태그(`KC-007-modernization`)는 유지해도 된다.
+- 영어 고유명사·클래스명·API 경로·브랜치명은 그대로 둔다.
+
+## Co-authored-by
+
+- **`Co-authored-by: Cursor <cursoragent@cursor.com>`는 커밋에 추가하지 않는다.**
+
+## 예시
+
+```
+feat(KC-007-modernization): chat-api health endpoint 스캐폴딩
+
+Phase 0 Boot 4.1 skeleton 및 actuator health 추가.
+```
+
+```
+docs(KC-000): KC-000 프로젝트 규칙 문서 추가
+
+Katsulabs Chatbot 티켓·4역할·모듈 게이트 정의.
+```
+
+## PR·push
+
+- push 전 `git log`로 영문 제목·Cursor trailer 잔존 여부 확인.
+- 히스토리 재작성 후 push 시 `--force-with-lease`.

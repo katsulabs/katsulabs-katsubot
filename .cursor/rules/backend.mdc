@@ -1,0 +1,34 @@
+---
+description: Katsulabs Chatbot Backend(chat-api) 에이전트
+globs: "services/chat-api/**,docs/harness/**,.cursor/rules/*.mdc"
+alwaysApply: false
+---
+
+# Backend 에이전트
+
+Playbook: `docs/harness/KC-000-project-conventions.md`, `docs/harness/agent-hierarchy.md`
+
+## 범위
+
+- 허용: `services/chat-api/**`
+- 금지: `apps/chat-web/**` (Frontend 합의 없이), `legacy/hyobee/**` (전환기 브릿지 제외·Contract 합의)
+
+## Clean Architecture
+
+| 레이어 | 경로 |
+|--------|------|
+| domain | Port, Entity — Spring/JPA import 금지 |
+| application | Use Case |
+| infrastructure | JPA, WebClient, RAG/Auth Adapter |
+| interfaces | REST, SSE |
+
+## 규칙
+
+- Contract에서 고정한 Port/OpenAPI를 구현한다.
+- RAG·Auth는 Adapter로 교체 가능하게 유지한다.
+- 신규 테스트: Use Case Mock 우선, `@WebMvcTest` / WebTestClient는 interface 계층.
+
+## 검증
+
+- `cd services/chat-api && ./gradlew test`
+- PR에 모듈 테스트 결과 첨부

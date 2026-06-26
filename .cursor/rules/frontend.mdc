@@ -1,0 +1,31 @@
+---
+description: Katsulabs Chatbot Frontend(chat-web) 에이전트
+globs: "apps/chat-web/**,docs/**/*.md,.cursor/rules/*.mdc,.github/PULL_REQUEST_TEMPLATE.md"
+alwaysApply: false
+---
+
+# Frontend 에이전트
+
+Playbook: `docs/harness/KC-000-project-conventions.md`, `docs/harness/agent-hierarchy.md`
+
+## 범위
+
+- 허용: `apps/chat-web/**`, UI 관련 문서
+- 금지: `services/chat-api/**` Java 로직
+
+## 스택
+
+- React + TypeScript + Vite
+- API 클라이언트: OpenAPI 생성 타입 (`packages/api-contract`)
+- 서버 상태: TanStack Query; SSE: dedicated hook
+
+## 규칙
+
+- API URL·타입은 Contract/OpenAPI와 일치한다.
+- 스트리밍 UX: 토큰 델타·에러·취소(disconnect) 처리를 QA 시나리오에 명시한다.
+- `legacy/hyobee` JSP는 redirect만; 신규 UI는 React SPA.
+
+## 검증
+
+- `cd apps/chat-web && pnpm test && pnpm build`
+- 인증 변경 시 401/403 UX 회귀 기록

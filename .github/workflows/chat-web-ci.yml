@@ -1,0 +1,28 @@
+name: chat-web CI
+
+on:
+  pull_request:
+    paths:
+      - 'apps/chat-web/**'
+      - '.github/workflows/chat-web-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/chat-web/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/chat-web/package-lock.json
+      - name: Install
+        working-directory: apps/chat-web
+        run: npm ci
+      - name: Test and build
+        working-directory: apps/chat-web
+        run: npm test && npm run build

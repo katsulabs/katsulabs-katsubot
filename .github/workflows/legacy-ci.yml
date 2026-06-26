@@ -1,0 +1,26 @@
+name: legacy hyobee CI
+
+on:
+  pull_request:
+    paths:
+      - 'legacy/hyobee/**'
+      - '.github/workflows/legacy-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'legacy/hyobee/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Maven P0 auth regression
+        working-directory: legacy/hyobee
+        run: >
+          mvn test -DfailIfNoTests=false
+          -Dtest=HyobeePagePathsTest,AuthPagePreloadTest,HyobeeSSOControllerTest,HyobeeSSOServiceImplTest,LoginServiceImplTest,HyobeeApiInterceptorTest,ApiServiceImplTest,XtrmHandlerInterceptorAuthTest

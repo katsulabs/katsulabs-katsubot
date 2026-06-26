@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: ${KATSUBOT_DB_URL:jdbc:postgresql://localhost:5432/katsubot}
+    username: ${KATSUBOT_DB_USER:katsubot}
+    password: ${KATSUBOT_DB_PASSWORD:katsubot}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
