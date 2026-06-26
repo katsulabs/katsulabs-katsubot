@@ -1,6 +1,7 @@
 # Phase 2 Strangler Proxy 스모크
 
-> Reverse proxy: `/api/v1/**` → chat-api, `/xs/**` · `/webapps/**` → legacy
+> Reverse proxy: `/api/v1/**` → chat-api, `/xs/**` · `/webapps/**` → legacy  
+> **Phase 4:** `/` → chat-web SPA — [phase4-cutover-smoke.md](./phase4-cutover-smoke.md)
 
 ## 구성
 

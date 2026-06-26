@@ -76,11 +76,12 @@ Authorization: Bearer <JWT>
 headers: { Authorization: `Bearer ${getAuthToken()}` }
 ```
 
-## Phase 2 예정
+## Phase 4 (Cutover)
 
-- Nginx: `/api/v1/**` → chat-api, `/xs/**` SSO → legacy
-- 세션 쿠키 공유 또는 `auth/verify` 프록시
-- `board-auth` 권한 Port
+- Strangler `:8088` — `/` → chat-web SPA, `/api/v1/**` → chat-api (동일 origin)
+- 로그인: legacy SSO → redirect `https://<host>/?jwt=<token>` → `initAuthFromUrl()` ([auth.ts](../apps/chat-web/src/lib/auth.ts))
+- 채팅 UX는 **legacy JSP 불필요** (dev-token 또는 JWT handoff)
+- SSO만 legacy `/xs/**` — `Deprecation` 헤더 ([decommission-runbook.md](./modernization/decommission-runbook.md))
 
 ## 관련 문서
 

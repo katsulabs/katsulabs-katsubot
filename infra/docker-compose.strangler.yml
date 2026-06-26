@@ -1,20 +1,36 @@
-# Strangler proxy overlay — `docker compose -f docker-compose.yml -f docker-compose.strangler.yml up -d`
+# Strangler proxy overlay — Phase 4 cutover
 #
-# 전제: 호스트에서 chat-api(:8081), 선택적으로 legacy(:8080) 기동
-# 프록시: http://localhost:8088
+#   docker compose -f docker-compose.yml -f docker-compose.strangler.yml up -d --build
+#
+# 전제: 호스트에서 chat-api(:8081) 기동
+# 프록시: http://localhost:8088 — SPA + API 단일 origin
 
 services:
+  chat-web:
+    build:
+      context: ../apps/chat-web
+      dockerfile: Dockerfile
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   strangler-proxy:
     image: nginx:1.27-alpine
     ports:
       - "8088:80"
     environment:
+      CHAT_WEB_UPSTREAM: ${CHAT_WEB_UPSTREAM:-chat-web:80}
       CHAT_API_UPSTREAM: ${CHAT_API_UPSTREAM:-host.docker.internal:8081}
       LEGACY_UPSTREAM: ${LEGACY_UPSTREAM:-host.docker.internal:8080}
     volumes:
       - ./nginx/strangler.conf.template:/etc/nginx/templates/default.conf.template:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    depends_on:
+      chat-web:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
       interval: 5s
