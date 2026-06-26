@@ -1,8 +1,16 @@
-# Strangler reverse proxy — `/api/v1/**` → chat-api, 레거시 SSO/JSP → legacy
+# Strangler reverse proxy — Phase 4 cutover
+#   /, /assets  → chat-web (React SPA)
+#   /api/v1/**  → chat-api
+#   /xs/**, /webapps/** → legacy (SSO·JSP, Deprecation 헤더)
 #
 # 환경 변수 (docker-compose.strangler.yml):
-#   CHAT_API_UPSTREAM   기본 host.docker.internal:8081
-#   LEGACY_UPSTREAM     기본 host.docker.internal:8080
+#   CHAT_WEB_UPSTREAM    기본 chat-web:80
+#   CHAT_API_UPSTREAM    기본 host.docker.internal:8081
+#   LEGACY_UPSTREAM      기본 host.docker.internal:8080
+
+upstream chat_web_upstream {
+    server ${CHAT_WEB_UPSTREAM};
+}
 
 upstream chat_api_upstream {
     server ${CHAT_API_UPSTREAM};
@@ -16,7 +24,6 @@ server {
     listen 80;
     server_name _;
 
-    # 신규 BFF
     location /api/v1/ {
         proxy_pass http://chat_api_upstream;
         proxy_http_version 1.1;
@@ -34,7 +41,6 @@ server {
         proxy_set_header Host $host;
     }
 
-    # 레거시 SSO · v2 · JSP
     location /xs/ {
         proxy_pass http://legacy_upstream;
         proxy_http_version 1.1;
@@ -42,12 +48,16 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Cookie $http_cookie;
+        add_header Deprecation "true" always;
+        add_header Link '</api/v1/>; rel="successor-version"' always;
     }
 
     location /webapps/ {
         proxy_pass http://legacy_upstream;
         proxy_set_header Host $host;
         proxy_set_header Cookie $http_cookie;
+        add_header Deprecation "true" always;
+        add_header Link '</api/v1/>; rel="successor-version"' always;
     }
 
     location = /healthz {
@@ -56,7 +66,11 @@ server {
     }
 
     location / {
-        return 404 '{"code":"NOT_FOUND","message":"Strangler proxy — /api/v1 또는 /xs 경로를 사용하세요"}';
-        add_header Content-Type application/json;
+        proxy_pass http://chat_web_upstream;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }

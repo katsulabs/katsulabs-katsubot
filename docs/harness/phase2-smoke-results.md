@@ -6,7 +6,7 @@
 ## G4 — v2 parity 매트릭스
 
 - 문서: [v2-parity-matrix.md](../modernization/v2-parity-matrix.md)
-- 핵심 8/10 항목 **80%+** 충족 (파일 업로드·HiCloud는 Phase 3+ 보류)
+- 핵심 8/10 항목 **80%+** 충족 (로컬 파일 업로드는 선택; HiCloud `cloudAttach`는 KC-007 범위 외)
 - **PASS**
 
 ## G5 — SSE 연결 (proxy 경유)

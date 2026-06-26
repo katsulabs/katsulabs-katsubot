@@ -27,7 +27,7 @@
 |----|------|------|
 | 3-X1 | `board-auth` 레거시 HTTP 브릿지 | [x] `legacy-bridge` + `LegacyBoardAuthClient` |
 | 3-X2 | auth-bridge — React JWT handoff | [x] `?jwt=` / `?token=` → sessionStorage |
-| 3-X3 | 파일 업로드·HiCloud | 보류 |
+| 3-X3 | 로컬 파일 업로드 (`uploadFile`) | 선택 |
 
 ## 산출물
 

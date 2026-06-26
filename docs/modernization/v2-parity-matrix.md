@@ -14,11 +14,10 @@
 | 7 | `GET /board-auth` | `GET /board-auth` | ✅ P2 | `BoardAuthPort` 브릿지 |
 | 8 | SSE `/stream/**` | `POST .../messages` (SSE) | ✅ P1 | |
 | 9 | `GET /healthCheck.json` | `/actuator/health` | ✅ | 벤더 health 별도 |
-| 10 | `uploadFile` / `uploadFiles` | — | ⏸ P3+ | |
-| 11 | `cloudAttach` | — | ⏸ P3+ | HiCloud |
-| 12 | `PUT /session/jwt-team-code` | — | ⏸ | auth-bridge 보강 시 |
+| 10 | `uploadFile` / `uploadFiles` | — | ⏸ | 로컬 파일 업로드 (선택) |
+| 11 | `PUT /session/jwt-team-code` | — | ⏸ | auth-bridge 보강 시 |
 
-**Phase 2 목표 커버리지:** 8/10 핵심 항목 = **80%** (G4)
+**Phase 2 목표 커버리지:** 8/10 핵심 항목 = **80%** (G4) — `cloudAttach`(HiCloud)는 **KC-007 범위 외**
 
 ## 의도적 차이
 
