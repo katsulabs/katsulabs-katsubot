@@ -1,3 +1,5 @@
+import { getAuthToken } from './auth'
+
 export type Conversation = {
   id: string
   title: string
@@ -35,7 +37,7 @@ export class ApiError extends Error {
 
 function authHeaders(): HeadersInit {
   return {
-    Authorization: `Bearer ${import.meta.env.VITE_AUTH_TOKEN ?? 'dev-token'}`,
+    Authorization: `Bearer ${getAuthToken()}`,
   }
 }
 

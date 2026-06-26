@@ -15,11 +15,17 @@ management:
   endpoint:
     health:
       show-details: when_authorized
+      show-components: always
+  tracing:
+    enabled: ${MANAGEMENT_TRACING_ENABLED:false}
 
 katsubot:
   rag:
     # 외부 RAG 서비스 (별도 배포). 로컬: infra/dummy-rag 스텁
     base-url: ${RAG_SERVICE_BASE_URL:http://localhost:8090}
+  legacy:
+    base-url: ${KATSUBOT_LEGACY_BASE_URL:http://localhost:8080}
+    board-auth-path: ${KATSUBOT_LEGACY_BOARD_AUTH_PATH:/xs/aichat/v2/board-auth}
   auth:
     dev-bypass: ${KATSUBOT_AUTH_DEV_BYPASS:true}
     dev-token: ${KATSUBOT_AUTH_DEV_TOKEN:dev-token}

@@ -43,7 +43,7 @@ public interface BoardAuthPort {
 | 프로필 | Adapter | 동작 |
 |--------|---------|------|
 | `in-memory` (기본) | `StubBoardAuthAdapter` | 빈 목록 또는 로컬 샘플 |
-| `legacy-bridge` (선택) | `LegacyBoardAuthClient` | 레거시 HTTP 프록시 |
+| `legacy-bridge` (선택) | `LegacyBoardAuthClient` | 레거시 HTTP 프록시 (Bearer 전달) |
 
 ## 레거시 브릿지 (선택 프로필)
 

@@ -7,7 +7,7 @@
 
 | 티켓 | 담당 | 상태 | DoD |
 |--------|-------|--------|-----|
-| KC-007-modernization | Main/Contract/Backend/Frontend/QA | **Phase 2 완료 → Phase 3 대기** | [KC-007-modernization-plan.md](../KC-007-modernization-plan.md) §5 Phase 3+ |
+| KC-007-modernization | Main/Contract/Backend/Frontend/QA | **Phase 3 진행 중** | [KC-007-modernization-plan.md](../KC-007-modernization-plan.md) §5 Phase 3+ |
 
 ## Phase 0 (완료 · main)
 
@@ -32,19 +32,23 @@
 
 참고: [KC-007-phase2-kickoff.md](./KC-007-phase2-kickoff.md) · [phase2-proxy-smoke.md](./phase2-proxy-smoke.md)
 
-## Phase 3+ (다음 · 별도 승인)
+## Phase 3 (진행 중)
 
-킥오프: [KC-007-phase3-kickoff.md](./KC-007-phase3-kickoff.md)
+킥오프: [KC-007-phase3-kickoff.md](./KC-007-phase3-kickoff.md)  
+브랜치: `feature/KC-007-modernization-phase3-rag-ops`
 
-- [ ] Epic 승인 (RAG 고도화·운영 전환)
-- [ ] 운영 RAG `RAG_SERVICE_BASE_URL` 전환
-- [ ] OpenTelemetry (RAG ↔ chat-api)
-- [ ] (선택) 파일 업로드·HiCloud·레거시 board-auth 브릿지
-
-브랜치 예: `feature/KC-007-modernization-phase3-rag-ops`
+- [x] RAG 운영 계약·`application-staging.yml` (`RAG_SERVICE_BASE_URL`)
+- [x] `RagHealthIndicator`, OTel tracing deps (`micrometer-tracing-bridge-otel`)
+- [x] Secrets 체크리스트 — [secrets-checklist.md](./secrets-checklist.md)
+- [x] `legacy-bridge` — `LegacyBoardAuthClient`
+- [x] React JWT URL handoff (`auth.ts`)
+- [x] `scripts/smoke-phase3.sh` (G6)
+- [ ] Epic 승인 (운영 배포 전)
+- [ ] G7 OTel collector 수동 검증
+- [ ] (보류) 3-X3 파일 업로드·HiCloud
 
 ## 보류
 
 | 항목 | 상태 |
 |------|------|
-| Secrets | 배포 전 (`katsubot-secrets-prep`) |
+| Secrets (staging/prod 등록) | [secrets-checklist.md](./secrets-checklist.md) |

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@Profile({"in-memory", "jpa"})
+@Profile("!legacy-bridge")
 public class StubBoardAuthAdapter implements BoardAuthPort {
 
     @Override
