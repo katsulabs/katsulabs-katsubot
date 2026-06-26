@@ -12,7 +12,7 @@ services:
       CHAT_API_UPSTREAM: ${CHAT_API_UPSTREAM:-host.docker.internal:8081}
       LEGACY_UPSTREAM: ${LEGACY_UPSTREAM:-host.docker.internal:8080}
     volumes:
-      - ./nginx/strangler.conf.template:/etc/nginx/templates/strangler.conf.template:ro
+      - ./nginx/strangler.conf.template:/etc/nginx/templates/default.conf.template:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
