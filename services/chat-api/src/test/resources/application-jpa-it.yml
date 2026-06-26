@@ -1,0 +1,7 @@
+# Testcontainers 통합 테스트 — Hibernate가 Postgres 스키마 생성 (Flyway는 main jpa 프로필·스모크에서 검증)
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  flyway:
+    enabled: false

@@ -1,12 +1,17 @@
 package com.katsulabs.chatbot.interfaces.rest;
 
 import com.katsulabs.chatbot.application.CreateConversationUseCase;
+import com.katsulabs.chatbot.application.DeleteConversationsUseCase;
 import com.katsulabs.chatbot.domain.model.Conversation;
 import com.katsulabs.chatbot.infrastructure.auth.AuthContext;
 import com.katsulabs.chatbot.interfaces.rest.dto.ConversationResponse;
 import com.katsulabs.chatbot.interfaces.rest.dto.CreateConversationRequest;
+import com.katsulabs.chatbot.interfaces.rest.dto.DeleteConversationsRequest;
+import com.katsulabs.chatbot.interfaces.rest.dto.DeleteConversationsResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,9 +26,14 @@ import java.util.List;
 public class ConversationController {
 
     private final CreateConversationUseCase createConversationUseCase;
+    private final DeleteConversationsUseCase deleteConversationsUseCase;
 
-    public ConversationController(CreateConversationUseCase createConversationUseCase) {
+    public ConversationController(
+            CreateConversationUseCase createConversationUseCase,
+            DeleteConversationsUseCase deleteConversationsUseCase
+    ) {
         this.createConversationUseCase = createConversationUseCase;
+        this.deleteConversationsUseCase = deleteConversationsUseCase;
     }
 
     @PostMapping
@@ -40,6 +50,24 @@ public class ConversationController {
         return createConversationUseCase.listForUser(userId).stream()
                 .map(ConversationController::toResponse)
                 .toList();
+    }
+
+    @DeleteMapping
+    public DeleteConversationsResponse delete(
+            @Valid @RequestBody DeleteConversationsRequest request,
+            HttpServletRequest httpRequest
+    ) {
+        var result = deleteConversationsUseCase.delete(userId(httpRequest), request.conversation_ids());
+        return new DeleteConversationsResponse(
+                result.deletedCount(),
+                result.results().stream()
+                        .map(item -> new DeleteConversationsResponse.DeleteConversationResult(
+                                item.conversationId(),
+                                item.deleted(),
+                                item.error()
+                        ))
+                        .toList()
+        );
     }
 
     private static String userId(HttpServletRequest request) {

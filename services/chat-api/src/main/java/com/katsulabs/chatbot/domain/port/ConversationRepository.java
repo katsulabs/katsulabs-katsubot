@@ -12,4 +12,10 @@ public interface ConversationRepository {
     Optional<Conversation> findById(String id);
 
     List<Conversation> findByUserId(String userId);
+
+    DeleteResult deleteByUserIdAndIds(String userId, List<String> conversationIds);
+
+    record DeleteResult(int deletedCount, List<DeleteItem> results) {}
+
+    record DeleteItem(String conversationId, boolean deleted, String error) {}
 }
