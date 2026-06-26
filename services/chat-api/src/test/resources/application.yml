@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: chat-api-test
+
+katsubot:
+  auth:
+    dev-bypass: true
+    dev-token: dev-token

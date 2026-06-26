@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
+import { App } from './App'
 
-describe('chat-web scaffold', () => {
-  it('placeholder passes', () => {
-    expect(true).toBe(true)
+describe('App', () => {
+  it('exports chat page root', () => {
+    expect(App).toBeTypeOf('function')
   })
 })

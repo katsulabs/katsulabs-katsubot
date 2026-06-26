@@ -18,3 +18,6 @@ katsubot:
   rag:
     # 외부 RAG 서비스 (별도 배포). 로컬: infra/dummy-rag 스텁
     base-url: ${RAG_SERVICE_BASE_URL:http://localhost:8090}
+  auth:
+    dev-bypass: ${KATSUBOT_AUTH_DEV_BYPASS:true}
+    dev-token: ${KATSUBOT_AUTH_DEV_TOKEN:dev-token}

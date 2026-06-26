@@ -1,0 +1,154 @@
+openapi: 3.1.0
+info:
+  title: Katsulabs Chatbot API
+  version: 0.1.0
+  description: |
+    chat-api BFF — browser ↔ chat-api 계약.
+    RAG 호출은 chat-api 내부 Port이며 본 스펙에 포함되지 않음 (`docs/rag-external-client.md`).
+servers:
+  - url: http://localhost:8081
+    description: 로컬 chat-api
+  - url: http://localhost:5173/api
+    description: Vite dev proxy (`/api` → chat-api)
+security:
+  - bearerAuth: []
+paths:
+  /api/v1/conversations:
+    post:
+      operationId: createConversation
+      summary: 새 대화 생성
+      tags: [conversations]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateConversationRequest'
+      responses:
+        '201':
+          description: 생성됨
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversation'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      operationId: listConversations
+      summary: 내 대화 목록
+      tags: [conversations]
+      responses:
+        '200':
+          description: 목록
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversation'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v1/conversations/{conversationId}/messages:
+    post:
+      operationId: sendMessage
+      summary: 메시지 전송 (SSE 스트림)
+      tags: [messages]
+      parameters:
+        - $ref: '#/components/parameters/ConversationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+      responses:
+        '200':
+          description: |
+            SSE 스트림. 각 이벤트는 `data: {json}` 형식.
+            - `event: delta` — `{"delta":"토큰"}`
+            - `event: done` — `{"conversation_id":"...","message_id":"..."}`
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                example: |
+                  event: delta
+                  data: {"delta":"안녕"}
+
+                  event: done
+                  data: {"conversation_id":"c1","message_id":"m1"}
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 레거시 SSO/JWT 브릿지 — `docs/auth-bridge.md`
+  parameters:
+    ConversationId:
+      name: conversationId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    CreateConversationRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 200
+          example: 새 대화
+    Conversation:
+      type: object
+      required: [id, title, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    SendMessageRequest:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          minLength: 1
+          maxLength: 8000
+          example: 안녕하세요
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+  responses:
+    Unauthorized:
+      description: 인증 필요 또는 토큰 무효
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: UNAUTHORIZED
+            message: Authorization Bearer 토큰이 필요합니다
+    NotFound:
+      description: 리소스 없음
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: NOT_FOUND
+            message: 대화를 찾을 수 없습니다
