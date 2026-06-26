@@ -28,7 +28,7 @@ Phase 0–2 — PR [#1](https://github.com/katsulabs/katsulabs-chatbot-api/pull/
 - [x] `scripts/smoke-phase4.sh` (G8)
 - [ ] Phase 3 PR #4 머지 후 Phase 4 PR
 - [ ] 운영 cutover (SSO·트래픽 0% 확인)
-- [ ] (보류) 파일 업로드·HiCloud · IdP 직접 연동
+- [ ] (선택) 로컬 파일 업로드 · IdP 직접 연동
 
 ## 보류
 

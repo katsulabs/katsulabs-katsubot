@@ -34,7 +34,8 @@
 | `DELETE .../feedback/{id}` | `DELETE .../feedback/{id}` | ✅ P2 | 논리 삭제 |
 | `GET /board-auth` | `GET /board-auth` | ✅ P2 | `BoardAuthPort` Stub |
 | SSE `/stream/**` | `POST .../messages` (SSE) | ✅ Phase 1 | |
-| `uploadFile` / `uploadFiles` / `cloudAttach` | — | ⏸ Phase 3+ | 파일·HiCloud |
+| `uploadFile` / `uploadFiles` | — | ⏸ | 로컬 파일 (선택) |
+| `cloudAttach` | — | ❌ 제외 | HiCloud — KC-007 범위 외 |
 | `PUT /session/jwt-team-code` | — | ⏸ | 세션·팀 전환 — auth-bridge 보강 시 |
 | `GET /healthCheck.json` | `/actuator/health` | ✅ | 벤더 health는 별도 |
 

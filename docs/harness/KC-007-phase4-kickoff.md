@@ -20,7 +20,7 @@
 | 4-O3 | Decommission runbook·legacy DEPRECATED | Contract | 진행 |
 | 4-O4 | `smoke-phase4.sh` (G8) | QA | 진행 |
 | 4-X1 | legacy CI → path-trigger 유지 | QA | [x] 기존 |
-| 4-X2 | 파일 업로드·HiCloud | — | 보류 (3-X3) |
+| 4-X2 | 로컬 파일 업로드 | — | 선택 |
 | 4-X3 | SSO IdP 직접 연동 | — | Phase 4+ |
 
 ## 분배
