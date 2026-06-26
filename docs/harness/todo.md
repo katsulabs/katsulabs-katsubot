@@ -51,7 +51,7 @@
 
 **DoD 잔여**
 
-- [ ] 로컬 E2E: [phase1-local-smoke.md](./phase1-local-smoke.md) 수행
+- [x] 로컬 E2E: [phase1-local-smoke.md](./phase1-local-smoke.md) (`smoke-phase1.sh` PASS)
 - [ ] PR 생성 (`katsubot-pr-harness-gate`)
 
 ## 보류
