@@ -34,7 +34,7 @@ buildNumber.properties
 
 # Node.js
 node_modules/
-apps/chat-web/dist/
+apps/katsubot-web/dist/
 
 # Gradle
 .gradle/

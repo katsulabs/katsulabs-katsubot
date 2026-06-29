@@ -20,6 +20,8 @@ export GATEWAY_DEV_CORP_CODE="${GATEWAY_DEV_CORP_CODE:-00}"
 export GATEWAY_DEV_PG_CODE="${GATEWAY_DEV_PG_CODE:-H}"
 export GATEWAY_DEV_PU_CODE="${GATEWAY_DEV_PU_CODE:-H01}"
 export GATEWAY_DEV_TEAM_CODE="${GATEWAY_DEV_TEAM_CODE:-65H00}"
+export GATEWAY_DEV_USER_NAME="${GATEWAY_DEV_USER_NAME:-한재혁}"
+export GATEWAY_DEV_TEAM_NAME="${GATEWAY_DEV_TEAM_NAME:-효성기술원 PP/DH연구팀}"
 export GATEWAY_DEV_ROLES="${GATEWAY_DEV_ROLES:-ROLE_USER,ROLE_ADMIN}"
 export GATEWAY_DEV_JWT_EXP_HOURS="${GATEWAY_DEV_JWT_EXP_HOURS:-87600}"
 
@@ -33,6 +35,8 @@ payload = {
     "pgCode": os.environ["GATEWAY_DEV_PG_CODE"],
     "puCode": os.environ["GATEWAY_DEV_PU_CODE"],
     "teamCode": os.environ["GATEWAY_DEV_TEAM_CODE"],
+    "userName": os.environ["GATEWAY_DEV_USER_NAME"],
+    "teamName": os.environ["GATEWAY_DEV_TEAM_NAME"],
     "roles": os.environ["GATEWAY_DEV_ROLES"].split(","),
     "iat": now,
     "exp": now + int(os.environ["GATEWAY_DEV_JWT_EXP_HOURS"]) * 3600,

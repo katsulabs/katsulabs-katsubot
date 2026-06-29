@@ -24,4 +24,4 @@ export KATSUBOT_ADMIN_DB_PASSWORD="${KATSUBOT_ADMIN_DB_PASSWORD:-}"
 # JWT 서명: HYOBEE_JWT_SECRET → KATSUBOT_AUTH_JWT_SECRET (scripts/lib/jwt-env.sh)
 
 cd "$ROOT"
-exec ./gradlew :services:chat-api:bootRun
+exec ./gradlew :services:katsubot-api:bootRun

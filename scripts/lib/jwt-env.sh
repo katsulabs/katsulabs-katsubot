@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Hyobee SECRET_KEY (legacy XtrmConfig.properties) — chat-api·Gateway 공통 JWT 서명 키
+# Hyobee SECRET_KEY (legacy XtrmConfig.properties) — katsubot-api·Gateway 공통 JWT 서명 키
 resolve_hyobee_jwt_secret() {
   echo "${HYOBEE_JWT_SECRET:-${KATSUBOT_AUTH_JWT_SECRET:-${GATEWAY_JWT_SECRET:-}}}"
 }

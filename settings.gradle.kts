@@ -14,5 +14,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "katsulabs-katsubot"
 
-include("services:chat-api")
-project(":services:chat-api").projectDir = file("services/api")
+include("services:katsubot-api")
+project(":services:katsubot-api").projectDir = file("services/katsubot-api")

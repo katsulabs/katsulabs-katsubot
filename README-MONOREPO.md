@@ -2,8 +2,8 @@
 
 | 모듈 | 경로 | 명령 |
 |------|------|------|
-| **chat-api** (Boot 4.1, JDK 25) | `services/chat-api` | `./gradlew :services:chat-api:test` |
-| **chat-web** (React) | `apps/chat-web` | `npm ci && npm test && npm run build` |
+| **katsubot-api** (Boot 4.1, JDK 25) | `services/katsubot-api` | `./gradlew :services:katsubot-api:test` |
+| **katsubot-web** (React) | `apps/katsubot-web` | `npm ci && npm test && npm run build` |
 | **legacy hyobee** (Boot 2.7 WAR) | `legacy/hyobee` | `mvn test` (JDK 21) |
 | **infra** | `infra/` | Postgres · [AI Gateway](https://github.com/katsulabs/katsulabs-ai-gateway) |
 
@@ -15,11 +15,11 @@ cp infra/.env.example infra/.env   # DB 비밀번호·JWT 채우기
 ./scripts/up-ai-gateway.sh
 curl -s http://localhost:8090/_health
 
-# 2) chat-api
-./scripts/boot-chat-api.sh   # :8081
+# 2) katsubot-api
+./scripts/boot-katsubot-api.sh   # :8081
 
-# 3) chat-web
-cd apps/chat-web && npm run dev                  # :5173
+# 3) katsubot-web
+cd apps/katsubot-web && npm run dev                  # :5173
 ```
 
 **CI·오프라인 스텁** (8090 — gateway와 동시 기동 금지):

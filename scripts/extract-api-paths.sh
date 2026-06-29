@@ -4,7 +4,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CONTRACT="${ROOT}/packages/api-contract/openapi.yaml"
-CHAT_API_URL="${CHAT_API_URL:-http://localhost:8081}"
+KATSUBOT_API_URL="${KATSUBOT_API_URL:-http://localhost:8081}"
 
 echo "=== packages/api-contract/openapi.yaml ==="
 if command -v yq >/dev/null 2>&1; then
@@ -14,15 +14,15 @@ else
 fi
 
 echo ""
-echo "=== chat-api runtime (/v3/api-docs) ==="
-if curl -sf "${CHAT_API_URL}/v3/api-docs" >/tmp/katsubot-openapi.json 2>/dev/null; then
+echo "=== katsubot-api runtime (/v3/api-docs) ==="
+if curl -sf "${KATSUBOT_API_URL}/v3/api-docs" >/tmp/katsubot-openapi.json 2>/dev/null; then
   if command -v jq >/dev/null 2>&1; then
     jq -r '.paths | keys[]' /tmp/katsubot-openapi.json | sort
   else
     echo "(jq 없음 — /tmp/katsubot-openapi.json 저장됨)"
   fi
 else
-  echo "(chat-api 미기동 — CHAT_API_URL=${CHAT_API_URL})"
+  echo "(katsubot-api 미기동 — KATSUBOT_API_URL=${KATSUBOT_API_URL})"
 fi
 
 echo ""

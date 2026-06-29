@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# chat-api gateway 프로필 + live AI Gateway E2E (P5-B)
+# katsubot-api gateway 프로필 + live AI Gateway E2E (P5-B)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ENV_FILE="$ROOT/infra/.env"
-BASE_URL="${CHAT_API_BASE_URL:-http://localhost:8081}"
+BASE_URL="${KATSUBOT_API_BASE_URL:-http://localhost:8081}"
 GATEWAY_URL="${RAG_SERVICE_BASE_URL:-http://localhost:8090}"
 
 if [[ -f "$ENV_FILE" ]]; then
@@ -27,7 +27,7 @@ USER_ID="${GATEWAY_DEV_USER_ID:-test20230128}"
 echo "==> Gateway health: $GATEWAY_URL/_health"
 curl -sf "$GATEWAY_URL/_health" | grep -q '"status":"ok"'
 
-echo "==> chat-api health: $BASE_URL/actuator/health"
+echo "==> katsubot-api health: $BASE_URL/actuator/health"
 curl -sf "$BASE_URL/actuator/health" | grep -q '"status":"UP"'
 
 echo "==> Create conversation (BFF)"

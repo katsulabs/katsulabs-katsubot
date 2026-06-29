@@ -1,17 +1,17 @@
-name: chat-api CI
+name: katsubot-api CI
 
 on:
   pull_request:
     paths:
-      - 'services/chat-api/**'
+      - 'services/katsubot-api/**'
       - 'gradle/**'
       - 'settings.gradle.kts'
       - 'build.gradle.kts'
-      - '.github/workflows/chat-api-ci.yml'
+      - '.github/workflows/katsubot-api-ci.yml'
   push:
     branches: [main]
     paths:
-      - 'services/chat-api/**'
+      - 'services/katsubot-api/**'
       - 'gradle/**'
       - 'settings.gradle.kts'
       - 'build.gradle.kts'
@@ -26,4 +26,4 @@ jobs:
           distribution: temurin
           java-version: '25'
       - name: Gradle test
-        run: ./gradlew :services:chat-api:test --no-daemon
+        run: ./gradlew :services:katsubot-api:test --no-daemon
