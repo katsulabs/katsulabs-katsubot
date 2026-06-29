@@ -1,6 +1,6 @@
 spring:
   application:
-    name: chat-api-test
+    name: katsubot-api-test
   profiles:
     active: in-memory
 

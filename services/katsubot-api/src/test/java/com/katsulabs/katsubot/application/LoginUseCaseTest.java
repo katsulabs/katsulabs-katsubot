@@ -93,11 +93,13 @@ class LoginUseCaseTest {
                 "ko"
         );
 
-        String token = loginUseCase.login(command, session);
-        assertThat(token).isNotBlank();
+        LoginResult result = loginUseCase.login(command, session);
+        assertThat(result.token()).isNotBlank();
+        assertThat(result.userName()).isEqualTo("User");
+        assertThat(result.teamName()).isEqualTo("Team");
 
         var validator = new LegacyJwtTokenValidator(new AuthProperties(false, "dev-token", TEST_SECRET, "1000", 5, false, null, 87600L));
-        var user = validator.validate(token);
+        var user = validator.validate(result.token());
         assertThat(user).isPresent();
         assertThat(user.get().userId()).isEqualTo(userId);
         assertThat(user.get().corpCode()).isEqualTo("00");

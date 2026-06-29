@@ -23,10 +23,12 @@ public class BearerAuthFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/actuator")
+        if (path.startsWith("/actuator")
                 || path.startsWith("/v3/api-docs")
-                || path.startsWith("/swagger-ui")
-                || path.startsWith("/api/v1/auth");
+                || path.startsWith("/swagger-ui")) {
+            return true;
+        }
+        return "/api/v1/auth/login".equals(path) || "/api/v1/auth/encrypt-key".equals(path);
     }
 
     @Override
@@ -45,7 +47,10 @@ public class BearerAuthFilter extends OncePerRequestFilter {
         }
 
         if (authProperties.devBypass() && authProperties.devToken().equals(token)) {
-            request.setAttribute(AuthContext.USER_ID_ATTRIBUTE, "dev-user");
+            String userId = jwtTokenValidator.validate(token)
+                    .map(AuthenticatedUser::userId)
+                    .orElse("dev-user");
+            request.setAttribute(AuthContext.USER_ID_ATTRIBUTE, userId);
             request.setAttribute(AuthContext.BEARER_TOKEN_ATTRIBUTE, token);
             filterChain.doFilter(request, response);
             return;

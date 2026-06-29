@@ -38,7 +38,7 @@ public class LoginUseCase {
         }
     }
 
-    public String login(EncryptedLoginCommand command, HttpSession session) {
+    public LoginResult login(EncryptedLoginCommand command, HttpSession session) {
         DecryptedLogin decrypted = decryptLoginFields(command, session);
         String userId = validatePassword(
                 decrypted.companyCode(),
@@ -51,18 +51,21 @@ public class LoginUseCase {
                         "PASSWORD_CHANGE_ERROR02",
                         "아이디 또는 비밀번호가 올바르지 않습니다."
                 ));
-        return issueTokenForProfile(profile);
+        return issueResultForProfile(profile);
     }
 
-    private String issueTokenForProfile(AdminChatUser profile) {
-        return jwtTokenIssuer.issueToken(
+    private LoginResult issueResultForProfile(AdminChatUser profile) {
+        String token = jwtTokenIssuer.issueToken(
                 profile.userId(),
                 profile.corpCode(),
                 profile.pgCode(),
                 profile.puCode(),
                 profile.teamCode(),
+                profile.userName(),
+                profile.teamName(),
                 List.of("ROLE_USER", "ROLE_ADMIN")
         );
+        return new LoginResult(token, profile.userName(), profile.teamName());
     }
 
     private DecryptedLogin decryptLoginFields(EncryptedLoginCommand command, HttpSession session) {

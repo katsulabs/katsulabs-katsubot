@@ -1,6 +1,6 @@
 spring:
   application:
-    name: chat-api
+    name: katsubot-api
   profiles:
     # in-memory | jpa | gateway (AI Gateway upstream — hyobee-rag-db)
     active: ${SPRING_PROFILES_ACTIVE:in-memory}

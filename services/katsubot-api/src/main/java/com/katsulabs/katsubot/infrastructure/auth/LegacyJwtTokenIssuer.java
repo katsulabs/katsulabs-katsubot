@@ -23,6 +23,8 @@ public class LegacyJwtTokenIssuer {
             String pgCode,
             String puCode,
             String teamCode,
+            String userName,
+            String teamName,
             List<String> roles
     ) {
         SecretKey signingKey = LegacyJwtTokenValidator.resolveSigningKey(authProperties.jwtSecret());
@@ -36,6 +38,12 @@ public class LegacyJwtTokenIssuer {
         claims.put("puCode", puCode);
         claims.put("teamCode", teamCode);
         claims.put("roles", roles);
+        if (userName != null && !userName.isBlank()) {
+            claims.put("userName", userName);
+        }
+        if (teamName != null && !teamName.isBlank()) {
+            claims.put("teamName", teamName);
+        }
 
         Instant now = Instant.now();
         Instant expiresAt = now.plusSeconds(authProperties.jwtExpireHours() * 3600L);

@@ -102,7 +102,7 @@ public class RagHttpClient implements RagCompletionPort {
             if (node.has("delta")) {
                 chunkHandler.accept(RagStreamChunk.delta(node.get("delta").asText()));
             }
-            // Gateway Phase 2+: {"source":{...}} — chat-api는 무시 (하위 호환)
+            // Gateway Phase 2+: {"source":{...}} — katsubot-api는 무시 (하위 호환)
         } catch (Exception ignored) {
             // malformed SSE line — skip
         }

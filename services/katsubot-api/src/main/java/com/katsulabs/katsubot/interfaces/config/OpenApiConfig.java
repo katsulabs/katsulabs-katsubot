@@ -16,13 +16,13 @@ public class OpenApiConfig {
     OpenAPI katsubotOpenApi() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Katsubot chat-api")
+                        .title("Katsubot katsubot-api")
                         .version("0.2.0")
                         .description("""
-                                browser ↔ chat-api REST/SSE 계약.
+                                browser ↔ katsubot-api REST/SSE 계약.
                                 RAG outbound 경로는 `docs/modernization/api-path-inventory.md` 참고.
                                 """))
-                .addServersItem(new Server().url("http://localhost:8081").description("로컬 chat-api"))
+                .addServersItem(new Server().url("http://localhost:8081").description("로컬 katsubot-api"))
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth", new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)
