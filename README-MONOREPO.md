@@ -1,5 +1,7 @@
 # Katsubot — 모노레포
 
+> **진입점:** 상세 개요·아키텍처는 루트 [README.md](./README.md)를 참고하세요. 아래는 모듈·명령 빠른 참조입니다.
+
 | 모듈 | 경로 | 명령 |
 |------|------|------|
 | **katsubot-api** (Boot 4.1, JDK 25) | `services/katsubot-api` | `./gradlew :services:katsubot-api:test` |
@@ -36,4 +38,4 @@ cd infra && docker compose --profile stub up -d dummy-rag
 - [01-project-conventions.md](docs/01-project-conventions.md) — 운영 규칙
 - [docs/README.md](docs/README.md) — 문서 목차
 
-레거시 Hyobee 상세 실행 방법은 기존 README 본문 및 `legacy/hyobee/`를 참고합니다.
+레거시 Hyobee 상세 실행 방법은 [legacy/hyobee/README.md](./legacy/hyobee/README.md)를 참고합니다.
