@@ -1,7 +1,7 @@
 # Phase 2 Strangler Proxy 스모크
 
-> Reverse proxy: `/api/v1/**` → chat-api, `/xs/**` · `/webapps/**` → legacy  
-> **Phase 4:** `/` → chat-web SPA — [phase4-cutover-smoke.md](./phase4-cutover-smoke.md)
+> Reverse proxy: `/api/v1/**` → katsubot-api, `/xs/**` · `/webapps/**` → legacy  
+> **Phase 4:** `/` → katsubot-web SPA — [phase4-cutover-smoke.md](./phase4-cutover-smoke.md)
 
 ## 구성
 
@@ -17,10 +17,10 @@ cd infra
 docker compose up -d postgres dummy-rag
 ```
 
-호스트에서 chat-api:
+호스트에서 katsubot-api:
 
 ```bash
-SPRING_PROFILES_ACTIVE=jpa ./gradlew :services:chat-api:bootRun
+SPRING_PROFILES_ACTIVE=jpa ./gradlew :services:katsubot-api:bootRun
 ```
 
 선택 — legacy SSO (포트 8080):
@@ -38,7 +38,7 @@ docker compose -f docker-compose.yml -f docker-compose.strangler.yml up -d stran
 
 | 변수 | 기본 | 설명 |
 |------|------|------|
-| `CHAT_API_UPSTREAM` | `host.docker.internal:8081` | chat-api |
+| `KATSUBOT_API_UPSTREAM` | `host.docker.internal:8081` | katsubot-api |
 | `LEGACY_UPSTREAM` | `host.docker.internal:8080` | legacy WAR |
 
 Health: `curl -s http://localhost:8088/healthz` → `ok`
@@ -50,7 +50,7 @@ Health: `curl -s http://localhost:8088/healthz` → `ok`
 curl -s http://localhost:8088/api/v1/conversations \
   -H "Authorization: Bearer dev-token"
 
-# chat-api 직접 (비교)
+# katsubot-api 직접 (비교)
 curl -s http://localhost:8081/actuator/health
 
 # 레거시 (legacy 기동 시)

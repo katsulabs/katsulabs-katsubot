@@ -14,15 +14,15 @@
 
 ## Phase 4 (머지 완료)
 
-- Strangler `:8088` — `/` → chat-web SPA
-- `chat-web/Dockerfile`, decommission runbook
+- Strangler `:8088` — `/` → katsubot-web SPA
+- `katsubot-web/Dockerfile`, decommission runbook
 - `smoke-phase4.sh` (G8)
 - HiCloud `cloudAttach` — **KC-007 범위 외**
 
 ## 스모크 (로컬)
 
 ```bash
-./gradlew :services:chat-api:bootRun
+./gradlew :services:katsubot-api:bootRun
 cd infra && docker compose -f docker-compose.strangler.yml up -d --build
 PROXY_BASE=http://localhost:8088 ./scripts/smoke-phase4.sh
 ```

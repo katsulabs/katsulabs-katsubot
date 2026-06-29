@@ -10,11 +10,11 @@ cp infra/.env.example infra/.env   # DB 비밀번호·JWT 채우기
 ./scripts/up-ai-gateway.sh
 curl -s http://localhost:8090/_health
 
-# 2) chat-api
-./scripts/boot-chat-api.sh   # :8081
+# 2) katsubot-api
+./scripts/boot-katsubot-api.sh   # :8081
 
-# 3) chat-web
-cd apps/chat-web && npm run dev   # :5173
+# 3) katsubot-web
+cd apps/katsubot-web && npm run dev   # :5173
 ```
 
 **CI·오프라인 스텁** (8090 — gateway와 동시 기동 금지):
@@ -29,8 +29,8 @@ cd infra && docker compose --profile stub up -d dummy-rag
 
 | 모듈 | 경로 | 명령 |
 |------|------|------|
-| chat-api | `services/chat-api` | `./gradlew :services:chat-api:test` |
-| chat-web | `apps/chat-web` | `npm ci && npm test && npm run build` |
+| katsubot-api | `services/katsubot-api` | `./gradlew :services:katsubot-api:test` |
+| katsubot-web | `apps/katsubot-web` | `npm ci && npm test && npm run build` |
 | legacy hyobee | `legacy/hyobee` | `mvn test` (JDK 21) |
 
 ## 1. 인프라
@@ -53,18 +53,18 @@ cd infra && docker compose up -d dummy-rag
 cd infra && docker compose up -d postgres
 ```
 
-## 2. chat-api
+## 2. katsubot-api
 
 **인메모리 (기본):**
 
 ```bash
-./gradlew :services:chat-api:bootRun
+./gradlew :services:katsubot-api:bootRun
 ```
 
 **Postgres + Flyway:**
 
 ```bash
-SPRING_PROFILES_ACTIVE=jpa ./gradlew :services:chat-api:bootRun
+SPRING_PROFILES_ACTIVE=jpa ./gradlew :services:katsubot-api:bootRun
 ```
 
 | 변수 | 기본 | 설명 |
@@ -77,10 +77,10 @@ SPRING_PROFILES_ACTIVE=jpa ./gradlew :services:chat-api:bootRun
 
 Health: `curl -s http://localhost:8081/actuator/health`
 
-## 3. chat-web
+## 3. katsubot-web
 
 ```bash
-cd apps/chat-web && npm run dev
+cd apps/katsubot-web && npm run dev
 ```
 
 브라우저: http://localhost:5173 — 메시지 전송 후 RAG 스트리밍 확인.
@@ -103,7 +103,7 @@ export KATSUBOT_AUTH_JWT_SECRET='<레거시 SECRET_KEY>'
 
 ```bash
 cd infra && docker compose up -d postgres dummy-rag
-./gradlew :services:chat-api:bootRun   # 별도 터미널
+./gradlew :services:katsubot-api:bootRun   # 별도 터미널
 cd infra && docker compose -f docker-compose.yml -f docker-compose.strangler.yml up -d --build
 PROXY_BASE=http://localhost:8088 ./scripts/smoke-phase4.sh
 ```

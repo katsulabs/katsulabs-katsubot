@@ -36,12 +36,12 @@ API_BASE=http://localhost:8082 ./scripts/smoke-phase2.sh
 API_BASE=http://localhost:8082 PROXY_BASE=http://localhost:8088 ./scripts/smoke-phase2.sh
 ```
 
-- `/api/v1/**` → chat-api 라우팅 — **PASS**
+- `/api/v1/**` → katsubot-api 라우팅 — **PASS**
 
 ## CI
 
-- chat-api CI — green (PR #2)
-- chat-web CI — green (PR #2)
+- katsubot-api CI — green (PR #2)
+- katsubot-web CI — green (PR #2)
 
 ## 비고
 

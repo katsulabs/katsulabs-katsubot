@@ -10,7 +10,7 @@
 | **수신 repo** | [katsulabs-ai-gateway](https://github.com/katsulabs/katsulabs-ai-gateway) |
 | **발신 repo** | katsulabs-katsubot (본 문서 + OpenAPI + 프롬프트) |
 | **목표** | Hyobee BFF가 `WRTN_BASEURL`만 Gateway URL로 바꿔 **동일 경로·계약**으로 재연결 |
-| **부가 목표** | chat-api `RagHttpClient`용 `/v1/completions`는 **유지·확장** (얇은 어댑터 또는 공유 코어) |
+| **부가 목표** | katsubot-api `RagHttpClient`용 `/v1/completions`는 **유지·확장** (얇은 어댑터 또는 공유 코어) |
 
 ## 2. 첨부 산출물 (이 repo)
 
@@ -20,7 +20,7 @@
 | [`packages/api-contract/wrtn-upstream-openapi.yaml`](../../packages/api-contract/wrtn-upstream-openapi.yaml) | 역공학 원본 (참고) |
 | [`docs/modernization/wrtn-upstream-api.md`](./wrtn-upstream-api.md) | API 목록·Hyobee 후처리·인증 분기 설명 |
 | [`docs/modernization/wrtn-to-ai-gateway-prompt.md`](./wrtn-to-ai-gateway-prompt.md) | Gateway repo 에이전트/개발자용 **복붙 프롬프트** |
-| [`docs/rag-external-client.md`](../rag-external-client.md) | chat-api ↔ Gateway **기존** 얇은 계약 (`/v1/completions`) |
+| [`docs/rag-external-client.md`](../rag-external-client.md) | katsubot-api ↔ Gateway **기존** 얇은 계약 (`/v1/completions`) |
 
 ### 근거 Java (katsubot)
 
@@ -41,7 +41,7 @@ flowchart LR
   end
   subgraph after [After — 목표]
     H2[Hyobee BFF] --> GW[katsulabs-ai-gateway]
-    CA[chat-api] --> GW
+    CA[katsubot-api] --> GW
     H2 -.->|Strangler 전환기| CA
   end
 ```
@@ -75,7 +75,7 @@ WRTN_BASEURL=https://<ai-gateway-host>   # 기존 wrtn.ai URL → Gateway
 | **P2** | GET | `.../related-items` | `selectJournalRelatedItems` | 연관 저널 |
 | **P2** | GET | `.../ai-summary` | `selectJournalAiSummary` | AI 요약 |
 
-### chat-api 전용 (WRTN 경로 아님 — **유지**)
+### katsubot-api 전용 (WRTN 경로 아님 — **유지**)
 
 | Method | Path | 비고 |
 |--------|------|------|
@@ -125,7 +125,7 @@ Authorization: Bearer <JWT>
 
 > Gateway `/v1/completions`의 `data: {"delta"}` 형식과 **다름**.  
 > Hyobee drop-in 호환을 위해 **`/api/v1/.../ai-chat`은 WRTN SSE 형식**을 구현해야 한다.  
-> `/v1/completions`는 chat-api용 **어댑터 레이어**로 같은 생성 코어를 감싸면 된다.
+> `/v1/completions`는 katsubot-api용 **어댑터 레이어**로 같은 생성 코어를 감싸면 된다.
 
 ## 6. 인증
 
@@ -146,11 +146,11 @@ Gateway에서 최소 구현:
 
 WRTN은 대화·메시지·피드백을 **자체 저장**했다. 폐기 후 Gateway가 P0 CRUD를 맡으면:
 
-- **Postgres** (권장): `conversations`, `messages`, `message_feedback` — katsubot chat-api Flyway 스키마 참고  
-  `services/api/src/main/resources/db/migration/V1__conversation_schema.sql`
-- 또는 Hyobee/ chat-api DB로 **위임 API** (Gateway는 inference only) — 이 경우 P0 CRUD는 chat-api로 트래픽 전환 필요 (**Hyobee URL 변경만으로는 불가**)
+- **Postgres** (권장): `conversations`, `messages`, `message_feedback` — katsubot katsubot-api Flyway 스키마 참고  
+  `services/katsubot-api/src/main/resources/db/migration/V1__conversation_schema.sql`
+- 또는 Hyobee/ katsubot-api DB로 **위임 API** (Gateway는 inference only) — 이 경우 P0 CRUD는 katsubot-api로 트래픽 전환 필요 (**Hyobee URL 변경만으로는 불가**)
 
-**권장:** Gateway에 WRTN 호환 persistence + inference **단일 서비스**로 P0 먼저, Strangler로 chat-api 트래픽을 점진 이전.
+**권장:** Gateway에 WRTN 호환 persistence + inference **단일 서비스**로 P0 먼저, Strangler로 katsubot-api 트래픽을 점진 이전.
 
 ## 8. Hyobee가 Gateway에 기대하지 않는 것 (BFF 책임)
 
@@ -182,7 +182,7 @@ WRTN은 대화·메시지·피드백을 **자체 저장**했다. 폐기 후 Gate
 - [ ] R&D 5 API + boards/auth
 - [ ] `web_search_enabled=true` 시 검색 경로 동작
 
-### chat-api Gate (기존)
+### katsubot-api Gate (기존)
 
 - [ ] `RAG_SERVICE_BASE_URL` → Gateway `/_health` + `/v1/completions` SSE (`scripts/smoke-phase3.sh`)
 
@@ -204,7 +204,7 @@ WRTN은 대화·메시지·피드백을 **자체 저장**했다. 폐기 후 Gate
 
 | # | 질문 | 옵션 |
 |---|------|------|
-| 1 | 대화 DB를 Gateway vs chat-api 중 어디에 둘 것인가? | Gateway WRTN compat DB / chat-api 단일 소스 |
+| 1 | 대화 DB를 Gateway vs katsubot-api 중 어디에 둘 것인가? | Gateway WRTN compat DB / katsubot-api 단일 소스 |
 | 2 | R&D 벡터 인덱스·원본 데이터 소스는? | WRTN 종속 데이터 마이그레이션 필요 여부 |
 | 3 | JWT 검증 키·issuer | Hyobee와 Gateway 공유 vs opaque token |
 | 4 | `web_search_enabled` | 외부 검색 API 연동 범위 |

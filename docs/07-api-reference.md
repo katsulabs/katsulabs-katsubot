@@ -1,25 +1,25 @@
 # 07 — API 참조
 
-> chat-api REST/SSE 경로·레거시 v2 parity. OpenAPI 단일 소스: [`packages/api-contract/openapi.yaml`](../packages/api-contract/openapi.yaml)
+> katsubot-api REST/SSE 경로·레거시 v2 parity. OpenAPI 단일 소스: [`packages/api-contract/openapi.yaml`](../packages/api-contract/openapi.yaml)
 
-Swagger UI: `http://localhost:8081/swagger-ui.html` · chat-web: http://localhost:5173/api-docs/
+Swagger UI: `http://localhost:8081/swagger-ui.html` · katsubot-web: http://localhost:5173/api-docs/
 
-## 1. Browser → chat-api
+## 1. Browser → katsubot-api
 
 | Method | Path | operationId | 사용처 |
 |--------|------|-------------|--------|
-| POST | `/api/v1/conversations` | `createConversation` | chat-web |
-| GET | `/api/v1/conversations` | `listConversations` | chat-web |
-| DELETE | `/api/v1/conversations` | `deleteConversations` | chat-web |
-| GET | `/api/v1/conversations/{conversationId}/messages` | `listMessages` | chat-web |
-| POST | `/api/v1/conversations/{conversationId}/messages` | `sendMessage` | chat-web (SSE) |
+| POST | `/api/v1/conversations` | `createConversation` | katsubot-web |
+| GET | `/api/v1/conversations` | `listConversations` | katsubot-web |
+| DELETE | `/api/v1/conversations` | `deleteConversations` | katsubot-web |
+| GET | `/api/v1/conversations/{conversationId}/messages` | `listMessages` | katsubot-web |
+| POST | `/api/v1/conversations/{conversationId}/messages` | `sendMessage` | katsubot-web (SSE) |
 | PUT | `.../messages/{messageId}/feedback` | `upsertMessageFeedback` | Phase 2+ |
 | DELETE | `.../feedback/{feedbackId}` | `deleteMessageFeedback` | Phase 2+ |
 | GET | `/api/v1/board-auth` | `listBoardAuth` | Phase 2+ |
 
 인증: `Authorization: Bearer <JWT>` (로컬: `dev-token`)
 
-## 2. chat-api → AI Gateway
+## 2. katsubot-api → AI Gateway
 
 Base: `RAG_SERVICE_BASE_URL` (기본 `http://localhost:8090`)
 
@@ -30,7 +30,7 @@ Base: `RAG_SERVICE_BASE_URL` (기본 `http://localhost:8090`)
 
 상세: [06-rag-contract.md](./06-rag-contract.md)
 
-## 3. chat-api → Legacy (legacy-bridge)
+## 3. katsubot-api → Legacy (legacy-bridge)
 
 | Method | Path | 구현 |
 |--------|------|------|

@@ -1,10 +1,10 @@
 # 06 — RAG 계약
 
-> LLM/RAG 추론은 **chat-api 밖** `katsulabs-ai-gateway`. chat-api는 HTTP/SSE 클라이언트만 둔다.
+> LLM/RAG 추론은 **katsubot-api 밖** `katsulabs-ai-gateway`. katsubot-api는 HTTP/SSE 클라이언트만 둔다.
 
 Gateway 상세: [katsulabs-ai-gateway `docs/contract/katsubot-integration.md`](https://github.com/katsulabs/katsulabs-ai-gateway/blob/main/docs/contract/katsubot-integration.md)
 
-## chat-api 내부 경계
+## katsubot-api 내부 경계
 
 ```text
 application/   SendMessageUseCase  ──►  RagCompletionPort (domain)
@@ -15,7 +15,7 @@ infrastructure/                    ◄──  RagHttpClient (WebClient → 외�
 |--------|------|------|
 | `domain/port` | `RagCompletionPort`, 요청/청크 모델 | WebClient, URL, Jackson |
 | `infrastructure/rag` | `RagHttpClient`, `RagServiceProperties` | 벡터 DB, 프롬프트, 에이전트 로직 |
-| 별도 AI Gateway | 검색·LLM·생성 | chat-api DB 직접 소유(선택) |
+| 별도 AI Gateway | 검색·LLM·생성 | katsubot-api DB 직접 소유(선택) |
 
 ## 설정
 
@@ -115,4 +115,4 @@ Accept: text/event-stream
 
 - [04-local-development.md](./04-local-development.md)
 - [08-ai-gateway-handoff.md](./08-ai-gateway-handoff.md)
-- [packages/api-contract/openapi.yaml](../packages/api-contract/openapi.yaml) — browser ↔ chat-api (RAG API 아님)
+- [packages/api-contract/openapi.yaml](../packages/api-contract/openapi.yaml) — browser ↔ katsubot-api (RAG API 아님)

@@ -10,7 +10,7 @@
 | **수신 repo** | [katsulabs-ai-gateway](https://github.com/katsulabs/katsulabs-ai-gateway) |
 | **발신 repo** | katsulabs-katsubot (본 문서 + OpenAPI) |
 | **목표** | Hyobee BFF가 `WRTN_BASEURL`만 Gateway URL로 바꿔 **동일 경로·계약**으로 재연결 |
-| **부가 목표** | chat-api `/v1/completions` **유지·확장** ([06-rag-contract.md](./06-rag-contract.md)) |
+| **부가 목표** | katsubot-api `/v1/completions` **유지·확장** ([06-rag-contract.md](./06-rag-contract.md)) |
 | **ID 형식 (v1.1.0)** | `conversation_id`, `message_id`, `feedback_id` — **UUID string** (WRTN integer 폐기) |
 
 ## 2. 첨부 산출물
@@ -44,7 +44,7 @@ WRTN_BASEURL=https://<ai-gateway-host>
 |------|------|
 | 대화 생성 | `user_query`/`title` → 50자 truncate (LLM 없음) |
 | 첫 `ai-chat` 완료 | placeholder 제목(`New chat`, `새 대화`)이면 Ollama **비스트리밍** 1회 호출로 제목 생성 → DB `conversations.title` 갱신 |
-| SSE `done` | 선택 필드 `title` — BFF `event:done`으로 전달, chat-web 사이드바 즉시 반영 |
+| SSE `done` | 선택 필드 `title` — BFF `event:done`으로 전달, katsubot-web 사이드바 즉시 반영 |
 
 LLM 비활성(`LLM_API_KEY` 없음) 시 첫 사용자 메시지 truncate fallback.
 
@@ -64,7 +64,7 @@ UUID 도입으로 `WrtnRequestMapper`·`dto/external/wrtn/**`에서 integer → 
 | **P2** | GET | `/api/v1/boards/auth` | `selectDataBoardsAuth` |
 | **P2** | GET | `/api/v2/rnd/journal/**` | R&D 저널 5 API |
 
-**chat-api 전용 (유지):** `GET /_health`, `POST /v1/completions`
+**katsubot-api 전용 (유지):** `GET /_health`, `POST /v1/completions`
 
 ## 4. SSE 계약 (Hyobee 호환)
 
@@ -90,13 +90,13 @@ Hyobee는 upstream에서 **JSON 한 줄씩** 수신 (`text/event-stream`).
 WRTN compat P0 CRUD는 Gateway Postgres 권장.
 
 - **PK:** UUID (`gen_random_uuid()`)
-- **스키마 참고:** `services/api/src/main/resources/db/migration/V1__conversation_schema.sql`, `V2__message_feedback.sql`
+- **스키마 참고:** `services/katsubot-api/src/main/resources/db/migration/V1__conversation_schema.sql`, `V2__message_feedback.sql`
 - OpenAPI: `ai-gateway-wrtn-replacement-openapi.yaml` v1.1.0
 
 ## 7. 완료 기준
 
 **P0:** Hyobee `WRTN_BASEURL=<gateway>` — health + conversation + ai-chat SSE 1회  
-**chat-api:** `RAG_SERVICE_BASE_URL` → `/_health` + `/v1/completions` (`scripts/smoke-phase3.sh`)
+**katsubot-api:** `RAG_SERVICE_BASE_URL` → `/_health` + `/v1/completions` (`scripts/smoke-phase3.sh`)
 
 ## 8. katsubot 후속
 

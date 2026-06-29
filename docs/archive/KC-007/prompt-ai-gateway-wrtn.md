@@ -16,8 +16,8 @@ You are implementing **WRTN upstream API replacement** in **katsulabs-ai-gateway
 - The external WRTN API server (`WRTN_BASEURL`) has been **decommissioned**.
 - Legacy Hyobee BFF (`katsulabs-katsubot`) calls WRTN via `WrtnChatVendorClient.java` — 14 HTTP endpoints.
 - Goal: Gateway exposes **WRTN-compatible paths** so Hyobee changes `WRTN_BASEURL` to the Gateway host (plus minimal UUID mapper in Hyobee — P5-C).
-- chat-api uses Gateway via `POST /v1/completions` + `GET /_health` — **keep and reuse** the same inference core behind a WRTN SSE adapter.
-- chat-api `gateway` profile will call your `/api/v1/**` routes and translate to the modern browser contract — implement **faithful Gateway contract**, not browser UX.
+- katsubot-api uses Gateway via `POST /v1/completions` + `GET /_health` — **keep and reuse** the same inference core behind a WRTN SSE adapter.
+- katsubot-api `gateway` profile will call your `/api/v1/**` routes and translate to the modern browser contract — implement **faithful Gateway contract**, not browser UX.
 
 ### Source of truth (from katsubot repo)
 
@@ -30,7 +30,7 @@ You are implementing **WRTN upstream API replacement** in **katsulabs-ai-gateway
 | Java client (calls to re-home) | `legacy/hyobee/.../WrtnChatVendorClient.java` |
 | SSE consumer | `legacy/hyobee/.../ChatStreamServiceImpl.java` (processChunk) |
 | DTOs | `legacy/hyobee/.../dto/external/wrtn/**` |
-| DB reference (UUID) | `services/api/src/main/resources/db/migration/V1__conversation_schema.sql` |
+| DB reference (UUID) | `services/katsubot-api/src/main/resources/db/migration/V1__conversation_schema.sql` |
 | Auth claims | `docs/05-auth-bridge.md` |
 
 ### Implementation priorities
@@ -38,7 +38,7 @@ You are implementing **WRTN upstream API replacement** in **katsulabs-ai-gateway
 **P0 — service cannot run without these**
 
 1. `GET /_health`
-2. `POST /api/v1/conversations/{conversationId}/ai-chat?web_search_enabled={bool}` — SSE with WRTN JSON-line format (NOT chat-api `data: {delta}` format)
+2. `POST /api/v1/conversations/{conversationId}/ai-chat?web_search_enabled={bool}` — SSE with WRTN JSON-line format (NOT katsubot-api `data: {delta}` format)
 3. `GET/POST /api/v1/conversations`, `GET /api/v1/conversations/{id}/messages` — conversation + message persistence
 
 **P1**
@@ -82,7 +82,7 @@ Upstream sends **one JSON object per line** on `text/event-stream`:
 
 Chunks may include `sources[]` with: `source_type`, `source_title`, `display_title`, `url`, `source_id`, `doc_type`, `board_id`.
 
-Hyobee forwards these to the browser; do **not** use chat-api's `data: {"delta"}` format on `/ai-chat`.
+Hyobee forwards these to the browser; do **not** use katsubot-api's `data: {"delta"}` format on `/ai-chat`.
 
 Implement `/v1/completions` as a **thin adapter** over the same generation pipeline:
 
@@ -132,9 +132,9 @@ Gateway **owns Postgres** for P0 CRUD:
 
 ### Do not
 
-- Break existing `POST /v1/completions` used by chat-api
+- Break existing `POST /v1/completions` used by katsubot-api
 - Emit integer `conversation_id` / `message_id`
-- Use chat-api SSE format on `/ai-chat`
+- Use katsubot-api SSE format on `/ai-chat`
 - Assume zero-downtime — focus on **external API replacement**
 
 ## PROMPT END

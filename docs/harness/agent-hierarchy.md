@@ -9,8 +9,8 @@
 | Agent | 역할 | 수정 범위 |
 |-------|------|-----------|
 | **Contract** | OpenAPI·Port·인증 브릿지 문서 | `docs/**`, `packages/api-contract/**` |
-| **Backend** | Use Case·인프라·테스트 | `services/chat-api/**` |
-| **Frontend** | React·SSE·API 클라이언트 | `apps/chat-web/**` |
+| **Backend** | Use Case·인프라·테스트 | `services/katsubot-api/**` |
+| **Frontend** | React·SSE·API 클라이언트 | `apps/katsubot-web/**` |
 | **QA** | CI·스모크·PR 게이트 | 테스트, `.github/workflows/**`, `docs/harness/**` |
 
 ## 분배 태그
@@ -27,7 +27,7 @@
 ## 병렬 정책
 
 - 서로 다른 worktree/브랜치
-- 경로 비중첩: `services/chat-api/**` vs `apps/chat-web/**`
+- 경로 비중첩: `services/katsubot-api/**` vs `apps/katsubot-web/**`
 - OpenAPI 계약 Contract 선행 확정
 
 불명확하면 **Contract → Backend → Frontend → QA** 순차 진행.

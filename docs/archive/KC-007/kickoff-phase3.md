@@ -16,7 +16,7 @@
 
 | ID | 작업 | 담당 | 상태 |
 |----|------|------|------|
-| 3-O1 | 운영 RAG 서비스 URL 확정·배포 | RAG/Infra | chat-api 밖 (Infra) |
+| 3-O1 | 운영 RAG 서비스 URL 확정·배포 | RAG/Infra | katsubot-api 밖 (Infra) |
 | 3-O2 | `RAG_SERVICE_BASE_URL` 전환·검증 | Backend/QA | [x] staging 프로필·`RagHealthIndicator` |
 | 3-O3 | OpenTelemetry trace 연동 | Backend/Infra | [x] OTel deps·staging 로그 패턴 |
 | 3-O4 | Secrets·배포 체크리스트 | QA | [x] [secrets-checklist.md](./secrets-checklist.md) |
@@ -49,7 +49,7 @@
 | 게이트 | 기준 | 상태 |
 |--------|------|------|
 | G6 | 스테이징 RAG E2E 1건 (SSE + 히스토리) | `smoke-phase3.sh` |
-| G7 | OTel trace RAG ↔ chat-api 상관 ID | 수동 (collector) |
+| G7 | OTel trace RAG ↔ katsubot-api 상관 ID | 수동 (collector) |
 
 ## 참고
 

@@ -3,8 +3,8 @@
 | 항목 | 값 |
 |------|-----|
 | 일시 | 2026-06-26 |
-| Proxy | `http://localhost:8088` (strangler + chat-web Docker) |
-| API | `http://localhost:8081` (chat-api 호스트) |
+| Proxy | `http://localhost:8088` (strangler + katsubot-web Docker) |
+| API | `http://localhost:8081` (katsubot-api 호스트) |
 | RAG | `http://localhost:8090` (dummy-rag) |
 | 스크립트 | `scripts/smoke-phase4.sh` |
 

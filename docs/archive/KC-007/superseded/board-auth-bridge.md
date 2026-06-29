@@ -1,4 +1,4 @@
-# Board Auth 브릿지 — 레거시 `board-auth` ↔ chat-api
+# Board Auth 브릿지 — 레거시 `board-auth` ↔ katsubot-api
 
 > **Phase 2:** 내부 게시판 접근 권한 목록을 `BoardAuthPort`로 추상화하고, 전환기에는 레거시 WRTN/DB 브릿지를 사용한다.
 
@@ -22,7 +22,7 @@
 
 ```mermaid
 flowchart LR
-  API[chat-api BoardAuthController]
+  API[katsubot-api BoardAuthController]
   Port[BoardAuthPort]
   Stub[StubBoardAuthAdapter]
   Legacy[LegacyBoardAuthClient]
@@ -58,7 +58,7 @@ public interface BoardAuthPort {
 
 ## 인증
 
-- chat-api: Bearer JWT (`sub` = userId)
+- katsubot-api: Bearer JWT (`sub` = userId)
 - 레거시 대조 시 `user_id` 쿼리는 **사용하지 않음** — JWT만 신뢰
 
 ## Phase 3+

@@ -13,8 +13,8 @@
 
 | # | 문서 | 내용 |
 |---|------|------|
-| 05 | [auth-bridge.md](./05-auth-bridge.md) | SSO/JWT ↔ chat-api |
-| 06 | [rag-contract.md](./06-rag-contract.md) | chat-api ↔ AI Gateway |
+| 05 | [auth-bridge.md](./05-auth-bridge.md) | SSO/JWT ↔ katsubot-api |
+| 06 | [rag-contract.md](./06-rag-contract.md) | katsubot-api ↔ AI Gateway |
 | 07 | [api-reference.md](./07-api-reference.md) | REST/SSE 경로·v2 parity |
 | 08 | [ai-gateway-handoff.md](./08-ai-gateway-handoff.md) | WRTN → Gateway 마이그레이션 |
 

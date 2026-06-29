@@ -16,7 +16,7 @@
 
 ## 목표
 
-1. Browser BFF(`chat-api /api/v1/**`)와 Gateway WRTN compat 간 **3-Tier Response** 확립
+1. Browser BFF(`katsubot-api /api/v1/**`)와 Gateway WRTN compat 간 **3-Tier Response** 확립
 2. katsulabs-ai-gateway P0 구현 (WRTN 대체)
 3. JWT 로그인 체계 **변경 없음** ([05-auth-bridge.md](./05-auth-bridge.md))
 
@@ -24,18 +24,18 @@
 
 | Tier | 경로 | ID | 에러 | SSE |
 |------|------|-----|------|-----|
-| **A** Browser BFF | `chat-api /api/v1/**` | UUID | `{code, message}` | `event: delta/done` |
+| **A** Browser BFF | `katsubot-api /api/v1/**` | UUID | `{code, message}` | `event: delta/done` |
 | **B** Gateway WRTN | `ai-gateway /api/v1/**` | **UUID** | `{error:{code,message}}` | JSON-line WRTN |
 | **C** RAG adapter | `ai-gateway /v1/completions` | — | — | `data: {delta}` |
 
-chat-api `gateway` 프로필이 Tier B → Tier A 변환(Anti-Corruption Layer).
+katsubot-api `gateway` 프로필이 Tier B → Tier A 변환(Anti-Corruption Layer).
 
 ## 단계
 
 | Phase | 범위 | 게이트 |
 |-------|------|--------|
 | **P5-A** | katsulabs-ai-gateway P0 | health + CRUD + ai-chat SSE |
-| **P5-B** | chat-api `gateway` 프로필 완성 | `./gradlew test` + 스모크 |
+| **P5-B** | katsubot-api `gateway` 프로필 완성 | `./gradlew test` + 스모크 |
 | **P5-C** | Hyobee `WRTN_BASEURL` + UUID mapper | legacy P0 |
 | **P5-D** | Strangler cutover | smoke-phase4 |
 | **P5-E** | Hyobee v2 채팅 축소 | 트래픽 0% |

@@ -26,11 +26,11 @@
 | -------- | --------------------------------------------------------------- |
 | 저장소 구조   | **구조안 B** — 모노레포 + Gradle 멀티모듈                                  |
 | Frontend | React + TypeScript + Vite                                       |
-| Backend  | Spring Boot 4.1, JDK 25, Gradle (`services/chat-api`)           |
+| Backend  | Spring Boot 4.1, JDK 25, Gradle (`services/katsubot-api`)           |
 | DB       | PostgreSQL (신규 `chat` 스키마, 레거시와 분리)                             |
 | RAG      | **별도 서비스** — `RagCompletionPort` + HTTP 클라이언트 (`RAG_SERVICE_BASE_URL`) |
 | ORM      | **JPA Optional** — 대화 메타만 JPA, 스트림·레거시 조회는 Adapter              |
-| CI/CD    | GitHub Actions 3종 (chat-api / chat-web / legacy)                |
+| CI/CD    | GitHub Actions 3종 (katsubot-api / katsubot-web / legacy)                |
 | 레거시      | `legacy/hyobee` 동결·축소, SSO는 전환기 브릿지                             |
 
 
@@ -88,8 +88,8 @@
 
 Epic 완료 시:
 
-1. `apps/chat-web` — React 채팅 UI, 외부 RAG(SSE) E2E
-2. `services/chat-api` — Clean Architecture, Boot 4.1, JDK 25, PostgreSQL, REST/SSE
+1. `apps/katsubot-web` — React 채팅 UI, 외부 RAG(SSE) E2E
+2. `services/katsubot-api` — Clean Architecture, Boot 4.1, JDK 25, PostgreSQL, REST/SSE
 3. `legacy/hyobee` — SSO·운영 경로 유지, Strangler proxy 준비
 4. `packages/api-contract` — OpenAPI 단일 계약
 5. GitHub Actions — 모듈별 CI green
@@ -115,11 +115,11 @@ Epic 완료 시:
 katsulabs-katsubot/
 ├── settings.gradle.kts
 ├── legacy/hyobee/              # Maven WAR (전환기 동결)
-├── services/chat-api/          # Boot 4.1, JDK 25
-├── apps/chat-web/              # React (Vite)
+├── services/katsubot-api/          # Boot 4.1, JDK 25
+├── apps/katsubot-web/              # React (Vite)
 ├── packages/api-contract/      # OpenAPI
 ├── infra/docker-compose.yml    # Postgres + dummy-rag
-└── .github/workflows/          # chat-api-ci, chat-web-ci, legacy-ci
+└── .github/workflows/          # katsubot-api-ci, katsubot-web-ci, legacy-ci
 ```
 
 ### 3.3 모듈 책임
@@ -128,12 +128,12 @@ katsulabs-katsubot/
 | 모듈                      | 빌드     | 책임                           |
 | ----------------------- | ------ | ---------------------------- |
 | `legacy/hyobee`         | Maven  | SSO, JSP, v2 API (축소 대상)     |
-| `services/chat-api`     | Gradle | BFF, Use Case, **RagCompletionPort** → 외부 HTTP |
-| `apps/chat-web`         | pnpm   | 채팅 SPA                       |
+| `services/katsubot-api`     | Gradle | BFF, Use Case, **RagCompletionPort** → 외부 HTTP |
+| `apps/katsubot-web`         | pnpm   | 채팅 SPA                       |
 | `packages/api-contract` | —      | OpenAPI · 생성 클라이언트           |
 
 
-### 3.4 Clean Architecture (`chat-api`)
+### 3.4 Clean Architecture (`katsubot-api`)
 
 ```text
 interfaces/      → REST, SSE
@@ -149,8 +149,8 @@ flowchart LR
   User[Browser]
   GW[Reverse Proxy]
   Legacy[legacy/hyobee]
-  API[services/chat-api]
-  Web[apps/chat-web]
+  API[services/katsubot-api]
+  Web[apps/katsubot-web]
 
   User --> Web
   Web --> GW
@@ -167,8 +167,8 @@ flowchart LR
 
 | 단계        | 트래픽                                 |
 | --------- | ----------------------------------- |
-| Phase 0–1 | React → chat-api; SSO는 레거시 redirect |
-| Phase 2   | 대화 CRUD → chat-api; v2 점진 축소        |
+| Phase 0–1 | React → katsubot-api; SSO는 레거시 redirect |
+| Phase 2   | 대화 CRUD → katsubot-api; v2 점진 축소        |
 | Phase 3+  | WRTN을 Port 어댑터로 통합                  |
 
 
@@ -192,7 +192,7 @@ flowchart LR
 ### 4.2 레거시 vs 신규
 
 
-|             | legacy/hyobee        | services/chat-api      |
+|             | legacy/hyobee        | services/katsubot-api      |
 | ----------- | -------------------- | ---------------------- |
 | Servlet     | `javax.`* / Tomcat 9 | `jakarta.*` / embedded |
 | Spring Boot | 2.7.x                | 4.1                    |
@@ -211,7 +211,7 @@ flowchart LR
 
 ### 4.4 RAG — 외부 클라이언트 (별도 서비스)
 
-RAG는 **chat-api에 내장하지 않는다.** `RagCompletionPort` 뒤에서 `RagHttpClient`가 `katsubot.rag.base-url`로 HTTP/SSE 호출한다 (레거시 `HyobeeChatApiClient` → WRTN 패턴).
+RAG는 **katsubot-api에 내장하지 않는다.** `RagCompletionPort` 뒤에서 `RagHttpClient`가 `katsubot.rag.base-url`로 HTTP/SSE 호출한다 (레거시 `HyobeeChatApiClient` → WRTN 패턴).
 
 상세 계약: **[06-rag-contract.md](./06-rag-contract.md)**
 
@@ -220,22 +220,22 @@ RAG는 **chat-api에 내장하지 않는다.** `RagCompletionPort` 뒤에서 `Ra
 | `infra/dummy-rag` | 로컬·CI용 **스텁** (별도 프로세스) |
 | 운영 RAG | 별도 팀/서비스 — URL만 `RAG_SERVICE_BASE_URL`로 교체 |
 
-Phase 3+ 에이전트·하이브리드 검색은 **RAG 서비스 내부**에서 진화; chat-api는 계약 유지.
+Phase 3+ 에이전트·하이브리드 검색은 **RAG 서비스 내부**에서 진화; katsubot-api는 계약 유지.
 
 ### 4.5 CI/CD (Phase 0)
 
 
 | Workflow          | 경로                     | 게이트                       |
 | ----------------- | ---------------------- | ------------------------- |
-| `chat-api-ci.yml` | `services/chat-api/**` | JDK 25, `./gradlew test`  |
-| `chat-web-ci.yml` | `apps/chat-web/**`     | `pnpm test`, `pnpm build` |
+| `katsubot-api-ci.yml` | `services/katsubot-api/**` | JDK 25, `./gradlew test`  |
+| `katsubot-web-ci.yml` | `apps/katsubot-web/**`     | `pnpm test`, `pnpm build` |
 | `legacy-ci.yml`   | `legacy/**`            | JDK 21, `mvn test` (터치 시) |
 
 
 ### 4.6 아키텍처 트렌드 (Phase 3+ 참고)
 
 - **Phase 1–2:** SSE + REST, `RagCompletionPort` + 외부 RAG 스텁, OpenAPI contract
-- **Phase 3+:** RAG 서비스 측 Router/Agentic (chat-api는 HTTP 계약 유지)
+- **Phase 3+:** RAG 서비스 측 Router/Agentic (katsubot-api는 HTTP 계약 유지)
 - 관측성: OpenTelemetry, 구조화 로그 (`conversation_id` 상관)
 
 ---
@@ -259,14 +259,14 @@ Phase 4  레거시 decommission  요구 시
 | --- | ---------------------------- | -------------------------------------------- |
 | 0-1 | 모노레포 디렉터리 스캐폴딩               | `legacy/`, `services/`, `apps/`, `packages/` |
 | 0-2 | `src/` → `legacy/hyobee/` 이동 | git history preserve                         |
-| 0-3 | chat-api Boot 4.1 skeleton   | `/actuator/health`                           |
-| 0-4 | chat-web Vite+React+TS       | dev server                                   |
+| 0-3 | katsubot-api Boot 4.1 skeleton   | `/actuator/health`                           |
+| 0-4 | katsubot-web Vite+React+TS       | dev server                                   |
 | 0-5 | docker-compose               | Postgres + **RAG 스텁** (dummy-rag)          |
 | 0-6 | GitHub Actions 3종            | CI green                                     |
 | 0-7 | JDK 25 / Node 22 CI 검증       | —                                            |
 
 
-**DoD:** legacy `mvn test` green · chat-api health 200 · chat-web build · RAG 스텁 SSE · README 갱신
+**DoD:** legacy `mvn test` green · katsubot-api health 200 · katsubot-web build · RAG 스텁 SSE · README 갱신
 
 **게이트:** G0 빌드 분리 무손상 · G1 CI 3종 green
 
@@ -294,7 +294,7 @@ Phase 4  레거시 decommission  요구 시
 
 - v2 API parity 분석·이전 (목록, 삭제, 히스토리, 피드백)
 - `board-auth` 권한 Port (레거시 브릿지)
-- Reverse proxy: `/api/v1/`** → chat-api, SSO → legacy
+- Reverse proxy: `/api/v1/`** → katsubot-api, SSO → legacy
 - Testcontainers 통합 테스트
 - Frontend: 대화 목록, 에러 UX
 
@@ -302,13 +302,13 @@ Phase 4  레거시 decommission  요구 시
 
 **게이트:** G4 매트릭스 리뷰 · G5 SSE 5분 연결 스모크
 
-### Phase 3+ — RAG 서비스 고도화 (별도 승인 · chat-api 밖)
+### Phase 3+ — RAG 서비스 고도화 (별도 승인 · katsubot-api 밖)
 
 | 작업 | 비고 |
 |------|------|
 | 운영 RAG 서비스 배포 | Agentic·벡터 검색은 RAG 팀/서비스 |
-| `RAG_SERVICE_BASE_URL` 전환 | chat-api는 Port/HTTP 계약 유지 |
-| OpenTelemetry | RAG ↔ chat-api trace 연동 |
+| `RAG_SERVICE_BASE_URL` 전환 | katsubot-api는 Port/HTTP 계약 유지 |
+| OpenTelemetry | RAG ↔ katsubot-api trace 연동 |
 
 ---
 
@@ -334,8 +334,8 @@ Phase 4  레거시 decommission  요구 시
 | Role     | 범위                                      |
 | -------- | --------------------------------------- |
 | Contract | OpenAPI, Port, auth-bridge 문서           |
-| Backend  | `services/chat-api/`**                  |
-| Frontend | `apps/chat-web/**`                      |
+| Backend  | `services/katsubot-api/`**                  |
+| Frontend | `apps/katsubot-web/**`                      |
 | QA       | CI, PR 게이트 (`katsubot-pr-harness-gate`) |
 
 
