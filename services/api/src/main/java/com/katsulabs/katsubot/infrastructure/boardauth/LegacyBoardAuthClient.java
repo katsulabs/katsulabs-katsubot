@@ -10,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Duration;
@@ -40,7 +38,7 @@ public class LegacyBoardAuthClient implements BoardAuthPort {
     public BoardAuthPage listAccessibleBoards(String userId, int page, int size) {
         try {
             var requestSpec = client().get().uri(properties.boardAuthPath());
-            String bearerToken = currentBearerToken();
+            String bearerToken = AuthContext.currentBearerToken();
             if (bearerToken != null) {
                 requestSpec = requestSpec.header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken);
             }
@@ -80,16 +78,5 @@ public class LegacyBoardAuthClient implements BoardAuthPort {
 
     private static BoardAuthPage empty(int page, int size) {
         return new BoardAuthPage(List.of(), 0, page, size, false);
-    }
-
-    private static String currentBearerToken() {
-        var attrs = RequestContextHolder.getRequestAttributes();
-        if (attrs instanceof ServletRequestAttributes servletAttrs) {
-            Object token = servletAttrs.getRequest().getAttribute(AuthContext.BEARER_TOKEN_ATTRIBUTE);
-            if (token instanceof String s && !s.isBlank()) {
-                return s;
-            }
-        }
-        return null;
     }
 }

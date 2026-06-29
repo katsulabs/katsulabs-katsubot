@@ -41,6 +41,7 @@ public class MessageSseStreamer {
                 sendErrorEvent(emitter, "NOT_FOUND", ex.getMessage());
                 emitter.completeWithError(ex);
             } catch (Exception ex) {
+                sendErrorEvent(emitter, "STREAM_ERROR", ex.getMessage() != null ? ex.getMessage() : "메시지 스트리밍에 실패했습니다.");
                 emitter.completeWithError(ex);
             }
         });

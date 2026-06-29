@@ -5,7 +5,9 @@ import tools.jackson.databind.ObjectMapper;
 import com.katsulabs.katsubot.domain.model.RagCompletionRequest;
 import com.katsulabs.katsubot.domain.model.RagStreamChunk;
 import com.katsulabs.katsubot.domain.port.RagCompletionPort;
+import com.katsulabs.katsubot.infrastructure.auth.AuthContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -38,8 +40,7 @@ public class RagHttpClient implements RagCompletionPort {
     @Override
     public void streamCompletion(RagCompletionRequest request, Consumer<RagStreamChunk> chunkHandler) {
         if (!request.stream()) {
-            var body = client().post()
-                    .uri("/v1/completions")
+            var body = withAuthorization(client().post().uri("/v1/completions"))
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(completionBody(request))
                     .retrieve()
@@ -52,8 +53,7 @@ public class RagHttpClient implements RagCompletionPort {
             return;
         }
 
-        String sseBody = client().post()
-                .uri("/v1/completions")
+        String sseBody = withAuthorization(client().post().uri("/v1/completions"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.TEXT_EVENT_STREAM)
                 .bodyValue(completionBody(request))
@@ -73,6 +73,14 @@ public class RagHttpClient implements RagCompletionPort {
                 emitChunk(payload, chunkHandler);
             }
         }
+    }
+
+    private static WebClient.RequestBodySpec withAuthorization(WebClient.RequestBodySpec spec) {
+        String bearerToken = AuthContext.currentBearerToken();
+        if (bearerToken != null) {
+            return spec.header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken);
+        }
+        return spec;
     }
 
     private Map<String, Object> completionBody(RagCompletionRequest request) {

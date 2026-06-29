@@ -3,11 +3,15 @@ package com.katsulabs.katsubot.infrastructure.rag;
 import tools.jackson.databind.ObjectMapper;
 import com.katsulabs.katsubot.domain.model.RagCompletionRequest;
 import com.katsulabs.katsubot.domain.model.RagStreamChunk;
+import com.katsulabs.katsubot.infrastructure.auth.AuthContext;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
@@ -31,6 +35,7 @@ class RagHttpClientTest {
 
     @AfterEach
     void tearDown() throws IOException {
+        RequestContextHolder.resetRequestAttributes();
         server.shutdown();
     }
 
@@ -71,6 +76,22 @@ class RagHttpClientTest {
         var recorded = server.takeRequest();
         assertThat(recorded.getPath()).isEqualTo("/v1/completions");
         assertThat(recorded.getBody().readUtf8()).contains("\"mode\":\"direct\"");
+    }
+
+    @Test
+    void streamCompletion_forwardsBearerTokenToGateway() throws InterruptedException {
+        server.enqueue(new MockResponse()
+                .setBody("data: {\"delta\":\"Hi\"}\n\ndata: {\"done\":true}\n\n")
+                .addHeader("Content-Type", "text/event-stream"));
+
+        var request = new MockHttpServletRequest();
+        request.setAttribute(AuthContext.BEARER_TOKEN_ATTRIBUTE, "login-jwt");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        collectChunks(new RagCompletionRequest("conv-1", "hi", true));
+
+        var recorded = server.takeRequest();
+        assertThat(recorded.getHeader("Authorization")).isEqualTo("Bearer login-jwt");
     }
 
     private List<RagStreamChunk> collectChunks(RagCompletionRequest request) {
