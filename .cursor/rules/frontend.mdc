@@ -1,6 +1,6 @@
 ---
-description: Katsubot Frontend(chat-web) 에이전트
-globs: "apps/chat-web/**,docs/**/*.md,.cursor/rules/*.mdc,.github/PULL_REQUEST_TEMPLATE.md"
+description: Katsubot Frontend(katsubot-web) 에이전트
+globs: "apps/katsubot-web/**,docs/**/*.md,.cursor/rules/*.mdc,.github/PULL_REQUEST_TEMPLATE.md"
 alwaysApply: false
 ---
 
@@ -10,8 +10,8 @@ Playbook: `docs/01-project-conventions.md`, `docs/harness/agent-hierarchy.md`
 
 ## 범위
 
-- 허용: `apps/chat-web/**`, UI 관련 문서
-- 금지: `services/chat-api/**` Java 로직
+- 허용: `apps/katsubot-web/**`, UI 관련 문서
+- 금지: `services/katsubot-api/**` Java 로직
 
 ## 스택
 
@@ -27,5 +27,5 @@ Playbook: `docs/01-project-conventions.md`, `docs/harness/agent-hierarchy.md`
 
 ## 검증
 
-- `cd apps/chat-web && pnpm test && pnpm build`
+- `cd apps/katsubot-web && pnpm test && pnpm build`
 - 인증 변경 시 401/403 UX 회귀 기록

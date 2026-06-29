@@ -1,6 +1,6 @@
 ---
 name: katsubot-ci-workflow
-description: Katsubot GitHub Actions CI — chat-api(Gradle), chat-web(pnpm), legacy(Maven) 분리 워크플로 생성·유지. Phase 0 CI 작업 시 사용.
+description: Katsubot GitHub Actions CI — katsubot-api(Gradle), katsubot-web(pnpm), legacy(Maven) 분리 워크플로 생성·유지. Phase 0 CI 작업 시 사용.
 ---
 
 # Katsubot CI Workflow
@@ -9,17 +9,17 @@ description: Katsubot GitHub Actions CI — chat-api(Gradle), chat-web(pnpm), le
 
 | File | paths filter | Job |
 |------|--------------|-----|
-| `.github/workflows/chat-api-ci.yml` | `services/chat-api/**` | JDK 25, `./gradlew test` |
-| `.github/workflows/chat-web-ci.yml` | `apps/chat-web/**` | Node 22, `pnpm test`, `pnpm build` |
+| `.github/workflows/katsubot-api-ci.yml` | `services/katsubot-api/**` | JDK 25, `./gradlew test` |
+| `.github/workflows/katsubot-web-ci.yml` | `apps/katsubot-web/**` | Node 22, `pnpm test`, `pnpm build` |
 | `.github/workflows/legacy-ci.yml` | `legacy/hyobee/**`, `pom.xml` | JDK 21, `mvn test` (선택) |
 
-## chat-api-ci 스켈레ton
+## katsubot-api-ci 스켈레ton
 
 ```yaml
-name: chat-api CI
+name: katsubot-api CI
 on:
   pull_request:
-    paths: ['services/chat-api/**', '.github/workflows/chat-api-ci.yml']
+    paths: ['services/katsubot-api/**', '.github/workflows/katsubot-api-ci.yml']
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -29,7 +29,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '25'
-      - run: cd services/chat-api && ./gradlew test
+      - run: cd services/katsubot-api && ./gradlew test
 ```
 
 ## 원칙

@@ -1,6 +1,6 @@
 ---
-description: Katsubot Backend(chat-api) 에이전트
-globs: "services/chat-api/**,docs/harness/**,.cursor/rules/*.mdc"
+description: Katsubot Backend(katsubot-api) 에이전트
+globs: "services/katsubot-api/**,docs/harness/**,.cursor/rules/*.mdc"
 alwaysApply: false
 ---
 
@@ -10,8 +10,8 @@ Playbook: `docs/01-project-conventions.md`, `docs/harness/agent-hierarchy.md`
 
 ## 범위
 
-- 허용: `services/chat-api/**`
-- 금지: `apps/chat-web/**` (Frontend 합의 없이), `legacy/hyobee/**` (전환기 브릿지 제외·Contract 합의)
+- 허용: `services/katsubot-api/**`
+- 금지: `apps/katsubot-web/**` (Frontend 합의 없이), `legacy/hyobee/**` (전환기 브릿지 제외·Contract 합의)
 
 ## Clean Architecture
 
@@ -30,5 +30,5 @@ Playbook: `docs/01-project-conventions.md`, `docs/harness/agent-hierarchy.md`
 
 ## 검증
 
-- `cd services/chat-api && ./gradlew test`
+- `cd services/katsubot-api && ./gradlew test`
 - PR에 모듈 테스트 결과 첨부

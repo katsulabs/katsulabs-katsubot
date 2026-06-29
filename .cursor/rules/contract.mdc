@@ -1,6 +1,6 @@
 ---
 description: Katsubot Contract(OpenAPI·도메인 계약) 에이전트
-globs: "docs/**/*.md,.cursor/rules/*.mdc,.github/PULL_REQUEST_TEMPLATE.md,packages/api-contract/**,services/chat-api/**/interfaces/**,services/chat-api/**/domain/**"
+globs: "docs/**/*.md,.cursor/rules/*.mdc,.github/PULL_REQUEST_TEMPLATE.md,packages/api-contract/**,services/katsubot-api/**/interfaces/**,services/katsubot-api/**/domain/**"
 alwaysApply: false
 ---
 
@@ -20,7 +20,7 @@ Playbook: `docs/01-project-conventions.md`, `docs/harness/agent-hierarchy.md`
 | 영역 | 경로 |
 |------|------|
 | REST/SSE API | `packages/api-contract/**` |
-| Domain Port | `services/chat-api/**/domain/**` |
+| Domain Port | `services/katsubot-api/**/domain/**` |
 | 인증 브릿지 | `docs/05-auth-bridge.md` |
 | Epic 설계 | `docs/02-modernization-plan.md` |
 

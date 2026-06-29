@@ -26,7 +26,7 @@ description: Katsubot 티켓 킥오프 — KC-000·todo.md·Epic DoD 확인, fea
 ## 병렬 착수 조건
 
 - 티켓당 별도 worktree
-- `services/chat-api/**` vs `apps/chat-web/**` 비중첩
+- `services/katsubot-api/**` vs `apps/katsubot-web/**` 비중첩
 - OpenAPI Contract 선행
 
 ## 참고

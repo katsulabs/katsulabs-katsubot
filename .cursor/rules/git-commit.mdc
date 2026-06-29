@@ -18,7 +18,7 @@ alwaysApply: true
 ## 예시
 
 ```
-feat(KC-007-modernization): chat-api health endpoint 스캐폴딩
+feat(KC-007-modernization): katsubot-api health endpoint 스캐폴딩
 
 Phase 0 Boot 4.1 skeleton 및 actuator health 추가.
 ```
