@@ -16,14 +16,27 @@ type AuthErrorBody = {
   error?: string
 }
 
+function authFailureMessage(response: Response, fallback: string): string {
+  if (response.status === 404) {
+    return '로그인 API를 찾을 수 없습니다. chat-api(:8081)가 실행 중인지 확인하고 Vite dev 서버를 재시작하세요.'
+  }
+  if (response.status === 502 || response.status === 503) {
+    return 'chat-api에 연결할 수 없습니다. ./scripts/boot-chat-api.sh 실행 후 다시 시도하세요.'
+  }
+  return fallback
+}
+
 async function parseAuthError(response: Response, fallback: string): Promise<LegacyLoginError> {
+  const statusFallback = authFailureMessage(response, fallback)
   try {
     const body = (await response.json()) as AuthErrorBody
-    const message = body.message ?? body.error ?? fallback
+    const raw = body.message ?? body.error ?? statusFallback
+    const message =
+      raw === 'No message available' || !raw.trim() ? statusFallback : raw
     const code = body.code === 'ENCRYPT_KEY' || body.code === 'TOKEN' ? body.code : 'LOGIN'
     return new LegacyLoginError(code, message)
   } catch {
-    return new LegacyLoginError('NETWORK', fallback)
+    return new LegacyLoginError('NETWORK', statusFallback)
   }
 }
 

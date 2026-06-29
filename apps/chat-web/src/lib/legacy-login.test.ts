@@ -33,6 +33,22 @@ describe('loginWithLegacyPassword', () => {
     expect(String(loginCall[1]?.body)).toContain('user_id_encrypt')
   })
 
+  it('maps encrypt-key 404 to chat-api hint', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        new Response(JSON.stringify({ message: 'No message available' }), { status: 404 }),
+      ),
+    )
+
+    await expect(loginWithLegacyPassword({ userId: 'user01', password: 'secret' })).rejects.toEqual(
+      expect.objectContaining<Partial<LegacyLoginError>>({
+        code: 'LOGIN',
+        message: expect.stringContaining('chat-api'),
+      }),
+    )
+  })
+
   it('surfaces login errors from auth API', async () => {
     vi.stubGlobal(
       'fetch',

@@ -47,11 +47,16 @@ function apiContractSpecsPlugin(): Plugin {
   }
 }
 
-// 로컬 legacy BFF(:8080)가 /api/v1 제공. chat-api만 쓸 때 VITE_CHAT_API_PROXY_TARGET=http://localhost:8081
-const chatApiProxyTarget =
-  process.env.VITE_CHAT_API_PROXY_TARGET?.replace(/\/$/, '') ?? 'http://localhost:8080'
+// legacy-first (기본): /api/v1 → :8080 (Gateway WRTN compat), /api/v1/auth → :8081 (chat-api 로그인)
+// chat-api-only: VITE_API_V1_PROXY_TARGET=http://localhost:8081
 const legacyProxyTarget =
   process.env.VITE_LEGACY_PROXY_TARGET?.replace(/\/$/, '') ?? 'http://localhost:8080'
+const chatApiProxyTarget =
+  process.env.VITE_CHAT_API_PROXY_TARGET?.replace(/\/$/, '') ?? 'http://localhost:8081'
+const apiV1ProxyTarget =
+  process.env.VITE_API_V1_PROXY_TARGET?.replace(/\/$/, '') ?? legacyProxyTarget
+
+const useLegacyApiFacade = apiV1ProxyTarget !== chatApiProxyTarget
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), apiContractSpecsPlugin()],
@@ -61,9 +66,17 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // Phase 1+ 로컬: chat-api(:8081). 레거시 BFF(:8080)는 WRTN upstream 의존.
+      ...(useLegacyApiFacade
+        ? {
+            // auth는 legacy에 없음 — chat-api LoginUseCase
+            '/api/v1/auth': {
+              target: chatApiProxyTarget,
+              changeOrigin: true,
+            },
+          }
+        : {}),
       '/api/v1': {
-        target: chatApiProxyTarget,
+        target: useLegacyApiFacade ? apiV1ProxyTarget : chatApiProxyTarget,
         changeOrigin: true,
       },
       '/xs': {
