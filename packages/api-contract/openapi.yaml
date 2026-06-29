@@ -113,7 +113,7 @@ paths:
           description: |
             SSE 스트림. 각 이벤트는 `data: {json}` 형식.
             - `event: delta` — `{"delta":"토큰"}`
-            - `event: done` — `{"conversation_id":"...","message_id":"..."}`
+            - `event: done` — `{"conversation_id":"...","message_id":"...","title":"..."}` (`title` optional, 첫 메시지 후 Gateway LLM 제목)
           content:
             text/event-stream:
               schema:
@@ -123,7 +123,7 @@ paths:
                   data: {"delta":"안녕"}
 
                   event: done
-                  data: {"conversation_id":"c1","message_id":"m1"}
+                  data: {"conversation_id":"c1","message_id":"m1","title":"휴가 규정 문의"}
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

@@ -110,7 +110,7 @@ class GatewayWrtnClientTest {
                         {"status":"response_chunk","text":"안"}
                         {"status":"response_chunk","text":"녕"}
                         {"status":"response_completed","message":""}
-                        {"status":"done"}
+                        {"status":"done","title":"휴가 규정 문의"}
                         """));
         server.enqueue(new MockResponse()
                 .setHeader("Content-Type", "application/json")
@@ -133,6 +133,7 @@ class GatewayWrtnClientTest {
 
         assertThat(result.fullText()).isEqualTo("안녕");
         assertThat(result.assistantMessageId()).isEqualTo(MSG_ID);
+        assertThat(result.conversationTitle()).isEqualTo("휴가 규정 문의");
         assertThat(chunks.stream().map(RagStreamChunk::delta).filter(d -> d != null).toList())
                 .containsExactly("안", "녕");
     }

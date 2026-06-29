@@ -30,12 +30,15 @@ public class MessageSseStreamer {
             try {
                 var result = sendMessageUseCase.streamReply(userId, conversationId, content, deltaChunkHandler(emitter));
 
+                var donePayload = new java.util.LinkedHashMap<String, String>();
+                donePayload.put("conversation_id", conversationId);
+                donePayload.put("message_id", result.assistantMessageId());
+                if (result.conversationTitle() != null && !result.conversationTitle().isBlank()) {
+                    donePayload.put("title", result.conversationTitle());
+                }
                 emitter.send(SseEmitter.event()
                         .name("done")
-                        .data(Map.of(
-                                "conversation_id", conversationId,
-                                "message_id", result.assistantMessageId()
-                        )));
+                        .data(donePayload));
                 emitter.complete();
             } catch (ConversationNotFoundException ex) {
                 sendErrorEvent(emitter, "NOT_FOUND", ex.getMessage());

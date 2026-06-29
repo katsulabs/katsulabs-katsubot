@@ -38,6 +38,16 @@ legacy/hyobee/.../ChatStreamServiceImpl.java
 WRTN_BASEURL=https://<ai-gateway-host>
 ```
 
+### 첫 메시지 대화 제목 (v1.1.1)
+
+| 단계 | 동작 |
+|------|------|
+| 대화 생성 | `user_query`/`title` → 50자 truncate (LLM 없음) |
+| 첫 `ai-chat` 완료 | placeholder 제목(`New chat`, `새 대화`)이면 Ollama **비스트리밍** 1회 호출로 제목 생성 → DB `conversations.title` 갱신 |
+| SSE `done` | 선택 필드 `title` — BFF `event:done`으로 전달, chat-web 사이드바 즉시 반영 |
+
+LLM 비활성(`LLM_API_KEY` 없음) 시 첫 사용자 메시지 truncate fallback.
+
 UUID 도입으로 `WrtnRequestMapper`·`dto/external/wrtn/**`에서 integer → UUID string 수용이 필요하다 (URL 변경만으로는 불충분).
 
 ## 3. API 교체 매트릭스

@@ -175,7 +175,8 @@ public class KatsubotMessageStreamService {
         }
         streamFinished[0] = true;
         String messageId = extractMessageId(responseMap);
-        sendDone(emitter, conversationId, messageId, accumulatedText.toString());
+        String title = extractTitle(responseMap);
+        sendDone(emitter, conversationId, messageId, accumulatedText.toString(), title);
         emitter.complete();
     }
 
@@ -209,13 +210,25 @@ public class KatsubotMessageStreamService {
         }
     }
 
-    private void sendDone(SseEmitter emitter, String conversationId, String messageId, String content) {
+    private String extractTitle(Map<String, Object> responseMap) {
+        Object title = responseMap.get("title");
+        if (title == null) {
+            return null;
+        }
+        String text = String.valueOf(title);
+        return text.isBlank() ? null : text;
+    }
+
+    private void sendDone(SseEmitter emitter, String conversationId, String messageId, String content, String title) {
         try {
             Map<String, String> payload = new HashMap<>();
             payload.put("conversation_id", conversationId);
             payload.put("message_id", messageId);
             if (content != null && !content.isEmpty()) {
                 payload.put("content", content);
+            }
+            if (title != null && !title.isEmpty()) {
+                payload.put("title", title);
             }
             emitter.send(SseEmitter.event()
                     .name("done")

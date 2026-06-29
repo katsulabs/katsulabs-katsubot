@@ -21,21 +21,29 @@ export type MessagesPage = {
 
 export type SendMessageHandlers = {
   onDelta: (delta: string) => void
-  onDone: (payload: { conversation_id: string; message_id: string; content?: string }) => void
+  onDone: (payload: {
+    conversation_id: string
+    message_id: string
+    content?: string
+    title?: string
+  }) => void
 }
 
 export function normalizeDonePayload(payload: Record<string, unknown>): {
   conversation_id: string
   message_id: string
   content?: string
+  title?: string
 } {
   const messageId = payload.message_id ?? payload.messageId
   const conversationId = payload.conversation_id ?? payload.conversationId
   const content = payload.content
+  const title = payload.title
   return {
     conversation_id: conversationId != null ? String(conversationId) : '',
     message_id: messageId != null ? String(messageId) : '',
     content: typeof content === 'string' && content.length > 0 ? content : undefined,
+    title: typeof title === 'string' && title.length > 0 ? title : undefined,
   }
 }
 

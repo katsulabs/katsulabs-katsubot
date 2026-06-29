@@ -174,6 +174,7 @@ public class GatewayWrtnClient {
                 "message", content);
 
         var buffer = new StringBuilder();
+        var generatedTitle = new String[1];
         streamWrtnSse(
                 authBody(client().post()
                                 .uri(uriBuilder -> uriBuilder
@@ -183,14 +184,18 @@ public class GatewayWrtnClient {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.TEXT_EVENT_STREAM)
                         .bodyValue(payload),
-                line -> handleWrtnSseLine(line, buffer, chunkConsumer));
+                line -> handleWrtnSseLine(line, buffer, chunkConsumer, generatedTitle));
 
         chunkConsumer.accept(RagStreamChunk.finished());
         String assistantMessageId = findLatestAssistantMessageId(userId, conversationId);
-        return new SendMessageUseCase.StreamResult(assistantMessageId, buffer.toString());
+        return new SendMessageUseCase.StreamResult(assistantMessageId, buffer.toString(), generatedTitle[0]);
     }
 
-    private void handleWrtnSseLine(String line, StringBuilder buffer, Consumer<RagStreamChunk> chunkConsumer) {
+    private void handleWrtnSseLine(
+            String line,
+            StringBuilder buffer,
+            Consumer<RagStreamChunk> chunkConsumer,
+            String[] generatedTitle) {
         if (line.isBlank()) {
             return;
         }
@@ -202,6 +207,11 @@ public class GatewayWrtnClient {
                 if (!delta.isEmpty()) {
                     buffer.append(delta);
                     chunkConsumer.accept(RagStreamChunk.delta(delta));
+                }
+            } else if ("done".equals(status)) {
+                String title = GatewayJsonSupport.optionalText(node, "title");
+                if (title != null && !title.isBlank()) {
+                    generatedTitle[0] = title;
                 }
             } else if ("error".equals(status)) {
                 throw new IllegalStateException(node.path("message").asText("stream failed"));

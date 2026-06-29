@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { ApiError, consumeSseBuffer, formatApiError, normalizeDonePayload } from './api'
 
 describe('consumeSseBuffer', () => {
-  it('parses delta and done events', () => {
+  it('parses delta and done events with optional title', () => {
     const onDelta = vi.fn()
     const onDone = vi.fn()
     const buffer = [
@@ -10,7 +10,7 @@ describe('consumeSseBuffer', () => {
       'data: {"delta":"Hi"}',
       '',
       'event: done',
-      'data: {"conversation_id":"c1","message_id":"m1"}',
+      'data: {"conversation_id":"c1","message_id":"m1","title":"휴가 문의"}',
       '',
     ].join('\n')
 
@@ -20,6 +20,7 @@ describe('consumeSseBuffer', () => {
     expect(onDone).toHaveBeenCalledWith({
       conversation_id: 'c1',
       message_id: 'm1',
+      title: '휴가 문의',
     })
   })
 

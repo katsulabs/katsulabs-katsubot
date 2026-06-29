@@ -350,6 +350,15 @@ export function ChatPage({ onLogout }: ChatPageProps) {
                 return { ...message, id: nextId, content: nextContent }
               }),
             )
+            if (payload.title && id) {
+              setConversations((prev) =>
+                prev.map((conversation) =>
+                  conversation.id === id
+                    ? { ...conversation, title: payload.title! }
+                    : conversation,
+                ),
+              )
+            }
           },
         },
         apiChatCategory,

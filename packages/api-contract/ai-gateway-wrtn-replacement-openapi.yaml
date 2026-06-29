@@ -553,6 +553,9 @@ components:
           type: string
         message:
           type: string
+        title:
+          type: string
+          description: 첫 메시지 완료 시 LLM 생성 제목 (placeholder title 대화만)
         error:
           type: string
         sources:
@@ -567,6 +570,7 @@ components:
         - status: response_completed
           message: ""
         - status: done
+          title: "휴가 규정 문의"
         - status: error
           message: "upstream failure"
 

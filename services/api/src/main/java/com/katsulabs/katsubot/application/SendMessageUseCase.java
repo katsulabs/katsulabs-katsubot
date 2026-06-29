@@ -27,7 +27,7 @@ public class SendMessageUseCase {
         this.gatewayWrtnClient = gatewayWrtnClient;
     }
 
-    public record StreamResult(String assistantMessageId, String fullText) {}
+    public record StreamResult(String assistantMessageId, String fullText, String conversationTitle) {}
 
     public StreamResult streamReply(String userId, String conversationId, String content, Consumer<RagStreamChunk> chunkConsumer) {
         if (gatewayWrtnClient != null) {
@@ -55,6 +55,6 @@ public class SendMessageUseCase {
         var assistantMessage = Message.assistantMessage(conversationId, buffer.toString());
         conversationRepository.save(conversation.addMessage(assistantMessage));
 
-        return new StreamResult(assistantMessage.id(), buffer.toString());
+        return new StreamResult(assistantMessage.id(), buffer.toString(), null);
     }
 }
