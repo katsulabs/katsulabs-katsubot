@@ -165,8 +165,8 @@ where vue.user_id = #{userId}
     <update id="appendConversation">
         update chat_viewable_teams
         set conversations = case
-            when #{conversationId} = any (conversations) then conversations
-            else array_append(conversations, #{conversationId})
+            when #{conversationId}::integer = any (conversations) then conversations
+            else array_append(conversations, #{conversationId}::integer)
         end
         where user_id = #{userId}
           and corp_code = #{corpCode}

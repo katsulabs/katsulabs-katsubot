@@ -20,7 +20,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * chat-web OpenAPI SSE 계약(event:delta / event:done)으로 벤더 스트림을 변환한다.
+ * katsubot-web OpenAPI SSE 계약(event:delta / event:done)으로 벤더 스트림을 변환한다.
  */
 @Slf4j
 @Service
@@ -134,6 +134,14 @@ public class KatsubotMessageStreamService {
                     sendError(emitter, "STREAM_ERROR", message);
                     emitter.complete();
                 }
+                case "response_completed" -> {
+                    String delta = extractDeltaText(responseMap);
+                    if (delta != null && !delta.isEmpty()) {
+                        accumulatedText.append(delta);
+                        sendDelta(emitter, delta);
+                    }
+                    // title은 다음 done 청크에 옴 — 여기서 종료하지 않음
+                }
                 case "done" -> finishStream(emitter, conversationId, responseMap, streamFinished, accumulatedText);
                 case "response_chunk" -> {
                     String delta = extractDeltaText(responseMap);
@@ -141,14 +149,6 @@ public class KatsubotMessageStreamService {
                         accumulatedText.append(delta);
                         sendDelta(emitter, delta);
                     }
-                }
-                case "response_completed" -> {
-                    String delta = extractDeltaText(responseMap);
-                    if (delta != null && !delta.isEmpty()) {
-                        accumulatedText.append(delta);
-                        sendDelta(emitter, delta);
-                    }
-                    finishStream(emitter, conversationId, responseMap, streamFinished, accumulatedText);
                 }
                 default -> {
                     String delta = extractDeltaText(responseMap);

@@ -126,13 +126,34 @@ public class HyobeeChatApiClient {
 
 	public Map<String, Object> callApiOrThrow(String callApiUrl, HttpMethod method,
 											  Map<String, String> headers, Object params) {
-		return executeCallApi(callApiUrl, method, headers, jsonAdapter.toMap(params), true, false);
+		return executeCallApi(
+				callApiUrl,
+				method,
+				headers,
+				toRequestBodyMap(params),
+				true,
+				false);
 	}
 
 	/** sidebar ?? ????? ??(JWT_TEAM_CODE) ??? JWT??WRTN ???? */
 	public Map<String, Object> callApiOrThrowWithViewableTeam(String callApiUrl, HttpMethod method,
 															  Map<String, String> headers, Object params) {
-		return executeCallApi(callApiUrl, method, headers, jsonAdapter.toMap(params), true, true);
+		return executeCallApi(
+				callApiUrl,
+				method,
+				headers,
+				toRequestBodyMap(params),
+				true,
+				true);
+	}
+
+	/** WRTN DTO는 @JsonNaming(snake_case) — toMap()만 쓰면 user_id 등이 누락된다. */
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> toRequestBodyMap(Object params) {
+		if (params instanceof Map<?, ?> map) {
+			return (Map<String, Object>) map;
+		}
+		return jsonAdapter.fromJson(jsonAdapter.toJson(params), new com.fasterxml.jackson.core.type.TypeReference<>() {});
 	}
 
 	private Map<String, Object> executeCallApi(String callApiUrl, HttpMethod method,
@@ -697,7 +718,7 @@ public class HyobeeChatApiClient {
     }
 
     /**
-     * chat-web Bearer JWT가 있으면 그대로 upstream에 전달하고, 없으면 세션 기반 stream JWT를 사용한다.
+     * katsubot-web Bearer JWT가 있으면 그대로 upstream에 전달하고, 없으면 세션 기반 stream JWT를 사용한다.
      */
     public void injectUpstreamAuthorizationHeader(HttpHeaders headers) {
         HttpServletRequest request = getCurrentRequest();

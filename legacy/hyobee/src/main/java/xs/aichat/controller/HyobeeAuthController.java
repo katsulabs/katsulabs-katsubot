@@ -34,7 +34,7 @@ public class HyobeeAuthController {
     private final AichatUserLoginService aichatUserLoginService;
 
     /**
-     * chat-web·레거시 공통 OTP 키 발급 (세션 ENCRYPT_KEY).
+     * katsubot-web·레거시 공통 OTP 키 발급 (세션 ENCRYPT_KEY).
      */
     @PostMapping("/encrypt-key")
     public ResponseEntity<?> createEncryptKey(HttpSession session) {
@@ -74,7 +74,7 @@ public class HyobeeAuthController {
     }
 
     /**
-     * loginBase 등 레거시 세션 로그인 후 chat-web JWT handoff용.
+     * loginBase 등 레거시 세션 로그인 후 katsubot-web JWT handoff용.
      */
     @GetMapping("/session-token")
     public ResponseEntity<?> issueSessionToken(HttpSession session) {
