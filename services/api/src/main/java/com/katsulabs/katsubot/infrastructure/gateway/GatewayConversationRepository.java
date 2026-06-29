@@ -21,10 +21,7 @@ public class GatewayConversationRepository implements ConversationRepository {
 
     @Override
     public Conversation save(Conversation conversation) {
-        if (isLocalDraftId(conversation.id())) {
-            return gateway.createConversation(conversation.userId(), conversation.title());
-        }
-        return conversation;
+        return gateway.createConversation(conversation.userId(), conversation.title());
     }
 
     @Override
@@ -55,14 +52,5 @@ public class GatewayConversationRepository implements ConversationRepository {
             return AuthContext.userId(request);
         }
         return null;
-    }
-
-    private static boolean isLocalDraftId(String id) {
-        try {
-            Long.parseLong(id);
-            return false;
-        } catch (NumberFormatException ex) {
-            return true;
-        }
     }
 }

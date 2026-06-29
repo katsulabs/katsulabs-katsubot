@@ -1,9 +1,12 @@
 openapi: 3.1.0
 info:
   title: katsulabs-ai-gateway — WRTN Replacement API
-  version: 1.0.0
+  version: 1.1.0
   description: |
     **katsulabs-ai-gateway 구현 대상** OpenAPI. 폐기된 WRTN upstream을 대체한다.
+
+    **v1.1.0 (KC-007 P5):** `conversation_id`, `message_id`, `feedback_id`를 **UUID string**으로 통일.
+    WRTN integer ID는 폐기. Postgres PK는 `gen_random_uuid()` / Java `UUID`.
 
     | Consumer | Base URL config | API surface |
     |----------|-----------------|-------------|
@@ -477,12 +480,14 @@ components:
       required: true
       schema:
         type: string
+        format: uuid
     messageIdPath:
       name: messageId
       in: path
       required: true
       schema:
         type: string
+        format: uuid
     journalIdPath:
       name: journalId
       in: path
@@ -517,6 +522,7 @@ components:
           type: string
         conversation_id:
           type: string
+          format: uuid
         stream:
           type: boolean
         mode:
@@ -603,7 +609,8 @@ components:
       type: object
       properties:
         conversation_id:
-          type: integer
+          type: string
+          format: uuid
         title:
           type: string
         chat_category:
@@ -639,6 +646,7 @@ components:
           type: array
           items:
             type: string
+            format: uuid
 
     DeleteConversationsApiResponse:
       type: object
@@ -662,7 +670,8 @@ components:
         status:
           type: integer
         conversation_id:
-          type: integer
+          type: string
+          format: uuid
         chat_category:
           type: string
 
@@ -690,7 +699,8 @@ components:
       type: object
       properties:
         message_id:
-          type: integer
+          type: string
+          format: uuid
         content:
           type: string
         sources:
@@ -765,6 +775,7 @@ components:
       properties:
         conversation_id:
           type: string
+          format: uuid
         user_id:
           type: string
         chat_category:
@@ -784,8 +795,10 @@ components:
       properties:
         conversation_id:
           type: string
+          format: uuid
         message_id:
           type: string
+          format: uuid
         user_id:
           type: string
 
@@ -794,6 +807,7 @@ components:
       properties:
         conversation_id:
           type: string
+          format: uuid
         return_stop:
           type: string
 
@@ -810,8 +824,10 @@ components:
       properties:
         feedback_id:
           type: string
+          format: uuid
         message_id:
           type: string
+          format: uuid
         feedback_type:
           type: string
 

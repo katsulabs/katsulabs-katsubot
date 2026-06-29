@@ -34,7 +34,7 @@ public class MessageController {
     @GetMapping
     public MessagesPageResponse listMessages(
             @PathVariable String conversationId,
-            @RequestParam(defaultValue = "0") int cursor,
+            @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "20") int size,
             HttpServletRequest httpRequest
     ) {

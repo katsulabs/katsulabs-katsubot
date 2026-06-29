@@ -11,7 +11,7 @@ import lombok.Data;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ConversationApiItem {
 
-    private Integer conversationId;
+    private String conversationId;
 
     private String title;
 

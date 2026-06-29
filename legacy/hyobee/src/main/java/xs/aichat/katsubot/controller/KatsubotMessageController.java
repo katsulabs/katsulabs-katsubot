@@ -29,7 +29,7 @@ public class KatsubotMessageController {
     public MessagesPageResponse listMessages(
             @LoggedInUser User user,
             @PathVariable String conversationId,
-            @RequestParam(defaultValue = "0") int cursor,
+            @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "20") int size
     ) {
         var request = new MessageRequest();

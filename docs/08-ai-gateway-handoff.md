@@ -11,6 +11,7 @@
 | **발신 repo** | katsulabs-katsubot (본 문서 + OpenAPI) |
 | **목표** | Hyobee BFF가 `WRTN_BASEURL`만 Gateway URL로 바꿔 **동일 경로·계약**으로 재연결 |
 | **부가 목표** | chat-api `/v1/completions` **유지·확장** ([06-rag-contract.md](./06-rag-contract.md)) |
+| **ID 형식 (v1.1.0)** | `conversation_id`, `message_id`, `feedback_id` — **UUID string** (WRTN integer 폐기) |
 
 ## 2. 첨부 산출물
 
@@ -31,11 +32,13 @@ legacy/hyobee/.../dto/external/wrtn/**
 legacy/hyobee/.../ChatStreamServiceImpl.java
 ```
 
-**Hyobee 최소 변경:**
+**Hyobee 변경 (P5-C):**
 
 ```properties
 WRTN_BASEURL=https://<ai-gateway-host>
 ```
+
+UUID 도입으로 `WrtnRequestMapper`·`dto/external/wrtn/**`에서 integer → UUID string 수용이 필요하다 (URL 변경만으로는 불충분).
 
 ## 3. API 교체 매트릭스
 
@@ -72,9 +75,13 @@ Hyobee는 upstream에서 **JSON 한 줄씩** 수신 (`text/event-stream`).
 - `Authorization: Bearer <JWT>` — claims: [05-auth-bridge.md](./05-auth-bridge.md)
 - SSE·R&D: sidebar `JWT_TEAM_CODE` / `resolveStreamTeamCode`
 
-## 6. Persistence (결정 필요)
+## 6. Persistence
 
-WRTN compat P0 CRUD는 Gateway Postgres 권장. chat-api Flyway: `services/api/src/main/resources/db/migration/V1__conversation_schema.sql`
+WRTN compat P0 CRUD는 Gateway Postgres 권장.
+
+- **PK:** UUID (`gen_random_uuid()`)
+- **스키마 참고:** `services/api/src/main/resources/db/migration/V1__conversation_schema.sql`, `V2__message_feedback.sql`
+- OpenAPI: `ai-gateway-wrtn-replacement-openapi.yaml` v1.1.0
 
 ## 7. 완료 기준
 
@@ -89,8 +96,9 @@ WRTN compat P0 CRUD는 Gateway Postgres 권장. chat-api Flyway: `services/api/s
 
 ## 9. 전달 방법
 
-1. GitHub Issue (katsulabs-ai-gateway): 본 문서 + OpenAPI
+1. GitHub Issue (katsulabs-ai-gateway): 본 문서 + OpenAPI v1.1.0
 2. Gateway repo `docs/contract/wrtn-replacement.md` 복사
 3. [prompt-ai-gateway-wrtn.md](./archive/KC-007/prompt-ai-gateway-wrtn.md)로 kickoff
+4. 승인 계획: [KC-007-api-server-migration-plan.md](./KC-007-api-server-migration-plan.md)
 
 **문의:** katsubot Contract `[KC-007][Contract]`

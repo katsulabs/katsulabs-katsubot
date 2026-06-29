@@ -14,6 +14,7 @@ import xs.aichat.v2.dto.internal.response.*;
 import xs.aichat.v2.dto.wrapper.ApiResponse;
 import xs.aichat.v2.dto.wrapper.JsonDataWrapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import xs.aichat.v2.dto.User;
 import xs.aichat.v2.exception.HyobeeException;
 import xs.aichat.v2.external.ChatVendorClient;
@@ -90,7 +91,7 @@ public class ChatServiceImpl implements ChatService {
             HttpSession session
     ) {
         var response = chatVendorClient.createConversation(request);
-        if (response.getConversationId() != null) {
+        if (StringUtils.hasText(response.getConversationId())) {
             var teamCode = JwtSessionHelper.resolveStreamTeamCode(session);
             chatUserService.appendConversation(
                     user.getUserId(),
@@ -123,21 +124,13 @@ public class ChatServiceImpl implements ChatService {
         }
     }
 
-    private List<Integer> parseConversationIds(List<String> conversationIds) {
+    private List<String> parseConversationIds(List<String> conversationIds) {
         if (conversationIds == null) {
             return List.of();
         }
         return conversationIds.stream()
                 .map(String::trim)
                 .filter(id -> !id.isEmpty())
-                .map(id -> {
-                    try {
-                        return Integer.parseInt(id);
-                    } catch (NumberFormatException ex) {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 

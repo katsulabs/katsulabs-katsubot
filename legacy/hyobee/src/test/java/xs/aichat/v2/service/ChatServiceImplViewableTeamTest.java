@@ -27,6 +27,11 @@ import static org.mockito.Mockito.*;
 @DisplayName("ChatServiceImpl viewable team 연동 테스트")
 class ChatServiceImplViewableTeamTest {
 
+    private static final String CONV_CREATED = "729a6287-ec1f-4e6d-a26a-0b1fed964896";
+    private static final String CONV_LISTED = "829a6287-ec1f-4e6d-a26a-0b1fed964897";
+    private static final String CONV_DELETE_1 = "929a6287-ec1f-4e6d-a26a-0b1fed964898";
+    private static final String CONV_DELETE_2 = "a29a6287-ec1f-4e6d-a26a-0b1fed964899";
+
     @Mock
     private ChatVendorClient chatVendorClient;
 
@@ -56,11 +61,11 @@ class ChatServiceImplViewableTeamTest {
 
         when(session.getAttribute(AichatSessionKeys.JWT_TEAM_CODE)).thenReturn("T9");
         when(chatVendorClient.createConversation(request))
-                .thenReturn(CreateConversationResponse.of(100, "t", "internal_rules", null, null));
+                .thenReturn(CreateConversationResponse.of(CONV_CREATED, "t", "internal_rules", null, null));
 
         chatService.createConversation(request, user, session);
 
-        verify(chatUserService).appendConversation("u1", "C1", "T9", 100);
+        verify(chatUserService).appendConversation("u1", "C1", "T9", CONV_CREATED);
     }
 
     @Test
@@ -68,7 +73,7 @@ class ChatServiceImplViewableTeamTest {
     void selectConversations_enrichesTargets() {
         var request = new ConversationRequest();
         request.setUserId("u1");
-        var item = ConversationItem.of(1, "t", "cat", "c", "u", null);
+        var item = ConversationItem.of(CONV_LISTED, "t", "cat", "c", "u", null);
         var response = ConversationsResponse.of(List.of(item), 1, 0, 20, false);
         when(chatVendorClient.selectConversations(request)).thenReturn(response);
 
@@ -85,13 +90,13 @@ class ChatServiceImplViewableTeamTest {
 
         var request = new DeleteConversationRequest();
         request.setUserId("u1");
-        request.setConversationIds(List.of("10", "20"));
+        request.setConversationIds(List.of(CONV_DELETE_1, CONV_DELETE_2));
 
         when(chatVendorClient.deleteConversations(request))
                 .thenReturn(DeleteConversationsResponse.of(200, "u1", null, 2, List.of()));
 
         chatService.deleteConversations(request, user);
 
-        verify(chatUserService).removeConversations(eq("u1"), eq(List.of(10, 20)));
+        verify(chatUserService).removeConversations(eq("u1"), eq(List.of(CONV_DELETE_1, CONV_DELETE_2)));
     }
 }

@@ -11,7 +11,7 @@ public class DeleteConversationResultItem {
     private int status;
 
     @JsonProperty("conversation_id")
-    private Long conversationId;
+    private String conversationId;
 
     @JsonProperty("chat_category")
     private String chatCategory;

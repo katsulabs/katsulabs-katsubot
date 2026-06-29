@@ -16,5 +16,5 @@ public class MessagesPageResponse {
     private boolean hasMore;
 
     @JsonProperty("next_cursor")
-    private Integer nextCursor;
+    private String nextCursor;
 }

@@ -12,6 +12,7 @@ import com.katsulabs.katsubot.domain.model.RagStreamChunk;
 import com.katsulabs.katsubot.domain.port.ConversationRepository;
 import com.katsulabs.katsubot.infrastructure.auth.AuthContext;
 import com.katsulabs.katsubot.infrastructure.rag.RagServiceProperties;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -20,12 +21,15 @@ import java.util.Map;
 import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
 @Component
 @Profile("gateway")
@@ -103,7 +107,7 @@ public class GatewayWrtnClient {
         JsonNode items = body.path("results");
         if (items.isArray()) {
             for (JsonNode item : items) {
-                String conversationId = String.valueOf(item.path("conversation_id").asInt());
+                String conversationId = GatewayJsonSupport.textId(item, "conversation_id");
                 int status = item.path("status").asInt(404);
                 boolean deleted = status >= 200 && status < 300;
                 results.add(new ConversationRepository.DeleteItem(
@@ -116,24 +120,19 @@ public class GatewayWrtnClient {
     }
 
     public void assertConversationOwned(String userId, String conversationId) {
-        try {
-            exchange(
-                    authGet(client().get()
-                            .uri(uriBuilder -> uriBuilder
-                                    .path("/api/v1/conversations/{conversationId}/messages")
-                                    .queryParam("user_id", userId)
-                                    .queryParam("size", 1)
-                                    .build(conversationId))),
-                    JsonNode.class);
-        } catch (ConversationNotFoundException ex) {
-            throw ex;
-        }
+        exchange(
+                authGet(client().get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/api/v1/conversations/{conversationId}/messages")
+                                .queryParam("user_id", userId)
+                                .queryParam("size", 1)
+                                .build(conversationId))),
+                JsonNode.class);
     }
 
     public ListMessagesUseCase.MessagesPage listMessagesPage(
-            String userId, String conversationId, int cursor, int size) {
+            String userId, String conversationId, String cursor, int size) {
         int pageSize = size <= 0 ? 20 : Math.min(size, 100);
-        String gatewayCursor = cursor <= 0 ? null : String.valueOf(cursor);
 
         JsonNode body = exchange(
                 authGet(client().get()
@@ -142,8 +141,8 @@ public class GatewayWrtnClient {
                                     .path("/api/v1/conversations/{conversationId}/messages")
                                     .queryParam("user_id", userId)
                                     .queryParam("size", pageSize);
-                            if (gatewayCursor != null) {
-                                builder.queryParam("cursor", gatewayCursor);
+                            if (cursor != null && !cursor.isBlank()) {
+                                builder.queryParam("cursor", cursor);
                             }
                             return builder.build(conversationId);
                         })),
@@ -157,13 +156,7 @@ public class GatewayWrtnClient {
         }
 
         boolean hasMore = body.path("has_next").asBoolean(false);
-        Integer nextCursor = null;
-        if (hasMore && body.hasNonNull("next_cursor")) {
-            String raw = body.get("next_cursor").asText();
-            if (!raw.isBlank()) {
-                nextCursor = Integer.parseInt(raw);
-            }
-        }
+        String nextCursor = hasMore ? GatewayJsonSupport.optionalText(body, "next_cursor") : null;
         return new ListMessagesUseCase.MessagesPage(messages, hasMore, nextCursor);
     }
 
@@ -180,7 +173,8 @@ public class GatewayWrtnClient {
                 "chat_category", "basic",
                 "message", content);
 
-        String responseBody = exchange(
+        var buffer = new StringBuilder();
+        streamWrtnSse(
                 authBody(client().post()
                                 .uri(uriBuilder -> uriBuilder
                                         .path("/api/v1/conversations/{conversationId}/ai-chat")
@@ -189,37 +183,76 @@ public class GatewayWrtnClient {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.TEXT_EVENT_STREAM)
                         .bodyValue(payload),
-                String.class);
-
-        var buffer = new StringBuilder();
-        if (responseBody != null) {
-            for (String line : responseBody.split("\\r?\\n")) {
-                if (line.isBlank()) {
-                    continue;
-                }
-                try {
-                    JsonNode node = objectMapper.readTree(line);
-                    String status = node.path("status").asText("");
-                    if ("response_chunk".equals(status)) {
-                        String delta = node.path("text").asText("");
-                        if (!delta.isEmpty()) {
-                            buffer.append(delta);
-                            chunkConsumer.accept(RagStreamChunk.delta(delta));
-                        }
-                    } else if ("error".equals(status)) {
-                        throw new IllegalStateException(node.path("message").asText("stream failed"));
-                    }
-                } catch (ConversationNotFoundException | ForbiddenException | IllegalStateException ex) {
-                    throw ex;
-                } catch (Exception ignored) {
-                    // skip malformed line
-                }
-            }
-        }
+                line -> handleWrtnSseLine(line, buffer, chunkConsumer));
 
         chunkConsumer.accept(RagStreamChunk.finished());
         String assistantMessageId = findLatestAssistantMessageId(userId, conversationId);
         return new SendMessageUseCase.StreamResult(assistantMessageId, buffer.toString());
+    }
+
+    private void handleWrtnSseLine(String line, StringBuilder buffer, Consumer<RagStreamChunk> chunkConsumer) {
+        if (line.isBlank()) {
+            return;
+        }
+        try {
+            JsonNode node = objectMapper.readTree(line);
+            String status = node.path("status").asText("");
+            if ("response_chunk".equals(status)) {
+                String delta = node.path("text").asText("");
+                if (!delta.isEmpty()) {
+                    buffer.append(delta);
+                    chunkConsumer.accept(RagStreamChunk.delta(delta));
+                }
+            } else if ("error".equals(status)) {
+                throw new IllegalStateException(node.path("message").asText("stream failed"));
+            }
+        } catch (ConversationNotFoundException | ForbiddenException | IllegalStateException ex) {
+            throw ex;
+        } catch (Exception ignored) {
+            // skip malformed line
+        }
+    }
+
+    private void streamWrtnSse(WebClient.RequestHeadersSpec<?> spec, Consumer<String> lineHandler) {
+        var pending = new StringBuilder();
+        spec.retrieve()
+                .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
+                        .defaultIfEmpty("")
+                        .flatMap(body -> Mono.error(toException(response.statusCode(), body))))
+                .bodyToFlux(DataBuffer.class)
+                .doOnNext(dataBuffer -> {
+                    pending.append(dataBuffer.toString(StandardCharsets.UTF_8));
+                    drainCompleteLines(pending, lineHandler);
+                })
+                .doOnComplete(() -> {
+                    String tail = pending.toString().trim();
+                    if (!tail.isEmpty()) {
+                        lineHandler.accept(tail);
+                    }
+                })
+                .then()
+                .block();
+    }
+
+    private static void drainCompleteLines(StringBuilder pending, Consumer<String> lineHandler) {
+        int index;
+        while ((index = findLineBreak(pending)) >= 0) {
+            String line = pending.substring(0, index);
+            pending.delete(0, index + 1);
+            if (!line.isBlank()) {
+                lineHandler.accept(line.trim());
+            }
+        }
+    }
+
+    private static int findLineBreak(StringBuilder pending) {
+        for (int i = 0; i < pending.length(); i++) {
+            char ch = pending.charAt(i);
+            if (ch == '\n' || ch == '\r') {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private String findLatestAssistantMessageId(String userId, String conversationId) {
@@ -238,16 +271,17 @@ public class GatewayWrtnClient {
         for (int i = content.size() - 1; i >= 0; i--) {
             JsonNode item = content.get(i);
             if ("assistant".equalsIgnoreCase(item.path("role").asText())) {
-                return String.valueOf(item.path("message_id").asInt());
+                return GatewayJsonSupport.textId(item, "message_id");
             }
         }
         return "";
     }
 
     private Conversation toConversation(String userId, JsonNode item) {
-        String id = item.has("conversation_id")
-                ? String.valueOf(item.get("conversation_id").asInt())
-                : item.path("id").asText("");
+        String id = GatewayJsonSupport.textId(item, "conversation_id");
+        if (id.isBlank()) {
+            id = item.path("id").asText("");
+        }
         String title = item.path("title").asText("새 대화");
         Instant createdAt = parseInstant(item.path("created_at").asText(null));
         return new Conversation(id, userId, title, createdAt, List.of());
@@ -258,11 +292,11 @@ public class GatewayWrtnClient {
         JsonNode feedback = item.get("feedback");
         if (feedback != null && !feedback.isNull()) {
             feedbackView = new ListMessagesUseCase.MessageFeedbackView(
-                    feedback.path("feedback_id").asText(""),
+                    GatewayJsonSupport.textId(feedback, "feedback_id"),
                     feedback.path("feedback_type").asText(""));
         }
         return new ListMessagesUseCase.MessageView(
-                String.valueOf(item.path("message_id").asInt()),
+                GatewayJsonSupport.textId(item, "message_id"),
                 normalizeRole(item.path("role").asText("assistant")),
                 item.path("content").asText(""),
                 item.path("created_at").asText(""),
@@ -283,28 +317,45 @@ public class GatewayWrtnClient {
         try {
             return Instant.parse(value);
         } catch (Exception ex) {
-            return Instant.now();
+            try {
+                return Instant.parse(value.replace(' ', 'T'));
+            } catch (Exception ignored) {
+                return Instant.now();
+            }
         }
     }
 
     private <T> T exchange(WebClient.RequestHeadersSpec<?> spec, Class<T> bodyType) {
         try {
-            return spec.retrieve().bodyToMono(bodyType).block();
+            return spec.retrieve()
+                    .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
+                            .defaultIfEmpty("")
+                            .flatMap(body -> Mono.error(toException(response.statusCode(), body))))
+                    .bodyToMono(bodyType)
+                    .block();
         } catch (WebClientResponseException ex) {
             throw mapException(ex);
         }
     }
 
-    private static RuntimeException mapException(WebClientResponseException ex) {
-        if (ex.getStatusCode() == HttpStatus.NOT_FOUND) {
+    private static RuntimeException toException(HttpStatusCode statusCode, String body) {
+        if (statusCode.value() == HttpStatus.NOT_FOUND.value()) {
             return new ConversationNotFoundException("대화를 찾을 수 없습니다");
         }
-        if (ex.getStatusCode() == HttpStatus.FORBIDDEN) {
+        if (statusCode.value() == HttpStatus.FORBIDDEN.value()) {
             return new ForbiddenException("대화에 접근할 권한이 없습니다");
         }
-        return new IllegalStateException(ex.getResponseBodyAsString().isBlank()
-                ? "Gateway 요청 실패 (" + ex.getStatusCode().value() + ")"
-                : ex.getResponseBodyAsString());
+        String wrtnMessage = GatewayJsonSupport.wrtnErrorMessage(body);
+        if (wrtnMessage != null) {
+            return new IllegalStateException(wrtnMessage);
+        }
+        return new IllegalStateException(body.isBlank()
+                ? "Gateway 요청 실패 (" + statusCode.value() + ")"
+                : body);
+    }
+
+    private static RuntimeException mapException(WebClientResponseException ex) {
+        return toException(ex.getStatusCode(), ex.getResponseBodyAsString());
     }
 
     private static WebClient.RequestHeadersSpec<?> authGet(WebClient.RequestHeadersSpec<?> spec) {
@@ -326,5 +377,4 @@ public class GatewayWrtnClient {
         }
         return spec;
     }
-
 }

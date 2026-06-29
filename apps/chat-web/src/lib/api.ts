@@ -16,7 +16,7 @@ export type ChatMessage = {
 export type MessagesPage = {
   messages: ChatMessage[]
   has_more: boolean
-  next_cursor: number | null
+  next_cursor: string | null
 }
 
 export type SendMessageHandlers = {

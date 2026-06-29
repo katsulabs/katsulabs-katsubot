@@ -185,7 +185,7 @@ where vue.user_id = #{userId}
                     #{id}
                 </foreach>
             ),
-            '{}'::integer[]
+            '{}'::text[]
         )
         where user_id = #{userId}
           and is_deleted = false

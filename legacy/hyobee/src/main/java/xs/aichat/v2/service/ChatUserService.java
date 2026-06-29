@@ -19,9 +19,9 @@ public interface ChatUserService {
     /** @return 세션 JWT에 반영할 teamCode (단일 권한은 DB skip, 다중 권한은 is_active 갱신) */
     String activateViewableTeam(String userId, String corpCode, String teamCode);
 
-    void appendConversation(String userId, String corpCode, String teamCode, int conversationId);
+    void appendConversation(String userId, String corpCode, String teamCode, String conversationId);
 
-    void removeConversations(String userId, List<Integer> conversationIds);
+    void removeConversations(String userId, List<String> conversationIds);
 
     /**
      * 대화 목록 BFF enrichment: target_dept_code, 타 부서 대화만 title에 (dept_name) prefix.

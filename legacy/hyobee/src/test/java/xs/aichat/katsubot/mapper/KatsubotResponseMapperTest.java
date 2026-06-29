@@ -45,11 +45,11 @@ class KatsubotResponseMapperTest {
     @Test
     @DisplayName("ConversationItem을 OpenAPI Conversation으로 변환한다")
     void toConversationResponse_mapsIdAsString() {
-        var item = ConversationItem.of(42, "제목", "internal_rules", "2026-01-01", "2026-01-02", "D001");
+        var item = ConversationItem.of("729a6287-ec1f-4e6d-a26a-0b1fed964896", "제목", "internal_rules", "2026-01-01", "2026-01-02", "D001");
 
         var response = KatsubotResponseMapper.toConversationResponse(item);
 
-        assertThat(response.getId()).isEqualTo("42");
+        assertThat(response.getId()).isEqualTo("729a6287-ec1f-4e6d-a26a-0b1fed964896");
         assertThat(response.getTitle()).isEqualTo("제목");
         assertThat(response.getCreatedAt()).isEqualTo("2026-01-01");
         assertThat(response.getChatCategory()).isEqualTo("internal_rules");
@@ -59,7 +59,7 @@ class KatsubotResponseMapperTest {
     @DisplayName("메시지 목록을 MessagesPage로 변환한다")
     void toMessagesPage_mapsMessages() {
         var message = MessageItem.of(
-                7,
+                "939a6287-ec1f-4e6d-a26a-0b1fed964898",
                 "안녕",
                 List.of(),
                 null,
@@ -70,10 +70,10 @@ class KatsubotResponseMapperTest {
         );
         var wrapper = new JsonDataWrapper<>(new ApiResponse<>(null, List.of(message)));
 
-        var page = KatsubotResponseMapper.toMessagesPage(wrapper, 0, 20);
+        var page = KatsubotResponseMapper.toMessagesPage(wrapper, null, 20);
 
         assertThat(page.getMessages()).hasSize(1);
-        assertThat(page.getMessages().get(0).getId()).isEqualTo("7");
+        assertThat(page.getMessages().get(0).getId()).isEqualTo("939a6287-ec1f-4e6d-a26a-0b1fed964898");
         assertThat(page.getMessages().get(0).getRole()).isEqualTo("assistant");
     }
 
@@ -81,7 +81,7 @@ class KatsubotResponseMapperTest {
     @DisplayName("메시지 feedback Map을 요약 DTO로 변환한다")
     void toMessageResponse_mapsFeedbackSummary() {
         var message = MessageItem.of(
-                9,
+                "a39a6287-ec1f-4e6d-a26a-0b1fed964899",
                 "답변",
                 List.of(),
                 null,
@@ -101,12 +101,12 @@ class KatsubotResponseMapperTest {
     @Test
     @DisplayName("대화 목록 페이지를 배열로 변환한다")
     void toConversationResponses_mapsList() {
-        var item = ConversationItem.of(1, "A", "internal_rules", "t1", "t2", null);
+        var item = ConversationItem.of("729a6287-ec1f-4e6d-a26a-0b1fed964896", "A", "internal_rules", "t1", "t2", null);
         var page = ConversationsResponse.of(List.of(item), 1, 0, 20, false);
 
         var responses = KatsubotResponseMapper.toConversationResponses(page);
 
         assertThat(responses).hasSize(1);
-        assertThat(responses.get(0).getId()).isEqualTo("1");
+        assertThat(responses.get(0).getId()).isEqualTo("729a6287-ec1f-4e6d-a26a-0b1fed964896");
     }
 }

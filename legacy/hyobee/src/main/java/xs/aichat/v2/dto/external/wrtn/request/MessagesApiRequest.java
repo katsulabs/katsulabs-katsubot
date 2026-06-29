@@ -17,7 +17,7 @@ public class MessagesApiRequest {
 
     private String conversationId;
 
-    private Integer cursor;
+    private String cursor;
 
     private Integer size;
 }

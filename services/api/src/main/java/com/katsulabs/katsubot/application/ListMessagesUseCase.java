@@ -40,9 +40,9 @@ public class ListMessagesUseCase {
 
     public record MessageFeedbackView(String feedbackId, String feedbackType) {}
 
-    public record MessagesPage(List<MessageView> messages, boolean hasMore, Integer nextCursor) {}
+    public record MessagesPage(List<MessageView> messages, boolean hasMore, String nextCursor) {}
 
-    public MessagesPage list(String userId, String conversationId, int cursor, int size) {
+    public MessagesPage list(String userId, String conversationId, String cursor, int size) {
         if (gatewayWrtnClient != null) {
             return gatewayWrtnClient.listMessagesPage(userId, conversationId, cursor, size);
         }
@@ -58,7 +58,7 @@ public class ListMessagesUseCase {
                 .sorted(Comparator.comparing(Message::createdAt))
                 .toList();
 
-        int from = Math.max(cursor, 0);
+        int from = parseOffset(cursor);
         int pageSize = size <= 0 ? 20 : Math.min(size, 100);
         int to = Math.min(from + pageSize, sorted.size());
         var slice = from >= sorted.size() ? List.<Message>of() : sorted.subList(from, to);
@@ -74,8 +74,19 @@ public class ListMessagesUseCase {
                 .toList();
 
         boolean hasMore = to < sorted.size();
-        Integer nextCursor = hasMore ? to : null;
+        String nextCursor = hasMore ? String.valueOf(to) : null;
         return new MessagesPage(views, hasMore, nextCursor);
+    }
+
+    private static int parseOffset(String cursor) {
+        if (cursor == null || cursor.isBlank()) {
+            return 0;
+        }
+        try {
+            return Math.max(Integer.parseInt(cursor), 0);
+        } catch (NumberFormatException ex) {
+            return 0;
+        }
     }
 
     private static MessageView toView(Message message, MessageFeedback feedback) {

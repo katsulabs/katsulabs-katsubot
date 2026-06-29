@@ -51,11 +51,11 @@ public interface UserMapper {
             @Param("userId") String userId,
             @Param("corpCode") String corpCode,
             @Param("deptCode") String deptCode,
-            @Param("conversationId") int conversationId
+            @Param("conversationId") String conversationId
     );
 
     int removeConversations(
             @Param("userId") String userId,
-            @Param("conversationIds") List<Integer> conversationIds
+            @Param("conversationIds") List<String> conversationIds
     );
 }
