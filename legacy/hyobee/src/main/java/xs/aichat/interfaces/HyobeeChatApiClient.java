@@ -697,6 +697,21 @@ public class HyobeeChatApiClient {
     }
 
     /**
+     * chat-web Bearer JWT가 있으면 그대로 upstream에 전달하고, 없으면 세션 기반 stream JWT를 사용한다.
+     */
+    public void injectUpstreamAuthorizationHeader(HttpHeaders headers) {
+        HttpServletRequest request = getCurrentRequest();
+        if (request != null) {
+            String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+            if (StringUtils.hasText(authorization)) {
+                headers.set(HttpHeaders.AUTHORIZATION, authorization);
+                return;
+            }
+        }
+        injectStreamAuthorizationHeader(headers);
+    }
+
+    /**
      * SSE ??????RND ?????? ????sidebar ?? ????? ??(JWT_TEAM_CODE)???? JWT ????.
      */
     public void injectStreamAuthorizationHeader(HttpHeaders headers) {

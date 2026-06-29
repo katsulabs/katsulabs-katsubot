@@ -1,9 +1,10 @@
-import { getAuthToken } from './auth'
+import { clearAuthToken, getAuthToken } from './auth'
 
 export type Conversation = {
   id: string
   title: string
   created_at: string
+  chat_category?: string
 }
 
 export type ChatMessage = {
@@ -20,7 +21,22 @@ export type MessagesPage = {
 
 export type SendMessageHandlers = {
   onDelta: (delta: string) => void
-  onDone: (payload: { conversation_id: string; message_id: string }) => void
+  onDone: (payload: { conversation_id: string; message_id: string; content?: string }) => void
+}
+
+export function normalizeDonePayload(payload: Record<string, unknown>): {
+  conversation_id: string
+  message_id: string
+  content?: string
+} {
+  const messageId = payload.message_id ?? payload.messageId
+  const conversationId = payload.conversation_id ?? payload.conversationId
+  const content = payload.content
+  return {
+    conversation_id: conversationId != null ? String(conversationId) : '',
+    message_id: messageId != null ? String(messageId) : '',
+    content: typeof content === 'string' && content.length > 0 ? content : undefined,
+  }
 }
 
 export class ApiError extends Error {
@@ -54,12 +70,37 @@ async function parseApiError(response: Response): Promise<ApiError> {
   }
 }
 
+async function fetchWithAuth(
+  input: string,
+  init?: RequestInit,
+  retried = false,
+): Promise<Response> {
+  const hadStoredToken = Boolean(sessionStorage.getItem('katsubot.auth.token'))
+  const response = await fetch(input, {
+    ...init,
+    headers: withAuthHeaders(init?.headers),
+  })
+  if (response.status === 401 && import.meta.env.DEV && hadStoredToken && !retried) {
+    clearAuthToken()
+    return fetchWithAuth(input, init, true)
+  }
+  return response
+}
+
 async function apiFetch(input: string, init?: RequestInit): Promise<Response> {
-  const response = await fetch(input, init)
+  const response = await fetchWithAuth(input, init)
   if (!response.ok) {
     throw await parseApiError(response)
   }
   return response
+}
+
+function withAuthHeaders(headers?: HeadersInit): Headers {
+  const merged = new Headers(headers)
+  if (!merged.has('Authorization')) {
+    merged.set('Authorization', `Bearer ${getAuthToken()}`)
+  }
+  return merged
 }
 
 export async function listConversations(): Promise<Conversation[]> {
@@ -69,14 +110,21 @@ export async function listConversations(): Promise<Conversation[]> {
   return response.json()
 }
 
-export async function createConversation(title?: string): Promise<Conversation> {
+export async function createConversation(title?: string, chatCategory?: string): Promise<Conversation> {
+  const payload: { title?: string; chat_category?: string } = {}
+  if (title) {
+    payload.title = title
+  }
+  if (chatCategory) {
+    payload.chat_category = chatCategory
+  }
   const response = await apiFetch('/api/v1/conversations', {
     method: 'POST',
     headers: {
       ...authHeaders(),
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(title ? { title } : {}),
+    body: JSON.stringify(payload),
   })
   return response.json()
 }
@@ -92,31 +140,80 @@ export async function deleteConversations(conversationIds: string[]): Promise<vo
   })
 }
 
-export async function listMessages(conversationId: string): Promise<ChatMessage[]> {
-  const response = await apiFetch(`/api/v1/conversations/${conversationId}/messages`, {
-    headers: authHeaders(),
+type RawMessage = {
+  id?: string
+  message_id?: string | number
+  role?: string
+  content?: string
+}
+
+type MessagesPagePayload = MessagesPage & {
+  content?: RawMessage[]
+}
+
+function normalizeRole(role: string | undefined): ChatMessage['role'] {
+  return role?.trim().toLowerCase() === 'user' ? 'user' : 'assistant'
+}
+
+function normalizeMessage(message: RawMessage): ChatMessage {
+  const id = message.id ?? (message.message_id != null ? String(message.message_id) : '')
+  return {
+    id,
+    role: normalizeRole(message.role),
+    content: message.content ?? '',
+  }
+}
+
+export async function listMessages(conversationId: string, size = 50): Promise<ChatMessage[]> {
+  const response = await apiFetch(
+    `/api/v1/conversations/${conversationId}/messages?size=${size}`,
+    {
+      headers: authHeaders(),
+    },
+  )
+  const page = (await response.json()) as MessagesPagePayload
+  const raw = page.messages ?? page.content ?? []
+  return raw.map(normalizeMessage).filter((message) => message.id.length > 0)
+}
+
+/** SSE 직후 listMessages가 빈 assistant를 줄 때 스트리밍 본문을 보존한다. */
+export function reconcileMessages(local: ChatMessage[], server: ChatMessage[]): ChatMessage[] {
+  if (server.length === 0) {
+    return local
+  }
+  const lastLocalAssistant = [...local]
+    .reverse()
+    .find((message) => message.role === 'assistant' && message.content.trim().length > 0)
+  return server.map((message, index, all) => {
+    if (
+      message.role === 'assistant' &&
+      !message.content.trim() &&
+      index === all.length - 1 &&
+      lastLocalAssistant
+    ) {
+      return { ...message, content: lastLocalAssistant.content }
+    }
+    return message
   })
-  const page = (await response.json()) as MessagesPage
-  return page.messages.map((message) => ({
-    id: message.id,
-    role: message.role,
-    content: message.content,
-  }))
 }
 
 export async function sendMessageStream(
   conversationId: string,
   content: string,
   handlers: SendMessageHandlers,
+  chatCategory?: string,
 ): Promise<void> {
-  const response = await fetch(`/api/v1/conversations/${conversationId}/messages`, {
+  const payload: { content: string; chat_category?: string } = { content }
+  if (chatCategory) {
+    payload.chat_category = chatCategory
+  }
+  const response = await fetchWithAuth(`/api/v1/conversations/${conversationId}/messages`, {
     method: 'POST',
     headers: {
-      ...authHeaders(),
       'Content-Type': 'application/json',
       Accept: 'text/event-stream',
     },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify(payload),
   })
 
   if (!response.ok || !response.body) {
@@ -162,11 +259,26 @@ export function consumeSseBuffer(
     if (!data) {
       continue
     }
-    const payload = JSON.parse(data)
-    if (event === 'delta' && payload.delta) {
+    const payload = JSON.parse(data) as Record<string, unknown>
+    if (event === 'delta' && typeof payload.delta === 'string' && payload.delta) {
       handlers.onDelta(payload.delta)
-    } else if (event === 'done') {
-      handlers.onDone(payload)
+      continue
+    }
+    if (event === 'done' || payload.status === 'done') {
+      handlers.onDone(normalizeDonePayload(payload))
+      continue
+    }
+    if (payload.status === 'response_completed') {
+      const completedText =
+        typeof payload.message === 'string' && payload.message
+          ? payload.message
+          : typeof payload.text === 'string' && payload.text
+            ? payload.text
+            : null
+      if (completedText) {
+        handlers.onDelta(completedText)
+      }
+      handlers.onDone(normalizeDonePayload(payload))
     }
   }
 

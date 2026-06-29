@@ -52,6 +52,9 @@ public class ChatLogService {
             String requestBodyForLog = removeContentFromFilesInRequestBody(logParam.getRequestBody());
             ChatLogParam paramForInsert = logParam.toBuilder()
                     .requestBody(requestBodyForLog)
+                    .requestHeader(normalizeJsonForLog(logParam.getRequestHeader()))
+                    .responseHeader(normalizeJsonForLog(logParam.getResponseHeader()))
+                    .responseBody(normalizeJsonForLog(logParam.getResponseBody()))
                     .build();
 
             chatLogMapper.insertChatApiLog(
@@ -273,6 +276,21 @@ public class ChatLogService {
         } catch (Exception e) {
             // 파일 로그 업데이트 실패해도 비즈니스 로직에 영향 없도록
             log.error("파일 로그 logKey 업데이트 실패: fileLogKey={}", fileLogKey, e);
+        }
+    }
+
+    /**
+     * CHAT_API_LOG jsonb 컬럼용 — JSON 이 아닌 plain text(예: "Internal Server Error") 는 객체로 감싼다.
+     */
+    private String normalizeJsonForLog(String value) {
+        if (value == null || value.isBlank()) {
+            return value;
+        }
+        try {
+            jsonAdapter.toTree(value);
+            return value;
+        } catch (Exception ignored) {
+            return jsonAdapter.toJson(Map.of("raw", value));
         }
     }
 

@@ -1,0 +1,57 @@
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { LegacyLoginError, loginWithLegacyPassword } from './legacy-login'
+
+describe('loginWithLegacyPassword', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('rejects empty credentials', async () => {
+    await expect(loginWithLegacyPassword({ userId: '', password: '' })).rejects.toMatchObject({
+      code: 'LOGIN',
+    })
+  })
+
+  it('returns JWT after aichat auth login flow', async () => {
+    const fetchMock = vi.fn(async (input: string) => {
+      if (input.endsWith('/encrypt-key')) {
+        return new Response(JSON.stringify({ encrypt_key: '12345678901234567890123456789012' }))
+      }
+      if (input.endsWith('/login')) {
+        return new Response(JSON.stringify({ token: 'legacy-jwt-token' }))
+      }
+      return new Response('', { status: 404 })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const token = await loginWithLegacyPassword({ userId: 'user01', password: 'secret' })
+
+    expect(token).toBe('legacy-jwt-token')
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    const loginCall = fetchMock.mock.calls[1]
+    expect(loginCall[0]).toContain('/api/v1/auth/login')
+    expect(String(loginCall[1]?.body)).toContain('user_id_encrypt')
+  })
+
+  it('surfaces login errors from auth API', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: string) => {
+        if (input.endsWith('/encrypt-key')) {
+          return new Response(JSON.stringify({ encrypt_key: '12345678901234567890123456789012' }))
+        }
+        return new Response(
+          JSON.stringify({ code: 'LOGIN_NMP', message: '비밀번호가 올바르지 않습니다.' }),
+          { status: 401 },
+        )
+      }),
+    )
+
+    await expect(loginWithLegacyPassword({ userId: 'user01', password: 'bad' })).rejects.toEqual(
+      expect.objectContaining<Partial<LegacyLoginError>>({
+        code: 'LOGIN',
+        message: '비밀번호가 올바르지 않습니다.',
+      }),
+    )
+  })
+})

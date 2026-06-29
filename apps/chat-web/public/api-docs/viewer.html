@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Swagger UI — Katsubot API</title>
+    <link rel="icon" type="image/png" href="/katsulabs-logo.png" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swagger-ui-dist@5.21.0/swagger-ui.css"
+    />
+    <style>
+      html {
+        box-sizing: border-box;
+      }
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+      body {
+        margin: 0;
+      }
+      .topbar {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.65rem 1rem;
+        background: #1a2332;
+        border-bottom: 1px solid #2d3a4f;
+        font-family: system-ui, sans-serif;
+        font-size: 0.875rem;
+      }
+      .topbar a {
+        color: #93c5fd;
+        text-decoration: none;
+      }
+      .topbar a:hover {
+        text-decoration: underline;
+      }
+      .topbar span {
+        color: #8b9cb3;
+      }
+      .topbar strong {
+        color: #e7ecf3;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <a href="./index.html">← API Docs</a>
+      <span>|</span>
+      <strong id="spec-label">OpenAPI</strong>
+    </div>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@5.21.0/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.21.0/swagger-ui-standalone-preset.js"></script>
+    <script>
+      const ALLOWED = [
+        'openapi.yaml',
+        'wrtn-upstream-openapi.yaml',
+        'ai-gateway-wrtn-replacement-openapi.yaml',
+      ];
+      const params = new URLSearchParams(window.location.search);
+      const specFile = params.get('spec') || 'openapi.yaml';
+      if (!ALLOWED.includes(specFile)) {
+        document.body.innerHTML =
+          '<p style="padding:2rem;font-family:system-ui">Invalid spec. <a href="./index.html">Back</a></p>';
+      } else {
+        document.getElementById('spec-label').textContent = specFile;
+        window.ui = SwaggerUIBundle({
+          url: '/api-docs/specs/' + specFile,
+          dom_id: '#swagger-ui',
+          deepLinking: true,
+          presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+          plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+          layout: 'StandaloneLayout',
+          validatorUrl: null,
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+@font-face {
+  font-family: 'xuiFontIcon';
+  src: url('../font/xuiFontIcon/xuiFontIcon.woff2') format('woff2');
+}
+
+.xfi {
+  font-family: 'xuiFontIcon';
+  position: relative;
+  font-size: 20px;
+  display: inline-block;
+  font-style: normal;
+  font-weight: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.xfi:before {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.xfi-ico_0002_arrow_down_line_nor:before { content: '\ea02'; }
+.xfi-ico_0018_edit:before { content: '\ea12'; }
+.xfi-ico_0042_delete:before { content: '\ea2a'; }
+.xfi-ico_0060_send:before { content: '\ea3c'; }
+.xfi-ico_0160_article:before { content: '\eaa0'; }
+.xfi-ico_0175_arrow_prev:before { content: '\eaaf'; }
+.xfi-ico_0188_arrow_down:before { content: '\eabc'; }
+.xfi-ico_0195_stop_circle_line:before { content: '\eac3'; }
+.xfi-ico_0340_delete_history:before { content: '\eb54'; }
+.xfi-ico_0341_attachment:before { content: '\eb55'; }

@@ -48,21 +48,31 @@ for f in src/main/resources/sql/aichat/*.sql; do sudo -u postgres psql -d xtrmvo
 mkdir -p /tmp/hyobee/{upload,clob,files,temp,download}
 export JAVA_HOME=$(/usr/libexec/java_home -v 21)
 cd legacy/hyobee
-mvn spring-boot:run -Dspring-boot.run.jvmArguments="-DXTRMDB_JDBC_URL=jdbc:postgresql://localhost:5432/xtrmvob -DXTRMDB_JDBC_USER_ID=xtrmdev -DXTRMDB_JDBC_USER_PW=xtrmdev -DCLOB_FILE_ROOT_PATH=/tmp/hyobee/clob/ -DFILE_UPLOAD_ROOT_PATH=/tmp/hyobee/files/ -DFILE_UPLOAD_TEMP_PATH=/tmp/hyobee/files/temp/ -DFILE_DOWNLOAD_TEMP_ROOT_PATH=/tmp/hyobee/files/download/ -DAI_CHAT_UPLOAD_PATH=/tmp/hyobee/upload/"
+# DB: hyobee-admin-db → localhost:53254 (XtrmConfig.properties 기본)
+# WRTN: 로컬 AI Gateway → http://127.0.0.1:8090 (XtrmConfig.properties WRTN_BASEURL)
+mvn spring-boot:run -Dspring-boot.run.jvmArguments="-DXTRMDB_JDBC_URL=jdbc:postgresql://localhost:53254/xtrmvob?tcpKeepAlive=true&applicationName=xtrmVOB -DXTRMDB_JDBC_USER_ID=XtrmSalesDev -DXTRMDB_JDBC_USER_PW=Xtrm-Sales#Dev#86 -DCLOB_FILE_ROOT_PATH=/tmp/hyobee/clob/ -DFILE_UPLOAD_ROOT_PATH=/tmp/hyobee/files/ -DFILE_UPLOAD_TEMP_PATH=/tmp/hyobee/files/temp/ -DFILE_DOWNLOAD_TEMP_ROOT_PATH=/tmp/hyobee/files/download/ -DAI_CHAT_UPLOAD_PATH=/tmp/hyobee/upload/"
 ```
 
 확인: `curl -s http://localhost:8080/actuator/health`
 
+**Gateway JWT:** `/xs/aichat/v2/**` → Gateway WRTN API 는 **레거시 로그인 JWT** 필요 (`dev-token` 거절). `GATEWAY_JWT_SECRET` = `SECRET_KEY`.
+
 ### chat-api (신규)
 
 ```bash
-./gradlew :services:chat-api:bootRun
+# 1) AI Gateway — WRTN + completions (:8090)
+cp infra/.env.example infra/.env   # hyobee-rag-db 비밀번호 등 채우기
+./scripts/up-ai-gateway.sh
+
+# 2) chat-api — infra/.env 의 JWT·RAG 설정 적용
+./scripts/boot-chat-api.sh   # :8081
 curl -s http://localhost:8081/actuator/health
 ```
 
-### infra
+### infra (Gateway만, katsubot compose)
 
 ```bash
-cd infra && docker compose up -d
+cp infra/.env.example infra/.env
+cd infra && docker compose -f docker-compose.ai-gateway.yml --env-file .env up --build -d
 curl -s http://localhost:8090/_health
 ```

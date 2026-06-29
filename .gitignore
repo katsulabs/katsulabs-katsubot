@@ -51,7 +51,9 @@ legacy/hyobee/target/
 #*.ear
 
 # 환경 설정 파일
+infra/.env
 *.env
+!**/.env.example
 #*.properties
 
 # 기타 파일

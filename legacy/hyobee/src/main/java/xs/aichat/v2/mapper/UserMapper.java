@@ -3,6 +3,7 @@ package xs.aichat.v2.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import xs.aichat.v2.dto.ConversationDeptMapping;
+import xs.aichat.v2.dto.LoginUserCredentials;
 import xs.aichat.v2.dto.Team;
 import xs.aichat.v2.dto.User;
 
@@ -12,6 +13,11 @@ import java.util.List;
 public interface UserMapper {
 
     User findById(@Param("userId") String userId);
+
+    LoginUserCredentials findLoginCredentials(
+            @Param("companyCode") String companyCode,
+            @Param("userId") String userId
+    );
 
     User findUserByIdAndCodes(@Param("userId") String userId,
                               @Param("pgCode") String pgCode,

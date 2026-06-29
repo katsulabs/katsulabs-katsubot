@@ -33,6 +33,42 @@ inner join vob_dept_lang vdl
 where cu.user_id =  #{userId};
 </select>
 
+<select id="findLoginCredentials" resultType="xs.aichat.v2.dto.LoginUserCredentials">
+select cu.company_code as companyCode,
+       cu.user_id as userId,
+       cu.user_name as userName,
+       cu.password_encpt as passwordEncpt,
+       (select cc.encpt_key_info
+          from com_company cc
+         where cc.company_code = cu.company_code) as encptKeyInfo,
+       cu.account_use_at as accountUseAt,
+       coalesce(cu.password_error_count, 0) as passwordErrorCount,
+       case when cu.recent_login_dt is not null
+                 and (current_timestamp - cast(cu.recent_login_dt as date)) > interval '180 days'
+            then 'Y'
+            else 'N'
+        end as isLockAccount,
+       vue.pg_code as pgCode,
+       vue.pu_code as puCode,
+       vue.corp_code as corpCode,
+       cu.dept_code as deptCode,
+       vdl.dept_code as teamCode,
+       vdl.dept_name as teamName
+ from com_user cu
+inner join vob_user_ext vue
+   on cu.user_id = vue.user_id
+  and vue.dept_code = cu.dept_code
+  and vue.company_code = cu.company_code
+  and vue.company_code = #{companyCode}
+inner join vob_dept_lang vdl
+   on vue.corp_code = vdl.corp_code
+  and vdl.language_code = 'ko'
+  and vue.company_code = vdl.company_code
+  and vdl.dept_code = vue.dept_special_code
+where cu.company_code = #{companyCode}
+  and cu.user_id = #{userId}
+</select>
+
 <select id="findUserByIdAndCodes" resultType="xs.aichat.v2.dto.User">
 select vue.user_id as userId,
        cu.user_name,

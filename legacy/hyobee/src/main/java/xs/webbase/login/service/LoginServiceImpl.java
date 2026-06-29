@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import xs.aichat.v2.exception.AichatLoginException;
+import xs.aichat.v2.service.AichatUserLoginService;
 import xs.core.api.service.ApiService;
 import xs.core.enumeration.XtrmEnum;
 import xs.core.extend.XtrmDefaultResource;
@@ -42,6 +44,9 @@ public class LoginServiceImpl extends XtrmDefaultResource implements LoginServic
 
 	@Autowired
 	ApiService apiService;
+
+	@Autowired
+	AichatUserLoginService aichatUserLoginService;
 
 	@Resource(name = "xtrmProperty")
 	public XtrmProperty objXtrmConfig;
@@ -104,6 +109,17 @@ public class LoginServiceImpl extends XtrmDefaultResource implements LoginServic
 		
 		//로그인을 위한 필수항목 체크 및 추가 처리
 		if(!validationLoginBase(objXtrmParams, objSession, objXtrmReturn)){return objXtrmReturn;}
+
+		try {
+			aichatUserLoginService.validateDecryptedPassword(
+					objXtrmParams.getString("companyCode"),
+					objXtrmParams.getString("userId"),
+					objXtrmParams.getString("password")
+			);
+		} catch (AichatLoginException ex) {
+			objXtrmReturn.setResultHeader(true, ex.getMessage(), ex.getLegacyCode());
+			return objXtrmReturn;
+		}
 
 		//사용자 정보 조회
 		//다국어를 지원하기 위해 로그인시 선택한 언어 코드를 파라메터에 추가함

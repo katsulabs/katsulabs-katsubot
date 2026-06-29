@@ -534,11 +534,11 @@ public class XtrmHandlerInterceptor extends HandlerInterceptorAdapter {
 //			objXtrmLogParams.setString("sessionCompanyCode",companyCodestr);
 
 			// 필수항목체크(회사코드와 사용자ID가 반드시 존재해야 접근일력을 저장한다.)
-			if(!objXtrmLogParams.getErrorFlag()) {
-				if (!objXtrmLogParams.getString("userId").equals("") && !objXtrmLogParams.getString("companyCode").equals("")) {
-					objXtrmDao.insert("xs.core.api.ApiMapper", "insertUserAccessLog", objXtrmLogParams);
-				}
-			}
+			// if(!objXtrmLogParams.getErrorFlag()) {
+			// 	if (!objXtrmLogParams.getString("userId").equals("") && !objXtrmLogParams.getString("companyCode").equals("")) {
+			// 		objXtrmDao.insert("xs.core.api.ApiMapper", "insertUserAccessLog", objXtrmLogParams);
+			// 	}
+			// }
 
 		}
 	}

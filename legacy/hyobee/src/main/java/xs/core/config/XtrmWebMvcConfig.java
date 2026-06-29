@@ -131,13 +131,15 @@ public class XtrmWebMvcConfig implements WebMvcConfigurer {
 						"/resources/**",
 						"/xs/vob/aichat/**",
 						"/xs/aichat/**",
+						"/api/v1/**",
 						"/static/**",
 						"/public/**",
 						"/**/*.js", "/**/*.css", "/**/*.png", "/**/*.jpg", "/**/*.jpeg", "/**/*.gif");
 		// /xs/aichat/** ? ??? XtrmHandlerInterceptor ?? ?? ????? ??.
 		registry.addInterceptor(new HyobeeApiInterceptor(hyobeeJwtTokenService))
 				.order(3)
-				.addPathPatterns("/xs/aichat/**");
+				.addPathPatterns("/xs/aichat/**", "/api/v1/**")
+				.excludePathPatterns("/api/v1/health");
 	}
 
 	@Bean

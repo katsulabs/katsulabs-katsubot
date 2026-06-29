@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -224,7 +225,7 @@ public class WrtnChatVendorClient implements ChatVendorClient {
         StringBuilder responseBodyBuilder = new StringBuilder();
 
         var dynamicHeaders = new HttpHeaders();
-        hyobeeChatApiClient.injectStreamAuthorizationHeader(dynamicHeaders);
+        hyobeeChatApiClient.injectUpstreamAuthorizationHeader(dynamicHeaders);
 
         var webClient = wrtnWebClient;
 
@@ -243,7 +244,8 @@ public class WrtnChatVendorClient implements ChatVendorClient {
                 // ?? ??? JSON String? ??? ???.
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
-                .bodyToFlux(String.class)
+                .bodyToFlux(DataBuffer.class)
+                .transform(WrtnNdjsonStreamSupport::ndjsonLines)
                 .subscribe(
                         chunk -> {
                             if (chunk == null || chunk.trim().isEmpty()) {

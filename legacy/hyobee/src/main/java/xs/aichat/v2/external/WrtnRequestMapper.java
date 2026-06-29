@@ -27,10 +27,15 @@ public final class WrtnRequestMapper {
     }
 
     public static MessagesApiRequest toApiRequest(MessageRequest request) {
+        // WRTN upstream: cursor=null → 첫 페이지. cursor=0 은 message_id<0 필터로 빈 목록이 됨.
+        Integer upstreamCursor = request.getCursor();
+        if (upstreamCursor != null && upstreamCursor <= 0) {
+            upstreamCursor = null;
+        }
         return MessagesApiRequest.of(
                 request.getUserId(),
                 request.getConversationId(),
-                request.getCursor(),
+                upstreamCursor,
                 request.getSize()
         );
     }

@@ -2876,7 +2876,7 @@ var aichat010={
         aichat010.defineLanguageSelectEvent();
     },
 
-    /** hyobee.locale.{code} 또는 SYS028 codeName으로 언어명 표기 */
+    /** hyobee.locale.{code} — SYS028 DB 의존 없음 (sidebar.jsp message-text와 동일) */
     getLanguageOptionLabel: function(languageCode) {
         if (xui.valid.isEmpty(languageCode)) {
             return "";
@@ -2885,13 +2885,8 @@ var aichat010={
         if (!xui.valid.isEmpty(label)) {
             return label;
         }
-        var languages = xui.syscode.get("SYS028") || [];
-        for (var i = 0; i < languages.length; i++) {
-            if (languages[i].code === languageCode) {
-                return languages[i].codeName || languageCode;
-            }
-        }
-        return languageCode;
+        var fallback = { ko: "한국어", en: "English", zh: "中國語", ja: "日本語" };
+        return fallback[languageCode] || languageCode;
     },
 
     /** 드롭다운 항목(ko/en/zh) 라벨을 현재 UI 로케일 문구로 갱신 */
@@ -2980,8 +2975,14 @@ var aichat010={
             if (response.getErrorFlag()) {
                 return;
             }
-            xui.syscode.load(response.getDataJsonObject("SYS_CODE"));
-            xui.message.load(response.getDataJsonArray("MESSAGE_DATA"));
+            var sysCode = response.getDataJsonObject("SYS_CODE");
+            if (sysCode) {
+                xui.syscode.load(sysCode);
+            }
+            var messageData = response.getDataJsonArray("MESSAGE_DATA");
+            if (messageData && messageData.length) {
+                xui.message.load(messageData);
+            }
             if (typeof $.cookie === "function") {
                 $.cookie("languageCode", languageCode, { expires: 30 });
             }
@@ -3902,6 +3903,13 @@ var aichat010={
                 dataObj.jsonData.DATA[0] && dataObj.jsonData.DATA[0].content) {
                 // (fallback) 일부 환경에서 이중 래핑 형태로 content가 더 깊이 들어가는 케이스
                 content = dataObj.jsonData.DATA[0].content;
+            } else if (typeof response.getJson === "function") {
+                var jsonRoot = response.getJson();
+                if (jsonRoot && jsonRoot.DATA && jsonRoot.DATA[0] && jsonRoot.DATA[0].content) {
+                    content = jsonRoot.DATA[0].content;
+                } else if (jsonRoot && jsonRoot.content) {
+                    content = jsonRoot.content;
+                }
             }
         } else if (response && response.content) {
             content = response.content;
@@ -3971,7 +3979,7 @@ var aichat010={
 
         $('.more-button').remove();
         if (chatHistoryHasNext) {
-            $("#chatHistory").append('<div class="list-view2-item more-button">' + aichat010.msg("hyobee.conversation.more") + '</div>');
+            $("#chatHistory").append('<div class="list-view2-item more-button">' + aichat010.msg("hyobee.conversations.more") + '</div>');
         }
 
         aichat010.defineEventChatHistory(content);

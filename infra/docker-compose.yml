@@ -13,7 +13,10 @@ services:
       timeout: 5s
       retries: 5
 
+  # CI·오프라인용 최소 스텁. 운영/로컬 LLM은 ai-gateway 사용 (아래 compose 파일)
+  #   docker compose -f docker-compose.ai-gateway.yml up --build -d
   dummy-rag:
+    profiles: ["stub"]
     build: ./dummy-rag
     ports:
       - "8090:8090"

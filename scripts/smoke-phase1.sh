@@ -5,7 +5,7 @@ API_BASE="${API_BASE:-http://localhost:8081}"
 TOKEN="${TOKEN:-dev-token}"
 RAG_BASE="${RAG_BASE:-http://localhost:8090}"
 
-echo "== dummy-rag health =="
+echo "== AI Gateway health (8090) =="
 curl -sf "${RAG_BASE}/_health" | grep -q '"status":"ok"'
 
 echo "== chat-api health =="
