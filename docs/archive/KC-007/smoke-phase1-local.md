@@ -1,14 +1,28 @@
 # Phase 1 로컬 스모크
 
-> 전제: `infra/docker-compose`의 **dummy-rag**(+ 선택 **postgres**) 기동, JDK 25, Node 22.
+> 전제: **dummy-rag** 또는 **katsulabs-ai-gateway**(+ 선택 **postgres**) 기동, JDK 25, Node 22.
 
 ## 1. 인프라
+
+**dummy-rag (최소 스텁)**
 
 ```bash
 cd infra
 docker compose up -d dummy-rag
-# JPA 영속화 사용 시
-docker compose up -d postgres
+```
+
+**katsulabs-ai-gateway (Phase 1 Direct LLM)**
+
+```bash
+# gateway repo clone 후 — Java 스택 (Boot 4.1, chat-api와 동일)
+docker compose -f infra/docker-compose.java.yml up --build -d
+# LLM 키 없으면 stub 응답 (smoke·CI)
+```
+
+**Postgres (JPA 영속화)**
+
+```bash
+cd infra && docker compose up -d postgres
 ```
 
 ## 2. chat-api
@@ -29,7 +43,8 @@ SPRING_PROFILES_ACTIVE=jpa ./gradlew :services:chat-api:bootRun
 |------|------|------|
 | `KATSUBOT_AUTH_DEV_BYPASS` | `true` | `Bearer dev-token` 허용 |
 | `KATSUBOT_AUTH_JWT_SECRET` | (없음) | 레거시 `SECRET_KEY`와 동일 시 JWT 검증 |
-| `RAG_SERVICE_BASE_URL` | `http://localhost:8090` | dummy-rag |
+| `RAG_SERVICE_BASE_URL` | `http://localhost:8090` | dummy-rag 또는 AI Gateway |
+| `RAG_SERVICE_MODE` | `direct` | `direct` · `rag` |
 | `KATSUBOT_DB_URL` | `jdbc:postgresql://localhost:5432/katsubot` | `jpa` 프로필 |
 
 Health: `curl -s http://localhost:8081/actuator/health`

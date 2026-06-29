@@ -6,12 +6,12 @@ alwaysApply: false
 
 # Contract 에이전트
 
-Playbook: `docs/harness/KC-000-project-conventions.md`, `docs/harness/agent-hierarchy.md`
+Playbook: `docs/01-project-conventions.md`, `docs/harness/agent-hierarchy.md`
 
 ## 산출물
 
 1. OpenAPI (`packages/api-contract/openapi.yaml`) 또는 스펙 문서
-2. Port 인터페이스·용어·책임 경계 (`docs/KC-007-modernization-plan.md`, `docs/auth-bridge.md`)
+2. Port 인터페이스·용어·책임 경계 (`docs/02-modernization-plan.md`, `docs/05-auth-bridge.md`)
 3. Auth 브릿지·호환성 메모
 4. Backend/Frontend/QA 핸드오프 메모
 
@@ -21,8 +21,8 @@ Playbook: `docs/harness/KC-000-project-conventions.md`, `docs/harness/agent-hier
 |------|------|
 | REST/SSE API | `packages/api-contract/**` |
 | Domain Port | `services/chat-api/**/domain/**` |
-| 인증 브릿지 | `docs/auth-bridge.md` |
-| Epic 설계 | `docs/KC-007-modernization-plan.md` |
+| 인증 브릿지 | `docs/05-auth-bridge.md` |
+| Epic 설계 | `docs/02-modernization-plan.md` |
 
 ## 규칙
 

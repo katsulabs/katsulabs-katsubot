@@ -1,6 +1,6 @@
 # 하네스 워크플로
 
-> 규칙: [KC-000-project-conventions.md](./KC-000-project-conventions.md)
+> 규칙: [01-project-conventions.md](../01-project-conventions.md)
 
 ## 원칙
 
@@ -28,7 +28,7 @@
 
 ## API·인증 계약 변경 시
 
-- `packages/api-contract/**`, `docs/auth-bridge.md`
+- `packages/api-contract/**`, [05-auth-bridge.md](../05-auth-bridge.md)
 - OpenAPI breaking change 검토
 - 401/403·SSE 취소 동작 회귀 확인
 

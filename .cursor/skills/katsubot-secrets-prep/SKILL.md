@@ -31,5 +31,5 @@ description: Katsubot Secrets 체크리스트 — repo secret 금지, env 분리
 
 ## 참고
 
-- `KC-000-project-conventions.md`
+- `docs/01-project-conventions.md`
 - `docs/harness/todo.md`

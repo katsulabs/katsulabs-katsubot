@@ -1,6 +1,6 @@
 # 에이전트 계층
 
-> 규칙: [KC-000-project-conventions.md](./KC-000-project-conventions.md)
+> 규칙: [01-project-conventions.md](../01-project-conventions.md)
 
 메인 오케스트레이터(`.cursor/rules/orchestrator.mdc`)가 티켓·worktree를 관리하고, Sub-agent 4역할이 구현합니다.
 

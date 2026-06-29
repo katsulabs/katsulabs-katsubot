@@ -31,4 +31,4 @@ git branch -d feature/KC-007-modernization-phase0-scaffold
 ## 참고
 
 - `docs/harness/workflow.md`
-- `KC-000-project-conventions.md` §1
+- `docs/01-project-conventions.md` §1

@@ -11,7 +11,8 @@
 
 | 변수 | 용도 | 저장소 |
 |------|------|--------|
-| `RAG_SERVICE_BASE_URL` | 운영 RAG HTTP/SSE | GitHub Environment `staging` / `production` |
+| `RAG_SERVICE_BASE_URL` | AI Gateway HTTP/SSE | GitHub Environment `staging` / `production` |
+| `RAG_SERVICE_MODE` | `direct` (기본) · `rag` | 선택 — Phase 2+ RAG |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | Trace 수집기 | Environment secret |
 | `MANAGEMENT_TRACING_ENABLED` | 로컬 `false`, 스테이징 `true` | 프로필·env |
 | `KATSUBOT_LEGACY_BASE_URL` | `legacy-bridge` 프로필 | staging only |

@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Frontend 에이전트
 
-Playbook: `docs/harness/KC-000-project-conventions.md`, `docs/harness/agent-hierarchy.md`
+Playbook: `docs/01-project-conventions.md`, `docs/harness/agent-hierarchy.md`
 
 ## 범위
 

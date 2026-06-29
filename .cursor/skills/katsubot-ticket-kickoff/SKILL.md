@@ -7,9 +7,9 @@ description: Katsubot 티켓 킥오프 — KC-000·todo.md·Epic DoD 확인, fea
 
 ## 첫 턴 체크리스트
 
-1. `docs/harness/KC-000-project-conventions.md`
+1. `docs/01-project-conventions.md`
 2. `docs/harness/todo.md` — 티켓, DoD
-3. Epic 문서: `docs/KC-007-modernization-plan.md`
+3. Epic 문서: `docs/02-modernization-plan.md`
 4. 브랜치: `feature/KC-{id}-{feature}` (`main` 기능 커밋 금지)
 5. 태그 분배: `[KC-xxx][Contract|Backend|Frontend|QA]`
 

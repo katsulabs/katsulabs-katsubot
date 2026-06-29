@@ -6,7 +6,8 @@
 
 | 변수 | 기본값 (로컬) | 스테이징 |
 |------|---------------|----------|
-| `RAG_SERVICE_BASE_URL` | `http://localhost:8090` | 운영 RAG URL (필수) |
+| `RAG_SERVICE_BASE_URL` | `http://localhost:8090` | AI Gateway URL (필수) |
+| `RAG_SERVICE_MODE` | `direct` | `direct` · `rag` (Phase 2+) |
 | `MANAGEMENT_TRACING_ENABLED` | `false` | `true` (`application-staging.yml`) |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | — | `http://<collector>:4318/v1/traces` |
 

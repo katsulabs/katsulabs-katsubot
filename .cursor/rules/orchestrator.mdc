@@ -5,7 +5,7 @@ alwaysApply: true
 
 # 메인 오케스트레이터
 
-Playbook: `docs/harness/KC-000-project-conventions.md`, `docs/harness/agent-hierarchy.md`
+Playbook: `docs/01-project-conventions.md`, `docs/harness/agent-hierarchy.md`
 
 ## 전역 규칙
 
@@ -18,7 +18,7 @@ Playbook: `docs/harness/KC-000-project-conventions.md`, `docs/harness/agent-hier
 
 ## 구현 요청 시 (첫 턴 필수)
 
-1. `docs/harness/KC-000-project-conventions.md` · `docs/harness/todo.md` 확인
+1. `docs/01-project-conventions.md` · `docs/harness/todo.md` 확인
 2. worktree/브랜치 준비
 3. Sub-agent 디스패치:
    - `[KC-xxx][Contract]`

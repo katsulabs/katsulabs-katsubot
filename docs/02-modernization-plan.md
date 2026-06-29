@@ -1,4 +1,4 @@
-# KC-007-modernization — 챗봇 현대화 작업계획서 (승인용)
+# KC-007-modernization — 챗봇 현대화 작업계획서 (02)
 
 
 | 항목    | 값                                                                        |
@@ -8,7 +8,7 @@
 | 상태    | **승인됨 (APPROVED)** — 2026-06-26 |
 | 작성일   | 2026-06-25                                                               |
 | 예상 기간 | Phase 0–2: **8–10주** (1 FTE, 병렬 시 단축)                                    |
-| 운영 규칙 | [KC-000-project-conventions.md](./harness/KC-000-project-conventions.md) |
+| 운영 규칙 | [01-project-conventions.md](./01-project-conventions.md) |
 
 
 ---
@@ -185,7 +185,7 @@ flowchart LR
 | Backend  | Spring Boot **4.1**, JDK **25** | **신규 모듈만**             |
 | Build    | Gradle (멀티모듈)                   | 레거시는 Maven 유지          |
 | DB       | PostgreSQL                      | Flyway, 스키마 `chat`     |
-| RAG      | **외부 HTTP** (`RagCompletionPort`) | [rag-external-client.md](./rag-external-client.md) |
+| RAG      | **외부 HTTP** (`RagCompletionPort`) | [06-rag-contract.md](./06-rag-contract.md) |
 | CI       | GitHub Actions                  | path filter 3 workflow |
 
 
@@ -213,7 +213,7 @@ flowchart LR
 
 RAG는 **chat-api에 내장하지 않는다.** `RagCompletionPort` 뒤에서 `RagHttpClient`가 `katsubot.rag.base-url`로 HTTP/SSE 호출한다 (레거시 `HyobeeChatApiClient` → WRTN 패턴).
 
-상세 계약: **[rag-external-client.md](./rag-external-client.md)**
+상세 계약: **[06-rag-contract.md](./06-rag-contract.md)**
 
 | 구분 | 역할 |
 |------|------|
@@ -278,8 +278,8 @@ Phase 4  레거시 decommission  요구 시
 | ID   | 산출물                                                                 |
 | ---- | ------------------------------------------------------------------- |
 | 1-C1 | `packages/api-contract/openapi.yaml` — conversations, messages(SSE) |
-| 1-C2 | `docs/auth-bridge.md` — JWT vs 레거시 세션                               |
-| 1-C3 | `RagCompletionPort` + [rag-external-client.md](./rag-external-client.md) |
+| 1-C2 | [05-auth-bridge.md](./05-auth-bridge.md) — JWT vs 레거시 세션            |
+| 1-C3 | `RagCompletionPort` + [06-rag-contract.md](./06-rag-contract.md)         |
 
 
 **Backend:** Use Case (`CreateConversation`, `SendMessage`), `RagHttpClient` → 외부 RAG, Flyway V1, JPA(optional), Port Mock 단위 테스트
@@ -342,7 +342,7 @@ Phase 4  레거시 decommission  요구 시
 브랜치: `feature/KC-007-modernization-phase0-scaffold`  
 태그: `[KC-007-modernization][Backend]` 등
 
-상세: [KC-000](./harness/KC-000-project-conventions.md) · [agent-hierarchy.md](./harness/agent-hierarchy.md)
+상세: [01-project-conventions.md](./01-project-conventions.md) · [agent-hierarchy.md](./harness/agent-hierarchy.md)
 
 ---
 
@@ -358,7 +358,7 @@ Phase 4  레거시 decommission  요구 시
 
 1. worktree 생성 (`katsubot-worktree-ticket`)
 2. Phase 0 PR — 디렉터리 이동 + 스캐폴딩 only
-3. Contract — `auth-bridge.md` + OpenAPI 초안
+3. Contract — [05-auth-bridge.md](./05-auth-bridge.md) + OpenAPI 초안
 4. `docs/harness/todo.md` 상태를 **IN PROGRESS**로 갱신
 
 ---

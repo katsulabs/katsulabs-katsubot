@@ -20,10 +20,10 @@
 ## 완전 제거 전제
 
 - [ ] SSO/ADFS를 chat-web 또는 IdP 직접 연동으로 대체
-- [ ] v2 parity 100% 또는 미사용 API 폐기 합의 ([v2-parity-matrix.md](../../docs/modernization/v2-parity-matrix.md))
+- [ ] v2 parity 100% 또는 미사용 API 폐기 합의 ([07-api-reference.md](../../docs/07-api-reference.md))
 - [ ] 운영 트래픽 0% 확인 (레거시 `/xs/aichat/v2/**` 모니터링)
 
 ## 참고
 
-- [decommission-runbook.md](../../docs/modernization/decommission-runbook.md)
+- [09-operations-runbook.md](../../docs/09-operations-runbook.md)
 - [KC-007-phase4-kickoff.md](../../docs/harness/KC-007-phase4-kickoff.md)

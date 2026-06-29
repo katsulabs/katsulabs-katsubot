@@ -43,4 +43,4 @@ KC-007-modernization — Phase 0 scaffold
 ## 참고
 
 - `.github/PULL_REQUEST_TEMPLATE.md`
-- `docs/harness/KC-000-project-conventions.md` §5
+- `docs/01-project-conventions.md` §5

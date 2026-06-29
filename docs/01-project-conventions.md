@@ -1,4 +1,4 @@
-# KC-000 — Katsubot 프로젝트 규칙
+# KC-000 — Katsubot 프로젝트 규칙 (01)
 
 | 항목 | 값 |
 |------|-----|
@@ -40,8 +40,9 @@ feature/KC-{번호}-{feature}   # Git 브랜치
 | `services/chat-api/` | Spring Boot 4.1, Clean Architecture | Backend |
 | `packages/api-contract/` | OpenAPI 3.1 (계약 단일 소스) | Contract |
 | `legacy/hyobee/` | 전환기 WAR — **신규 기능 금지** | (터치 시 QA만) |
-| `docs/KC-007-modernization-plan.md` | 현대화 Epic (승인용 단일 문서) |
-| `docs/harness/` | 운영·워크플로 | Main |
+| `docs/02-modernization-plan.md` | 현대화 Epic (승인용 단일 문서) |
+| `docs/README.md` | 문서 목차 (00) |
+| `docs/harness/` | 에이전트 TODO·워크플로 | Main |
 
 ## 3. 에이전트 4역할
 
@@ -85,11 +86,12 @@ infrastructure/ → JPA, RagHttpClient, AuthAdapter
 
 ## 7. 문서 읽기 순서
 
-1. **본 문서** (`KC-000`)
-2. **[KC-007-modernization-plan.md](../KC-007-modernization-plan.md)** — 승인·실행 계획
-3. `docs/harness/todo.md`
-4. `packages/api-contract/openapi.yaml` (존재 시)
-5. `docs/harness/workflow.md`
+1. **본 문서** (`01-project-conventions`)
+2. **[02-modernization-plan.md](./02-modernization-plan.md)** — 승인·실행 계획
+3. **[03-architecture-flows.md](./03-architecture-flows.md)** — 플로우차트
+4. `docs/harness/todo.md`
+5. `packages/api-contract/openapi.yaml`
+6. `docs/harness/workflow.md`
 
 ## 8. Cursor Skills
 
