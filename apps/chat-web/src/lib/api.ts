@@ -51,10 +51,25 @@ export class ApiError extends Error {
   }
 }
 
+function requireAuthToken(): string {
+  const token = getAuthToken()
+  if (!token) {
+    throw new ApiError(401, 'UNAUTHORIZED', '로그인이 필요합니다.')
+  }
+  return token
+}
+
 function authHeaders(): HeadersInit {
   return {
-    Authorization: `Bearer ${getAuthToken()}`,
+    Authorization: `Bearer ${requireAuthToken()}`,
   }
+}
+
+let unauthorizedHandler: (() => void) | null = null
+
+/** 401 시 로그인 화면으로 돌리기 위해 App에서 등록한다. */
+export function setUnauthorizedHandler(handler: (() => void) | null): void {
+  unauthorizedHandler = handler
 }
 
 async function parseApiError(response: Response): Promise<ApiError> {
@@ -70,19 +85,14 @@ async function parseApiError(response: Response): Promise<ApiError> {
   }
 }
 
-async function fetchWithAuth(
-  input: string,
-  init?: RequestInit,
-  retried = false,
-): Promise<Response> {
-  const hadStoredToken = Boolean(sessionStorage.getItem('katsubot.auth.token'))
+async function fetchWithAuth(input: string, init?: RequestInit): Promise<Response> {
   const response = await fetch(input, {
     ...init,
     headers: withAuthHeaders(init?.headers),
   })
-  if (response.status === 401 && import.meta.env.DEV && hadStoredToken && !retried) {
+  if (response.status === 401 && getAuthToken()) {
     clearAuthToken()
-    return fetchWithAuth(input, init, true)
+    unauthorizedHandler?.()
   }
   return response
 }
@@ -98,7 +108,7 @@ async function apiFetch(input: string, init?: RequestInit): Promise<Response> {
 function withAuthHeaders(headers?: HeadersInit): Headers {
   const merged = new Headers(headers)
   if (!merged.has('Authorization')) {
-    merged.set('Authorization', `Bearer ${getAuthToken()}`)
+    merged.set('Authorization', `Bearer ${requireAuthToken()}`)
   }
   return merged
 }

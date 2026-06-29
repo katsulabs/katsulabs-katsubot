@@ -24,18 +24,13 @@ export function setAuthToken(token: string): void {
 }
 
 export function isAuthenticated(): boolean {
-  if (sessionStorage.getItem(AUTH_STORAGE_KEY)) {
-    return true
-  }
-  return Boolean(import.meta.env.VITE_AUTH_TOKEN)
+  return getAuthToken() != null
 }
 
-export function getAuthToken(): string {
-  const stored = sessionStorage.getItem(AUTH_STORAGE_KEY)
-  if (stored) {
-    return stored
-  }
-  return import.meta.env.VITE_AUTH_TOKEN ?? 'dev-token'
+/** sessionStorage에 저장된 JWT. 로그인·SSO handoff 후에만 존재한다. */
+export function getAuthToken(): string | null {
+  const stored = sessionStorage.getItem(AUTH_STORAGE_KEY)?.trim()
+  return stored || null
 }
 
 /** Strangler 동일 origin 또는 VITE_LEGACY_BASE_URL 기준 레거시 베이스 URL */

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   clearAuthToken,
+  getAuthToken,
   getLegacyBaseUrl,
   getSsoLoginUrl,
   isAuthenticated,
@@ -35,8 +36,12 @@ describe('auth', () => {
     vi.unstubAllGlobals()
   })
 
-  it('tracks session token as authenticated', () => {
+  it('returns null without a stored token', () => {
+    expect(getAuthToken()).toBeNull()
     expect(isAuthenticated()).toBe(false)
+  })
+
+  it('tracks session token as authenticated', () => {
     setAuthToken('jwt-abc')
     expect(isAuthenticated()).toBe(true)
   })
