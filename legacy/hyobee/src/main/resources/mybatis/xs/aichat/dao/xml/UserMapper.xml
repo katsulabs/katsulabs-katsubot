@@ -180,12 +180,12 @@ where vue.user_id = #{userId}
             array(
                 select e
                 from unnest(conversations) as e
-                where e not in
+                where e::text not in
                 <foreach collection="conversationIds" item="id" open="(" separator="," close=")">
                     #{id}
                 </foreach>
             ),
-            '{}'::text[]
+            '{}'::integer[]
         )
         where user_id = #{userId}
           and is_deleted = false
