@@ -40,8 +40,8 @@ describe('ui-theme', () => {
     vi.unstubAllGlobals()
   })
 
-  it('defaults to light when storage is empty', () => {
-    expect(getStoredUiTheme()).toBe('light')
+  it('defaults to dark when storage is empty', () => {
+    expect(getStoredUiTheme()).toBe('dark')
   })
 
   it('reads and applies stored theme', () => {

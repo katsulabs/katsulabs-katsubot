@@ -2,6 +2,7 @@ export type UiTheme = 'light' | 'dark' | 'gray'
 
 export const UI_THEME_CODES: UiTheme[] = ['light', 'dark', 'gray']
 export const UI_THEME_STORAGE_KEY = 'katsubotUiTheme'
+export const DEFAULT_UI_THEME: UiTheme = 'dark'
 
 export function isUiTheme(value: string | null | undefined): value is UiTheme {
   return value === 'light' || value === 'dark' || value === 'gray'
@@ -16,7 +17,7 @@ export function getStoredUiTheme(): UiTheme {
   } catch {
     // ignore storage errors (private mode, etc.)
   }
-  return 'light'
+  return DEFAULT_UI_THEME
 }
 
 export function applyUiTheme(theme: UiTheme, persist = true): void {

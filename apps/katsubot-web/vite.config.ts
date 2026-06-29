@@ -47,12 +47,12 @@ function apiContractSpecsPlugin(): Plugin {
   }
 }
 
-// legacy-first (기본): /api/v1 → :8080 (Gateway WRTN compat), /api/v1/auth → :8081 (chat-api 로그인)
-// chat-api-only: VITE_API_V1_PROXY_TARGET=http://localhost:8081
+// legacy-first (기본): /api/v1 → :8080 (Gateway WRTN compat), /api/v1/auth → :8081 (katsubot-api 로그인)
+// katsubot-api-only: VITE_API_V1_PROXY_TARGET=http://localhost:8081
 const legacyProxyTarget =
   process.env.VITE_LEGACY_PROXY_TARGET?.replace(/\/$/, '') ?? 'http://localhost:8080'
 const chatApiProxyTarget =
-  process.env.VITE_CHAT_API_PROXY_TARGET?.replace(/\/$/, '') ?? 'http://localhost:8081'
+  process.env.VITE_KATSUBOT_API_PROXY_TARGET?.replace(/\/$/, '') ?? 'http://localhost:8081'
 const apiV1ProxyTarget =
   process.env.VITE_API_V1_PROXY_TARGET?.replace(/\/$/, '') ?? legacyProxyTarget
 
@@ -68,7 +68,7 @@ export default defineConfig({
     proxy: {
       ...(useLegacyApiFacade
         ? {
-            // auth는 legacy에 없음 — chat-api LoginUseCase
+            // auth는 legacy에 없음 — katsubot-api LoginUseCase
             '/api/v1/auth': {
               target: chatApiProxyTarget,
               changeOrigin: true,

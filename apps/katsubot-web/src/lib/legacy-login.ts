@@ -18,10 +18,10 @@ type AuthErrorBody = {
 
 function authFailureMessage(response: Response, fallback: string): string {
   if (response.status === 404) {
-    return '로그인 API를 찾을 수 없습니다. chat-api(:8081)가 실행 중인지 확인하고 Vite dev 서버를 재시작하세요.'
+    return '로그인 API를 찾을 수 없습니다. katsubot-api(:8081)가 실행 중인지 확인하고 Vite dev 서버를 재시작하세요.'
   }
   if (response.status === 502 || response.status === 503) {
-    return 'chat-api에 연결할 수 없습니다. ./scripts/boot-chat-api.sh 실행 후 다시 시도하세요.'
+    return 'katsubot-api에 연결할 수 없습니다. ./scripts/boot-katsubot-api.sh 실행 후 다시 시도하세요.'
   }
   return fallback
 }
@@ -81,11 +81,19 @@ async function postAichatLogin(
   if (!response.ok) {
     throw await parseAuthError(response, '로그인에 실패했습니다.')
   }
-  const body = (await response.json()) as { token?: string }
+  const body = (await response.json()) as {
+    token?: string
+    user_name?: string
+    team_name?: string
+  }
   if (!body.token) {
     throw new LegacyLoginError('TOKEN', 'JWT를 받지 못했습니다.')
   }
-  return body.token
+  return {
+    token: body.token,
+    userName: body.user_name?.trim() || '',
+    teamName: body.team_name?.trim() || '',
+  }
 }
 
 export type LegacyPasswordLoginInput = {
@@ -95,11 +103,17 @@ export type LegacyPasswordLoginInput = {
   languageCode?: string
 }
 
+export type LegacyLoginResult = {
+  token: string
+  userName: string
+  teamName: string
+}
+
 /**
- * chat-api UserMapper(hyobee-admin-db) + OTP 복호화 비밀번호 로그인.
+ * katsubot-api UserMapper(hyobee-admin-db) + OTP 복호화 비밀번호 로그인.
  * encrypt-key → login → JWT
  */
-export async function loginWithLegacyPassword(input: LegacyPasswordLoginInput): Promise<string> {
+export async function loginWithLegacyPassword(input: LegacyPasswordLoginInput): Promise<LegacyLoginResult> {
   const userId = input.userId.trim()
   const password = input.password
   if (!userId || !password) {

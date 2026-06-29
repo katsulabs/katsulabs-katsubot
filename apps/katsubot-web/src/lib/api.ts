@@ -1,4 +1,6 @@
 import { clearAuthToken, getAuthToken } from './auth'
+import type { UserProfile } from './auth'
+import { normalizeConversations } from './conversation-list'
 
 export type Conversation = {
   id: string
@@ -125,7 +127,8 @@ export async function listConversations(): Promise<Conversation[]> {
   const response = await apiFetch('/api/v1/conversations', {
     headers: authHeaders(),
   })
-  return response.json()
+  const items = (await response.json()) as Conversation[]
+  return normalizeConversations(items)
 }
 
 export async function createConversation(title?: string, chatCategory?: string): Promise<Conversation> {
@@ -144,7 +147,12 @@ export async function createConversation(title?: string, chatCategory?: string):
     },
     body: JSON.stringify(payload),
   })
-  return response.json()
+  const body = (await response.json()) as Conversation
+  const created = normalizeConversations([body])[0]
+  if (!created) {
+    throw new ApiError(500, 'INTERNAL_ERROR', '대화를 생성하지 못했습니다.')
+  }
+  return created
 }
 
 export async function deleteConversations(conversationIds: string[]): Promise<void> {
@@ -213,6 +221,15 @@ export function reconcileMessages(local: ChatMessage[], server: ChatMessage[]): 
     }
     return message
   })
+}
+
+export async function fetchUserProfile(): Promise<UserProfile> {
+  const response = await apiFetch('/api/v1/auth/me')
+  const body = (await response.json()) as { user_name?: string; team_name?: string; user_id?: string }
+  return {
+    userName: body.user_name?.trim() || body.user_id?.trim() || '사용자',
+    teamName: body.team_name?.trim() || '',
+  }
 }
 
 export async function sendMessageStream(

@@ -1,7 +1,7 @@
 import { Loader2, LogIn } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { HYOBEE_LABELS } from '../hyobee/strings'
-import { getSsoLoginUrl, setAuthToken } from '../lib/auth'
+import { getSsoLoginUrl, setAuthToken, setUserProfile, syncUserProfileFromToken } from '../lib/auth'
 import { formatLegacyLoginError, loginWithLegacyPassword } from '../lib/legacy-login'
 
 const KATSULABS_LOGO_SRC = '/katsulabs-logo.png'
@@ -29,8 +29,12 @@ export function LoginPage({ onSuccess }: LoginPageProps) {
     setError(null)
     setSubmitting(true)
     try {
-      const token = await loginWithLegacyPassword({ userId, password })
-      setAuthToken(token)
+      const result = await loginWithLegacyPassword({ userId, password })
+      setAuthToken(result.token)
+      setUserProfile({
+        userName: result.userName || userId,
+        teamName: result.teamName,
+      })
       onSuccess()
     } catch (err) {
       setError(formatLegacyLoginError(err))
@@ -48,6 +52,7 @@ export function LoginPage({ onSuccess }: LoginPageProps) {
     setError(null)
     setSubmitting(true)
     setAuthToken(trimmed)
+    syncUserProfileFromToken(trimmed)
     onSuccess()
   }
 

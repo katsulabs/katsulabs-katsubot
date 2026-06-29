@@ -7,6 +7,7 @@ import {
   Loader2,
   LogOut,
   MessageSquarePlus,
+  MoreVertical,
   PanelLeftClose,
   PanelLeftOpen,
   Palette,
@@ -16,12 +17,14 @@ import {
   X,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from 'react'
 import { HYOBEE_LABELS, pickPlaceholder, pickWelcomeMessage } from '../hyobee/strings'
+import { getUserProfile, setUserProfile, type UserProfile } from '../lib/auth'
 import {
   type Conversation,
   createConversation,
   deleteConversations,
+  fetchUserProfile,
   formatApiError,
   listConversations,
   listMessages,
@@ -29,12 +32,18 @@ import {
   sendMessageStream,
 } from '../lib/api'
 import { searchModeLabel, searchTypeFromChatCategory, toApiChatCategory, type SearchType } from '../lib/chat-category'
+import { SearchCategoryBadge } from './SearchCategoryBadge'
 import {
   applyUiTheme,
   getStoredUiTheme,
   uiThemeLabel,
   type UiTheme,
 } from '../lib/ui-theme'
+import { streamTextReveal } from '../lib/stream-text'
+import { PLACEHOLDER_CONVERSATION_TITLE, isListedConversation, isPlaceholderConversationTitle, mergeConversationTitles, normalizeConversations, shouldShowConversationTitleShimmer, titleFromFirstMessage } from '../lib/conversation-list'
+import { ConfirmDialog } from './ConfirmDialog'
+import { ChatMarkdown } from './ChatMarkdown'
+import { ConversationTitleShimmer } from './ConversationTitleShimmer'
 
 type ChatMessage = {
   id: string
@@ -46,29 +55,16 @@ type ChatPageProps = {
   onLogout?: () => void
 }
 
-function ConversationCategoryBadge({ chatCategory }: { chatCategory?: string }) {
-  if (chatCategory === 'rnd_search') {
-    return (
-      <span
-        className="flex size-9 shrink-0 items-center justify-center rounded-md bg-violet-100 text-[10px] font-semibold uppercase tracking-wide text-violet-800 ring-1 ring-violet-200"
-        aria-label="journal"
-      >
-        journal
-      </span>
-    )
-  }
-  if (chatCategory === 'web_search') {
-    return (
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-sky-50 text-sky-700 ring-1 ring-sky-200">
-        <Globe2 className="size-4" aria-hidden="true" />
-      </span>
-    )
-  }
-  return (
-    <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-zinc-100 text-zinc-700 ring-1 ring-zinc-200">
-      <Building2 className="size-4" aria-hidden="true" />
-    </span>
-  )
+type DeleteConfirmState = {
+  ids: string[]
+  title: string
+  description: string
+}
+
+type ConversationContextMenu = {
+  x: number
+  y: number
+  conversationId: string
 }
 
 const SEARCH_MODE_OPTIONS: { type: SearchType; label: string; icon: LucideIcon }[] = [
@@ -83,9 +79,13 @@ const THEME_OPTIONS: { theme: UiTheme; label: string }[] = [
   { theme: 'gray', label: HYOBEE_LABELS.themeGray },
 ]
 
-const DEFAULT_USER_NAME = '사용자'
 const KATSULABS_LOGO_SRC = '/katsulabs-logo.png'
 const KATSULABS_LOGO_CLASS = 'rounded-[19%] ring-1 ring-border'
+
+function profileInitial(profile: UserProfile): string {
+  const source = profile.userName.trim() || '사용자'
+  return source.charAt(0)
+}
 
 function TypingIndicator() {
   return (
@@ -98,6 +98,7 @@ function TypingIndicator() {
 }
 
 export function ChatPage({ onLogout }: ChatPageProps) {
+  const [userProfile, setUserProfileState] = useState<UserProfile>(() => getUserProfile())
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [conversationId, setConversationId] = useState<string | null>(null)
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -109,12 +110,19 @@ export function ChatPage({ onLogout }: ChatPageProps) {
   const [searchType, setSearchType] = useState<SearchType>('internal')
   const [deleteMode, setDeleteMode] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const [contextMenu, setContextMenu] = useState<ConversationContextMenu | null>(null)
+  const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirmState | null>(null)
+  const [deleting, setDeleting] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [searchMenuOpen, setSearchMenuOpen] = useState(false)
   const [themeMenuOpen, setThemeMenuOpen] = useState(false)
   const [uiTheme, setUiTheme] = useState<UiTheme>(() => getStoredUiTheme())
+  const [titleOverrides, setTitleOverrides] = useState<Record<string, string>>({})
+  const [titleStreamingId, setTitleStreamingId] = useState<string | null>(null)
+  const titleStreamAbortRef = useRef<AbortController | null>(null)
   const [welcomeMessage, setWelcomeMessage] = useState(() =>
-    pickWelcomeMessage(DEFAULT_USER_NAME),
+    pickWelcomeMessage(userProfile.userName),
   )
   const [placeholder, setPlaceholder] = useState(() => pickPlaceholder('internal'))
   const chatMessageRef = useRef<HTMLDivElement>(null)
@@ -127,6 +135,19 @@ export function ChatPage({ onLogout }: ChatPageProps) {
   const inputEmpty = input.trim().length === 0
   const apiChatCategory = toApiChatCategory(searchType)
 
+  useEffect(() => {
+    void fetchUserProfile()
+      .then((profile) => {
+        setUserProfile(profile)
+        setUserProfileState(profile)
+        setWelcomeMessage(pickWelcomeMessage(profile.userName))
+      })
+      .catch(() => {
+        const fallback = getUserProfile()
+        setUserProfileState(fallback)
+      })
+  }, [])
+
   const loadConversations = useCallback(async () => {
     setLoadingList(true)
     setError(null)
@@ -137,6 +158,73 @@ export function ChatPage({ onLogout }: ChatPageProps) {
       setError(formatApiError(err))
     } finally {
       setLoadingList(false)
+    }
+  }, [])
+
+  const refreshConversationsAfterTurn = useCallback(async () => {
+    try {
+      const items = await listConversations()
+      setConversations(mergeConversationTitles(items, titleOverrides))
+    } catch {
+      // 목록 갱신 실패는 채팅 본문에 영향 없음
+    }
+  }, [titleOverrides])
+
+  const getDisplayTitle = useCallback(
+    (conversation: Conversation) => titleOverrides[conversation.id] ?? conversation.title,
+    [titleOverrides],
+  )
+
+  const listedConversations = useMemo(
+    () =>
+      conversations.filter((conversation) =>
+        isListedConversation(
+          conversation,
+          conversationId,
+          messages.length > 0,
+          streaming,
+          loadingHistory,
+        ),
+      ),
+    [conversationId, conversations, loadingHistory, messages.length, streaming],
+  )
+
+  const allSelected =
+    listedConversations.length > 0 && selectedIds.size === listedConversations.length
+
+  const animateConversationTitle = useCallback(async (id: string, finalTitle: string) => {
+    titleStreamAbortRef.current?.abort()
+    const controller = new AbortController()
+    titleStreamAbortRef.current = controller
+    setTitleStreamingId(id)
+
+    await streamTextReveal(
+      finalTitle,
+      (partial) => setTitleOverrides((prev) => ({ ...prev, [id]: partial })),
+      { charDelayMs: 28, signal: controller.signal },
+    )
+
+    if (controller.signal.aborted) {
+      return
+    }
+
+    setConversations((prev) =>
+      prev.map((conversation) =>
+        conversation.id === id ? { ...conversation, title: finalTitle } : conversation,
+      ),
+    )
+    setTitleOverrides((prev) => {
+      const next = { ...prev }
+      delete next[id]
+      return next
+    })
+    setTitleStreamingId((current) => (current === id ? null : current))
+    titleStreamAbortRef.current = null
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      titleStreamAbortRef.current?.abort()
     }
   }, [])
 
@@ -163,7 +251,7 @@ export function ChatPage({ onLogout }: ChatPageProps) {
   }, [searchType])
 
   useEffect(() => {
-    if (!searchMenuOpen && !themeMenuOpen) {
+    if (!searchMenuOpen && !themeMenuOpen && !openMenuId && !contextMenu) {
       return
     }
     const onPointerDown = (event: MouseEvent) => {
@@ -174,10 +262,16 @@ export function ChatPage({ onLogout }: ChatPageProps) {
       if (themeMenuOpen && themeMenuRef.current && !themeMenuRef.current.contains(target)) {
         setThemeMenuOpen(false)
       }
+      if (openMenuId && !(target as Element).closest?.('[data-conversation-menu]')) {
+        setOpenMenuId(null)
+      }
+      if (contextMenu && !(target as Element).closest?.('[data-conversation-context-menu]')) {
+        setContextMenu(null)
+      }
     }
     document.addEventListener('mousedown', onPointerDown)
     return () => document.removeEventListener('mousedown', onPointerDown)
-  }, [searchMenuOpen, themeMenuOpen])
+  }, [contextMenu, openMenuId, searchMenuOpen, themeMenuOpen])
 
   const selectSearchType = useCallback((next: SearchType) => {
     setSearchType(next)
@@ -214,8 +308,8 @@ export function ChatPage({ onLogout }: ChatPageProps) {
   }, [input])
 
   const refreshWelcome = useCallback(() => {
-    setWelcomeMessage(pickWelcomeMessage(DEFAULT_USER_NAME))
-  }, [])
+    setWelcomeMessage(pickWelcomeMessage(userProfile.userName))
+  }, [userProfile.userName])
 
   const selectConversation = useCallback(
     async (id: string) => {
@@ -231,24 +325,81 @@ export function ChatPage({ onLogout }: ChatPageProps) {
     [conversations, loadHistory],
   )
 
-  const startNewConversation = useCallback(async () => {
+  const startNewConversation = useCallback(() => {
+    if (streaming) {
+      return
+    }
     setError(null)
     setDeleteMode(false)
     setSelectedIds(new Set())
+    setConversationId(null)
+    setMessages([])
     refreshWelcome()
+  }, [refreshWelcome, streaming])
+
+  const openDeleteConfirm = useCallback(
+    (ids: string[]) => {
+      if (ids.length === 0) {
+        return
+      }
+      const titles = ids.map((id) => {
+        const conversation = conversations.find((item) => item.id === id)
+        return conversation ? getDisplayTitle(conversation) : '대화'
+      })
+      if (ids.length === 1) {
+        setDeleteConfirm({
+          ids,
+          title: HYOBEE_LABELS.deleteConfirmTitle,
+          description: `「${titles[0]}」 대화를 삭제합니다. ${HYOBEE_LABELS.deleteConfirmDescription}`,
+        })
+      } else {
+        setDeleteConfirm({
+          ids,
+          title: HYOBEE_LABELS.deleteConfirmBulkTitle,
+          description: `${ids.length}개 대화를 삭제합니다. ${HYOBEE_LABELS.deleteConfirmDescription}`,
+        })
+      }
+      setOpenMenuId(null)
+      setContextMenu(null)
+    },
+    [conversations, getDisplayTitle],
+  )
+
+  const executeDelete = useCallback(async () => {
+    if (!deleteConfirm) {
+      return
+    }
+    setDeleting(true)
+    setError(null)
+    const ids = deleteConfirm.ids
+    const idSet = new Set(ids)
     try {
-      const conversation = await createConversation('새 대화')
-      setConversations((prev) => [conversation, ...prev])
-      setConversationId(conversation.id)
-      setMessages([])
+      await deleteConversations(ids)
+      setConversations((prev) => prev.filter((item) => !idSet.has(item.id)))
+      if (conversationId && idSet.has(conversationId)) {
+        setConversationId(null)
+        setMessages([])
+        refreshWelcome()
+      }
+      setSelectedIds((prev) => {
+        const next = new Set(prev)
+        ids.forEach((id) => next.delete(id))
+        return next
+      })
+      setDeleteMode(false)
+      setDeleteConfirm(null)
     } catch (err) {
       setError(formatApiError(err))
+    } finally {
+      setDeleting(false)
     }
-  }, [refreshWelcome])
+  }, [conversationId, deleteConfirm, refreshWelcome])
 
   const toggleDeleteMode = useCallback(() => {
     setDeleteMode((prev) => !prev)
     setSelectedIds(new Set())
+    setOpenMenuId(null)
+    setContextMenu(null)
   }, [])
 
   const toggleSelectAll = useCallback(
@@ -257,9 +408,9 @@ export function ChatPage({ onLogout }: ChatPageProps) {
         setSelectedIds(new Set())
         return
       }
-      setSelectedIds(new Set(conversations.map((item) => item.id)))
+      setSelectedIds(new Set(listedConversations.map((item) => item.id)))
     },
-    [conversations],
+    [listedConversations],
   )
 
   const toggleSelectConversation = useCallback((id: string, checked: boolean) => {
@@ -274,25 +425,17 @@ export function ChatPage({ onLogout }: ChatPageProps) {
     })
   }, [])
 
-  const removeSelectedConversations = useCallback(async () => {
-    if (selectedIds.size === 0) {
-      return
-    }
-    setError(null)
-    try {
-      await deleteConversations([...selectedIds])
-      setConversations((prev) => prev.filter((item) => !selectedIds.has(item.id)))
-      if (conversationId && selectedIds.has(conversationId)) {
-        setConversationId(null)
-        setMessages([])
-        refreshWelcome()
+  const handleConversationContextMenu = useCallback(
+    (event: ReactMouseEvent, id: string) => {
+      if (deleteMode) {
+        return
       }
-      setSelectedIds(new Set())
-      setDeleteMode(false)
-    } catch (err) {
-      setError(formatApiError(err))
-    }
-  }, [conversationId, refreshWelcome, selectedIds])
+      event.preventDefault()
+      setOpenMenuId(null)
+      setContextMenu({ x: event.clientX, y: event.clientY, conversationId: id })
+    },
+    [deleteMode],
+  )
 
   const send = useCallback(async () => {
     const content = input.trim()
@@ -316,11 +459,30 @@ export function ChatPage({ onLogout }: ChatPageProps) {
 
     try {
       let id = conversationId
+      const draftTitle = titleFromFirstMessage(content)
+      const activeConversation = id ? conversations.find((item) => item.id === id) : undefined
+      const needsTitleUpdate =
+        !id ||
+        isPlaceholderConversationTitle(titleOverrides[id] ?? activeConversation?.title ?? PLACEHOLDER_CONVERSATION_TITLE)
+
+      if (needsTitleUpdate && id) {
+        setTitleOverrides((prev) => ({ ...prev, [id!]: draftTitle }))
+        setConversations((prev) =>
+          mergeConversationTitles(
+            prev.map((item) => (item.id === id ? { ...item, title: draftTitle } : item)),
+            { ...titleOverrides, [id!]: draftTitle },
+          ),
+        )
+      }
+
       if (!id) {
-        const conversation = await createConversation('새 대화', apiChatCategory)
+        const conversation = await createConversation(draftTitle, apiChatCategory)
         id = conversation.id
         setConversationId(id)
-        setConversations((prev) => [conversation, ...prev])
+        setTitleOverrides((prev) => ({ ...prev, [id!]: draftTitle }))
+        setConversations((prev) =>
+          normalizeConversations([{ ...conversation, title: draftTitle }, ...prev]),
+        )
       }
 
       await sendMessageStream(
@@ -350,14 +512,8 @@ export function ChatPage({ onLogout }: ChatPageProps) {
                 return { ...message, id: nextId, content: nextContent }
               }),
             )
-            if (payload.title && id) {
-              setConversations((prev) =>
-                prev.map((conversation) =>
-                  conversation.id === id
-                    ? { ...conversation, title: payload.title! }
-                    : conversation,
-                ),
-              )
+            if (id && needsTitleUpdate) {
+              void animateConversationTitle(id, payload.title ?? draftTitle)
             }
           },
         },
@@ -366,22 +522,30 @@ export function ChatPage({ onLogout }: ChatPageProps) {
 
       const history = await listMessages(id)
       setMessages((prev) => reconcileMessages(prev, history))
+      await refreshConversationsAfterTurn()
     } catch (err) {
       setError(formatApiError(err))
     } finally {
       setStreaming(false)
     }
-  }, [apiChatCategory, conversationId, input, streaming])
-
-  const allSelected =
-    conversations.length > 0 && selectedIds.size === conversations.length
+  }, [animateConversationTitle, apiChatCategory, conversationId, conversations, input, refreshConversationsAfterTurn, streaming, titleOverrides])
 
   const activeTitle = useMemo(() => {
     if (!conversationId) {
-      return '새 대화'
+      return PLACEHOLDER_CONVERSATION_TITLE
+    }
+    if (titleOverrides[conversationId]) {
+      return titleOverrides[conversationId]
     }
     return conversations.find((item) => item.id === conversationId)?.title ?? '대화'
-  }, [conversationId, conversations])
+  }, [conversationId, conversations, titleOverrides])
+
+  const showHeaderTitle =
+    !showWelcomeLayout &&
+    (activeTitle !== PLACEHOLDER_CONVERSATION_TITLE ||
+      (conversationId !== null && conversationId in titleOverrides))
+
+  const isTitleStreaming = titleStreamingId !== null
 
   const composerInput = (
     <div className="mx-auto w-full max-w-3xl">
@@ -496,11 +660,11 @@ export function ChatPage({ onLogout }: ChatPageProps) {
       <aside
         className={`${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-border bg-sidebar transition-transform duration-200 ease-out md:relative md:z-auto md:translate-x-0 ${
-          sidebarOpen ? 'md:w-72' : 'md:w-0 md:overflow-hidden md:border-r-0 md:opacity-0'
+        } fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-sidebar transition-transform duration-200 ease-out md:relative md:z-auto md:translate-x-0 ${
+          sidebarOpen ? 'md:w-72' : 'md:w-0 md:overflow-hidden md:opacity-0'
         }`}
       >
-        <div className="flex h-14 items-center gap-2 border-b border-border px-4">
+        <div className="flex h-14 items-center gap-2 px-4">
           <div className="size-8 shrink-0 overflow-hidden rounded-md ring-1 ring-border">
             <img
               src={KATSULABS_LOGO_SRC}
@@ -515,8 +679,9 @@ export function ChatPage({ onLogout }: ChatPageProps) {
         <div className="flex flex-col gap-1 p-3">
           <button
             type="button"
-            onClick={() => void startNewConversation()}
-            className="flex h-10 w-full items-center gap-2 rounded-lg border border-border bg-card px-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent"
+            onClick={() => startNewConversation()}
+            disabled={streaming}
+            className="flex h-10 w-full items-center gap-2 rounded-lg border border-border bg-card px-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent disabled:cursor-default disabled:opacity-60"
           >
             <MessageSquarePlus className="size-4 shrink-0" aria-hidden="true" />
             {HYOBEE_LABELS.newConversation}
@@ -540,26 +705,16 @@ export function ChatPage({ onLogout }: ChatPageProps) {
             <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               {HYOBEE_LABELS.recentConversations}
             </span>
-            {deleteMode && conversations.length > 0 ? (
-              <div className="flex items-center gap-2">
-                <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
-                  <input
-                    type="checkbox"
-                    checked={allSelected}
-                    onChange={(event) => toggleSelectAll(event.target.checked)}
-                    className="rounded border-input"
-                  />
-                  전체
-                </label>
-                <button
-                  type="button"
-                  onClick={() => void removeSelectedConversations()}
-                  disabled={selectedIds.size === 0}
-                  className="rounded-md px-2 py-1 text-xs text-destructive hover:bg-destructive/10 disabled:opacity-40"
-                >
-                  삭제
-                </button>
-              </div>
+            {deleteMode && listedConversations.length > 0 ? (
+              <label className="flex cursor-pointer items-center gap-2 text-xs text-muted-foreground">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={(event) => toggleSelectAll(event.target.checked)}
+                  className="size-4 rounded border-input accent-primary"
+                />
+                {HYOBEE_LABELS.selectAll}
+              </label>
             ) : null}
           </div>
 
@@ -569,25 +724,42 @@ export function ChatPage({ onLogout }: ChatPageProps) {
                 <Loader2 className="size-4 animate-spin" aria-hidden="true" />
                 불러오는 중…
               </div>
-            ) : conversations.length === 0 ? (
+            ) : listedConversations.length === 0 ? (
               <p className="px-2 py-3 text-sm text-muted-foreground">{HYOBEE_LABELS.emptyConversations}</p>
             ) : (
               <ul className="flex flex-col gap-0.5">
-                {conversations.map((conversation) => {
+                {listedConversations.map((conversation) => {
                   const isActive = conversation.id === conversationId
+                  const displayTitle = getDisplayTitle(conversation)
+                  const hasTitleOverride = conversation.id in titleOverrides
+                  const streamingTitle = titleStreamingId === conversation.id
+                  const showTitleShimmer = shouldShowConversationTitleShimmer(
+                    conversation,
+                    conversationId,
+                    displayTitle,
+                    hasTitleOverride,
+                    titleStreamingId,
+                  )
                   return (
-                    <li key={conversation.id}>
-                      <div className="flex items-center gap-1">
+                    <li key={conversation.id} className="group">
+                      <div
+                        className="flex items-center gap-0.5"
+                        onContextMenu={(event) =>
+                          handleConversationContextMenu(event, conversation.id)
+                        }
+                      >
                         {deleteMode ? (
-                          <input
-                            type="checkbox"
-                            checked={selectedIds.has(conversation.id)}
-                            onChange={(event) =>
-                              toggleSelectConversation(conversation.id, event.target.checked)
-                            }
-                            className="ml-1 rounded border-input"
-                            aria-label={`${conversation.title} 선택`}
-                          />
+                          <label className="flex size-11 shrink-0 cursor-pointer items-center justify-center">
+                            <input
+                              type="checkbox"
+                              checked={selectedIds.has(conversation.id)}
+                              onChange={(event) =>
+                                toggleSelectConversation(conversation.id, event.target.checked)
+                              }
+                              className="size-5 rounded border-input accent-primary"
+                              aria-label={`${displayTitle} 선택`}
+                            />
+                          </label>
                         ) : null}
                         <button
                           type="button"
@@ -598,9 +770,66 @@ export function ChatPage({ onLogout }: ChatPageProps) {
                               : 'text-sidebar-foreground hover:bg-accent/60'
                           }`}
                         >
-                          <ConversationCategoryBadge chatCategory={conversation.chat_category} />
-                          <span className="min-w-0 flex-1 truncate">{conversation.title}</span>
+                          {showTitleShimmer ? null : (
+                            <SearchCategoryBadge chatCategory={conversation.chat_category} />
+                          )}
+                          <span className="flex min-w-0 flex-1 items-center">
+                            {showTitleShimmer ? (
+                              <ConversationTitleShimmer />
+                            ) : (
+                              <span className="min-w-0 flex-1 truncate">
+                                {displayTitle}
+                                {streamingTitle ? (
+                                  <span
+                                    className="ml-0.5 inline-block w-0.5 animate-pulse bg-current align-middle"
+                                    style={{ height: '0.85em' }}
+                                    aria-hidden="true"
+                                  />
+                                ) : null}
+                              </span>
+                            )}
+                          </span>
                         </button>
+                        {!deleteMode && !showTitleShimmer ? (
+                          <div className="relative shrink-0" data-conversation-menu>
+                            <button
+                              type="button"
+                              onClick={(event) => {
+                                event.stopPropagation()
+                                setContextMenu(null)
+                                setOpenMenuId((prev) =>
+                                  prev === conversation.id ? null : conversation.id,
+                                )
+                              }}
+                              className={`inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-opacity hover:bg-accent hover:text-accent-foreground focus-visible:opacity-100 ${
+                                openMenuId === conversation.id
+                                  ? 'opacity-100'
+                                  : 'opacity-0 group-hover:opacity-100'
+                              }`}
+                              aria-label={HYOBEE_LABELS.conversationMenu}
+                              aria-expanded={openMenuId === conversation.id}
+                              aria-haspopup="menu"
+                            >
+                              <MoreVertical className="size-4" aria-hidden="true" />
+                            </button>
+                            {openMenuId === conversation.id ? (
+                              <div
+                                role="menu"
+                                className="absolute right-0 top-full z-20 mt-1 min-w-[7rem] overflow-hidden rounded-xl border border-border bg-card p-1 shadow-lg"
+                              >
+                                <button
+                                  type="button"
+                                  role="menuitem"
+                                  onClick={() => openDeleteConfirm([conversation.id])}
+                                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-destructive transition-colors hover:bg-destructive/10"
+                                >
+                                  <Trash2 className="size-4 shrink-0" aria-hidden="true" />
+                                  {HYOBEE_LABELS.deleteConversation}
+                                </button>
+                              </div>
+                            ) : null}
+                          </div>
+                        ) : null}
                       </div>
                     </li>
                   )
@@ -610,14 +839,29 @@ export function ChatPage({ onLogout }: ChatPageProps) {
           </div>
         </div>
 
-        <div className="border-t border-border p-3">
+        {deleteMode && selectedIds.size > 0 ? (
+          <div className="px-3 py-3">
+            <button
+              type="button"
+              onClick={() => openDeleteConfirm([...selectedIds])}
+              className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-destructive text-sm font-medium text-destructive-foreground transition-opacity hover:opacity-90"
+            >
+              <Trash2 className="size-4 shrink-0" aria-hidden="true" />
+              {HYOBEE_LABELS.deleteSelectedCount.replace('{0}', String(selectedIds.size))}
+            </button>
+          </div>
+        ) : null}
+
+        <div className="p-3">
           <div className="flex items-center gap-2 rounded-lg px-2 py-2">
             <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
-              {DEFAULT_USER_NAME.charAt(0)}
+              {profileInitial(userProfile)}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium">{DEFAULT_USER_NAME}</p>
-              <p className="truncate text-xs text-muted-foreground">Katsubot</p>
+              <p className="truncate text-sm font-medium">{userProfile.userName}</p>
+              <p className="truncate text-xs text-muted-foreground">
+                {userProfile.teamName || '—'}
+              </p>
             </div>
             <div ref={themeMenuRef} className="relative shrink-0">
               <button
@@ -675,7 +919,7 @@ export function ChatPage({ onLogout }: ChatPageProps) {
 
       {/* Main */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4">
+        <header className="flex h-14 shrink-0 items-center gap-3 px-4">
           <button
             type="button"
             onClick={() => setSidebarOpen((prev) => !prev)}
@@ -689,9 +933,22 @@ export function ChatPage({ onLogout }: ChatPageProps) {
             )}
           </button>
 
-          <div className="min-w-0 flex-1">
-            <h1 className="truncate text-sm font-semibold">{activeTitle}</h1>
-          </div>
+          {showHeaderTitle ? (
+            <div className="min-w-0 flex-1">
+              <h1 className="truncate text-sm font-semibold">
+                {activeTitle}
+                {isTitleStreaming && conversationId ? (
+                  <span
+                    className="ml-0.5 inline-block w-0.5 animate-pulse bg-current align-middle"
+                    style={{ height: '0.9em' }}
+                    aria-hidden="true"
+                  />
+                ) : null}
+              </h1>
+            </div>
+          ) : (
+            <div className="min-w-0 flex-1" />
+          )}
         </header>
 
         <main ref={chatMessageRef} className="min-h-0 flex-1 overflow-y-auto">
@@ -728,7 +985,7 @@ export function ChatPage({ onLogout }: ChatPageProps) {
                       />
                       <div className="min-w-0 flex-1 pt-0.5 text-sm leading-relaxed text-foreground">
                         {message.content ? (
-                          <p className="whitespace-pre-wrap">{message.content}</p>
+                          <ChatMarkdown content={message.content} />
                         ) : (
                           <TypingIndicator />
                         )}
@@ -741,11 +998,7 @@ export function ChatPage({ onLogout }: ChatPageProps) {
           )}
         </main>
 
-        <footer
-          className={`shrink-0 bg-background px-4 pb-3 pt-2 ${
-            showWelcomeLayout ? '' : 'border-t border-border'
-          }`}
-        >
+        <footer className="shrink-0 bg-background px-4 pb-3 pt-2">
           {composerInput}
           <p className="mx-auto mt-2 w-full max-w-3xl text-center text-xs text-muted-foreground">
             {HYOBEE_LABELS.aiDisclaimer}
@@ -762,6 +1015,39 @@ export function ChatPage({ onLogout }: ChatPageProps) {
           onClick={() => setSidebarOpen(false)}
         />
       ) : null}
+
+      {contextMenu ? (
+        <div
+          data-conversation-context-menu
+          className="fixed z-[90] min-w-[8rem] overflow-hidden rounded-xl border border-border bg-card p-1 shadow-lg"
+          style={{ left: contextMenu.x, top: contextMenu.y }}
+        >
+          <button
+            type="button"
+            onClick={() => openDeleteConfirm([contextMenu.conversationId])}
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-destructive transition-colors hover:bg-destructive/10"
+          >
+            <Trash2 className="size-4 shrink-0" aria-hidden="true" />
+            {HYOBEE_LABELS.deleteConversation}
+          </button>
+        </div>
+      ) : null}
+
+      <ConfirmDialog
+        open={deleteConfirm != null}
+        title={deleteConfirm?.title ?? ''}
+        description={deleteConfirm?.description ?? ''}
+        confirmLabel={HYOBEE_LABELS.deleteConfirmAction}
+        cancelLabel={HYOBEE_LABELS.cancel}
+        destructive
+        loading={deleting}
+        onConfirm={() => void executeDelete()}
+        onCancel={() => {
+          if (!deleting) {
+            setDeleteConfirm(null)
+          }
+        }}
+      />
     </div>
   )
 }

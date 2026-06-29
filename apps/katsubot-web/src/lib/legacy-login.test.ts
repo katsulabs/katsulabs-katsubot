@@ -18,22 +18,26 @@ describe('loginWithLegacyPassword', () => {
         return new Response(JSON.stringify({ encrypt_key: '12345678901234567890123456789012' }))
       }
       if (input.endsWith('/login')) {
-        return new Response(JSON.stringify({ token: 'legacy-jwt-token' }))
+        return new Response(
+          JSON.stringify({ token: 'legacy-jwt-token', user_name: '김효성', team_name: 'DX기획팀' }),
+        )
       }
       return new Response('', { status: 404 })
     })
     vi.stubGlobal('fetch', fetchMock)
 
-    const token = await loginWithLegacyPassword({ userId: 'user01', password: 'secret' })
+    const result = await loginWithLegacyPassword({ userId: 'user01', password: 'secret' })
 
-    expect(token).toBe('legacy-jwt-token')
+    expect(result.token).toBe('legacy-jwt-token')
+    expect(result.userName).toBe('김효성')
+    expect(result.teamName).toBe('DX기획팀')
     expect(fetchMock).toHaveBeenCalledTimes(2)
     const loginCall = fetchMock.mock.calls[1]
     expect(loginCall[0]).toContain('/api/v1/auth/login')
     expect(String(loginCall[1]?.body)).toContain('user_id_encrypt')
   })
 
-  it('maps encrypt-key 404 to chat-api hint', async () => {
+  it('maps encrypt-key 404 to katsubot-api hint', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn(async () =>
@@ -44,7 +48,7 @@ describe('loginWithLegacyPassword', () => {
     await expect(loginWithLegacyPassword({ userId: 'user01', password: 'secret' })).rejects.toEqual(
       expect.objectContaining<Partial<LegacyLoginError>>({
         code: 'LOGIN',
-        message: expect.stringContaining('chat-api'),
+        message: expect.stringContaining('katsubot-api'),
       }),
     )
   })
