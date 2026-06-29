@@ -425,6 +425,25 @@ export function ChatPage({ onLogout }: ChatPageProps) {
     })
   }, [])
 
+  const handleConversationClick = useCallback(
+    (id: string) => {
+      if (deleteMode) {
+        setSelectedIds((prev) => {
+          const next = new Set(prev)
+          if (next.has(id)) {
+            next.delete(id)
+          } else {
+            next.add(id)
+          }
+          return next
+        })
+        return
+      }
+      void selectConversation(id)
+    },
+    [deleteMode, selectConversation],
+  )
+
   const handleConversationContextMenu = useCallback(
     (event: ReactMouseEvent, id: string) => {
       if (deleteMode) {
@@ -763,11 +782,13 @@ export function ChatPage({ onLogout }: ChatPageProps) {
                         ) : null}
                         <button
                           type="button"
-                          onClick={() => void selectConversation(conversation.id)}
+                          onClick={() => handleConversationClick(conversation.id)}
                           className={`flex min-w-0 flex-1 items-center gap-1 rounded-lg px-2 py-2 text-left text-sm transition-colors ${
-                            isActive
-                              ? 'bg-accent font-medium text-accent-foreground'
-                              : 'text-sidebar-foreground hover:bg-accent/60'
+                            deleteMode && selectedIds.has(conversation.id)
+                              ? 'bg-accent/80 font-medium text-accent-foreground'
+                              : isActive
+                                ? 'bg-accent font-medium text-accent-foreground'
+                                : 'text-sidebar-foreground hover:bg-accent/60'
                           }`}
                         >
                           {showTitleShimmer ? null : (
