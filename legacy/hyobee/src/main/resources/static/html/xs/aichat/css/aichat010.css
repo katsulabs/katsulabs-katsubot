@@ -3033,6 +3033,10 @@ height: auto;
     letter-spacing: -0.24px;
 }
 
+.current-user__position:empty:before {
+    display: none;
+}
+
 .current-user__position:before {
     content: "";
     display: inline-block;

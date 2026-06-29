@@ -1,5 +1,7 @@
 [versions]
 spring-boot = "4.1.0"
+springdoc = "3.0.3"
+testcontainers = "1.21.3"
 
 [libraries]
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }

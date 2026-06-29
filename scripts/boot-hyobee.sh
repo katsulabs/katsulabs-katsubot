@@ -10,7 +10,7 @@ if [[ -f "$ENV_FILE" ]]; then
   set -a && source "$ENV_FILE" && set +a
 fi
 
-export JAVA_HOME="${JAVA_HOME:-$(/usr/libexec/java_home -v 21)}"
+export JAVA_HOME="${JAVA_HOME:-$(/usr/libexec/java_home -v 11)}"
 export WRTN_BASEURL="${WRTN_BASEURL:-http://127.0.0.1:8090}"
 
 mkdir -p /tmp/hyobee/{upload,clob,files,temp,download}

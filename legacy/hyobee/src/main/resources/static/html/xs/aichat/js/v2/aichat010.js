@@ -2796,8 +2796,9 @@ var aichat010={
         param.setString("key", "ALL");
         param.setAuthType(xui.enum.AUTH_TYPE_NONE.getCode());
         var response = xui.ajax.callSync(param);
-        if (!response.getErrorFlag() && response.getDataJsonArray("DATA").length > 0) {
-            xui.extends.session.sessionInfo = response.getDataJsonArray("DATA")[0];
+        var sessionData = response.getDataJsonArray("DATA");
+        if (!response.getErrorFlag() && sessionData && sessionData.length > 0) {
+            xui.extends.session.sessionInfo = sessionData[0];
         }
     },
 
@@ -2807,9 +2808,9 @@ var aichat010={
      */
     hydrateUserProfileFromServer: function() {
         aichat010.syncClientSessionInfo();
+        var userName = xui.extends.session.getSessionInfoByKey("USER_NAME");
         var deptName = xui.extends.session.getSessionInfoByKey("DEPT_NAME");
-        var position = xui.extends.session.getSessionInfoByKey("OFFICIAL_POSITION_NAME");
-        if (!xui.valid.isEmpty(deptName) && !xui.valid.isEmpty(position)) {
+        if (!xui.valid.isEmpty(userName) && !xui.valid.isEmpty(deptName)) {
             return;
         }
         var lang = xui.extends.session.getSessionInfoByKey("LANGUAGE_CODE");
@@ -2839,6 +2840,9 @@ var aichat010={
     /** 프로필 영역(이름/직급/팀)을 세션 값 기준으로 다시 그린다. */
     refreshUserProfileArea: function() {
         var userFullName = xui.extends.session.getSessionInfoByKey("USER_NAME") || "";
+        if (xui.valid.isEmpty(userFullName)) {
+            userFullName = xui.extends.session.getSessionInfoByKey("USER_ID") || "";
+        }
         var position = xui.extends.session.getSessionInfoByKey("OFFICIAL_POSITION_NAME") || "";
         var deptName = xui.extends.session.getSessionInfoByKey("DEPT_NAME") || "";
 
@@ -3074,6 +3078,9 @@ var aichat010={
         //var corpCode = xui.extends.session.getSessionInfoByKey("CORP_CODE") || params.get('corpCode') || ''; //H000
         var corpCode = xui.extends.session.getSessionInfoByKey("GBIS_CORP_CODE") || params.get('corpCode') || ''; //00
         var userFullName = xui.extends.session.getSessionInfoByKey("USER_NAME") || params.get('userFullName') || '';
+        if (xui.valid.isEmpty(userFullName)) {
+            userFullName = xui.extends.session.getSessionInfoByKey("USER_ID") || params.get('userId') || '';
+        }
         var userFirstName = userFullName ? userFullName.charAt(0) : '';
         var position = xui.extends.session.getSessionInfoByKey("OFFICIAL_POSITION_NAME") || params.get('position') || '';
         var affiliate = xui.extends.session.getSessionInfoByKey("FULL_DEPT_NAME") || params.get('fullDeptName') || '';

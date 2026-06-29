@@ -67,8 +67,10 @@ public class HyobeeHttpClientConfig {
 	@Bean(name = "blockingIoExecutor")
 	public Executor blockingIoExecutor() {
 		if (xtrmConfig.getBoolean("HYOBEE_VIRTUAL_THREADS_ENABLED", false)) {
-			log.info("HYOBEE_VIRTUAL_THREADS_ENABLED=true — using virtual-thread per task executor for blocking I/O");
-			return Executors.newVirtualThreadPerTaskExecutor();
+			log.info(
+					"HYOBEE_VIRTUAL_THREADS_ENABLED=true — using cached thread pool (JDK 11; virtual threads require JDK 21+)"
+			);
+			return Executors.newCachedThreadPool();
 		}
 		return Runnable::run;
 	}

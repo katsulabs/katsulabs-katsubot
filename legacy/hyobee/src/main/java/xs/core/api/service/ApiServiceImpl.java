@@ -32,6 +32,7 @@ import xs.core.utility.XtrmCmmnUtilWeb;
 import xs.core.utility.XtrmCryptoUtil;
 import xs.core.utility.XtrmNIOFileUtil;
 import xs.core.utility.extend.XtrmDateUtil;
+import xs.aichat.v2.service.AichatUserLoginService;
 import xs.vob.cmmn.service.CmmnService;
 import xs.vob.enumeration.MainEnum;
 import xs.vob.management.dto.ComUser;
@@ -45,6 +46,9 @@ public class ApiServiceImpl extends XtrmDefaultResource implements ApiService {
 
 	@Autowired
 	CmmnService cmmnService;
+
+	@Autowired
+	AichatUserLoginService aichatUserLoginService;
 
 //	@Autowired
 //	XtrmRMQComponent objRMQComponent;
@@ -294,6 +298,7 @@ public class ApiServiceImpl extends XtrmDefaultResource implements ApiService {
 	 */
 	@Override
 	public ApiEnvelope initAichatPageLoad(ApiEnvelope objXtrmParams, HttpSession objSession) throws Exception {
+		aichatUserLoginService.enrichSessionDisplayProfile(objSession);
 		ApiEnvelope objXtrmReturn = new ApiEnvelope();
 		ApiEnvelope messageData = getMessageData(objXtrmParams);
 		objXtrmReturn.setDataArrayNode(messageData.getDataArrayNode(), "MESSAGE_DATA");
@@ -616,7 +621,7 @@ public class ApiServiceImpl extends XtrmDefaultResource implements ApiService {
 				objValue			= objSession.getAttribute(strSessionKey);
 				jsonObject.put(strSessionKey, MAPPER.valueToTree(objValue).toString());
 			}
-		}else if("ALL".equals(strSessionKey)) {
+		}else if("ALL".equals(strSessionKey) && objSession != null) {
 			Enumeration<String> attribute = objSession.getAttributeNames();
 			while(attribute.hasMoreElements()) {
 				strSessionKey 	= attribute.nextElement();

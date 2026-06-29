@@ -150,8 +150,8 @@ public class HyobeeChatApiClient {
 	/** WRTN DTO는 @JsonNaming(snake_case) — toMap()만 쓰면 user_id 등이 누락된다. */
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> toRequestBodyMap(Object params) {
-		if (params instanceof Map<?, ?> map) {
-			return (Map<String, Object>) map;
+		if (params instanceof Map) {
+			return (Map<String, Object>) params;
 		}
 		return jsonAdapter.fromJson(jsonAdapter.toJson(params), new com.fasterxml.jackson.core.type.TypeReference<>() {});
 	}

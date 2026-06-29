@@ -6,7 +6,7 @@
 |------|------|------|
 | **katsubot-api** (Boot 4.1, JDK 25) | `services/katsubot-api` | `./gradlew :services:katsubot-api:test` |
 | **katsubot-web** (React) | `apps/katsubot-web` | `npm ci && npm test && npm run build` |
-| **legacy hyobee** (Boot 2.7 WAR) | `legacy/hyobee` | `mvn test` (JDK 21) |
+| **legacy hyobee** (Boot 2.7.18, JDK 11) | `legacy/hyobee` | `mvn test` |
 | **infra** | `infra/` | Postgres · [AI Gateway](https://github.com/katsulabs/katsulabs-ai-gateway) |
 
 ## 로컬 (Phase 0+)
