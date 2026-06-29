@@ -44,7 +44,7 @@
 - [x] P5-A Gateway P0 구현 (외부 repo, smoke green)
 - [x] P5-B chat-api `gateway` 프로필 — UUID 매핑·SSE·`scripts/smoke-gateway-profile.sh` green
 - [x] P5-C Hyobee UUID DTO/mapper + `chat_viewable_teams.conversations` text[]
-- [ ] P5-C 운영: `WRTN_BASEURL` Secrets + V3 SQL 적용
+- [x] P5-C 운영: `WRTN_BASEURL` Secrets + V3 SQL 적용 (로컬: XtrmConfig `8090`, V3 `text[]`, `infra/.env` gateway)
 
 ## 보류
 

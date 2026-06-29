@@ -1,6 +1,6 @@
+-- P5-C: Gateway UUID conversation_id — Hyobee chat_viewable_teams.conversations integer[] → text[]
 ALTER TABLE chat_viewable_teams
+  ALTER COLUMN conversations DROP DEFAULT,
   ALTER COLUMN conversations TYPE text[]
-  USING CASE
-    WHEN conversations IS NULL THEN NULL
-    ELSE ARRAY(SELECT x::text FROM unnest(conversations) AS x)
-  END;
+  USING conversations::text[],
+  ALTER COLUMN conversations SET DEFAULT '{}'::text[];
