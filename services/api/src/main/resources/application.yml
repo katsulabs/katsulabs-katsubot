@@ -38,7 +38,7 @@ katsubot:
   auth:
     dev-bypass: ${KATSUBOT_AUTH_DEV_BYPASS:true}
     dev-token: ${KATSUBOT_AUTH_DEV_TOKEN:dev-token}
-    jwt-secret: ${KATSUBOT_AUTH_JWT_SECRET:}
+    jwt-secret: ${KATSUBOT_AUTH_JWT_SECRET:${HYOBEE_JWT_SECRET:}}
     company-code: ${KATSUBOT_AUTH_COMPANY_CODE:1000}
     limit-password-fail-count: ${KATSUBOT_AUTH_LIMIT_PASSWORD_FAIL_COUNT:5}
     master-login-available: ${KATSUBOT_AUTH_MASTER_LOGIN_AVAILABLE:false}

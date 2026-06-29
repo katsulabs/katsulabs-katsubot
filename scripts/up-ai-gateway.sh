@@ -17,6 +17,10 @@ if [[ -f "$KATSUBOT_ENV" ]]; then
   set -a && source "$KATSUBOT_ENV" && set +a
 fi
 
+# shellcheck disable=SC1091
+source "$ROOT/scripts/lib/jwt-env.sh"
+export_hyobee_jwt_env
+
 if [[ ! -f "$GW_ENV" && -f "$ROOT/infra/.env.example" ]]; then
   echo "Gateway infra/.env missing — copy infra/.env.example values into $GW_ENV" >&2
   exit 1

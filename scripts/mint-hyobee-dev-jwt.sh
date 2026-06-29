@@ -10,6 +10,10 @@ if [[ -f "$ENV_FILE" ]]; then
   set -a && source "$ENV_FILE" && set +a
 fi
 
+# shellcheck disable=SC1091
+source "$ROOT/scripts/lib/jwt-env.sh"
+export_hyobee_jwt_env
+
 export GATEWAY_JWT_SECRET="${GATEWAY_JWT_SECRET:-yZp3n4W8LkqS1tDbE9mV0rXuA7wC2pTfG5hQ8jR3xU6sNcKdF4vB1zYeH0aMiOwP}"
 export GATEWAY_DEV_USER_ID="${GATEWAY_DEV_USER_ID:-test20230128}"
 export GATEWAY_DEV_CORP_CODE="${GATEWAY_DEV_CORP_CODE:-00}"
