@@ -240,6 +240,10 @@
 	/*Load asynchronous page resource loader & Common resource load*/
 	var today = new Date();
 	var strToday = String(today.getFullYear())+String(today.getMonth()+1)+String(today.getDate());
+	var strXuiVersion = strToday;
+	if(location.pathname.indexOf("login.jsp")>-1 || location.pathname.indexOf("login010.jsp")>-1){
+		strXuiVersion = String(Date.now());
+	}
 
 	var loadResources = [];
 	loadResources.push("html/xs/core/xui/js/jquery/core/jquery-3.5.1.min.js?version=" + strToday);
@@ -269,8 +273,8 @@
 		loadResources.push("html/xs/core/xui/js/jquery/plugin/mark/jquery.mark.min.js?version=" + strToday);
 		loadResources.push("html/xs/core/xui/js/opensources/stomp/stomp.js?version=" + strToday);
 	}
-	loadResources.push("html/xs/core/xui/js/xuicore.js?version=" + strToday);
-	loadResources.push("html/xs/core/xui/js/xui.js?version=" + strToday);
+	loadResources.push("html/xs/core/xui/js/xuicore.js?version=" + strXuiVersion);
+	loadResources.push("html/xs/core/xui/js/xui.js?version=" + strXuiVersion);
 	loadResources.push("html/xs/core/xui/js/jquery/plugin/toast/jquery.toast.js?version=" + strToday);
 	// login 화면 일 경우 동적으로 webbaseCmmn.css 제거
 	if(location.pathname.indexOf("login.jsp")>-1 || location.pathname.indexOf("login010.jsp")>-1){

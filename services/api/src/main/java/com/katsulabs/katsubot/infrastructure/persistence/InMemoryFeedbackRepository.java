@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@Profile("in-memory")
+@Profile({"in-memory", "gateway"})
 public class InMemoryFeedbackRepository implements FeedbackRepository {
 
     private final Map<String, MessageFeedback> store = new ConcurrentHashMap<>();

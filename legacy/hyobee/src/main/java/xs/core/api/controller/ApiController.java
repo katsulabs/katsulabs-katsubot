@@ -84,6 +84,14 @@ public class ApiController {
 	}
 
 	/**
+	 * Hyobee aichat·로그인 — 다국어 메시지만 반환(VIEW_COM_CODE 등 VOB 전역 로드 생략)
+	 */
+	@PostMapping(value = "initAichatPageLoad.json")
+	public ApiEnvelope initAichatPageLoad(XtrmArgumentResolveMap inRequestMap) throws Exception {
+		return objXtrmService.initAichatPageLoad(inRequestMap.getParams(), inRequestMap.getSession());
+	}
+
+	/**
 	 * 공통코드 데이터를 조회한다.
 	 */
 	@PostMapping(value = "getCmmnCodeData.json")

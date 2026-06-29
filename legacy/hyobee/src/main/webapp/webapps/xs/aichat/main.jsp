@@ -17,6 +17,7 @@
 
     <!-- Hyobee v2 모듈 (TB-004 Phase 1 — defer 로드 순서 유지) -->
     <script defer src="${pageContext.request.contextPath}/html/xs/aichat/js/v2/hyobee-constants.js?version=<%=System.currentTimeMillis() %>"></script>
+    <script defer src="${pageContext.request.contextPath}/html/xs/aichat/js/v2/hyobee-messages.js?version=<%=System.currentTimeMillis() %>"></script>
     <script defer src="${pageContext.request.contextPath}/html/xs/aichat/js/v2/hyobee-i18n.js?version=<%=System.currentTimeMillis() %>"></script>
     <script defer src="${pageContext.request.contextPath}/html/xs/aichat/js/v2/hyobee-api.js?version=<%=System.currentTimeMillis() %>"></script>
     <!-- 화면 전용 스크립트 (facade) -->

@@ -5,21 +5,35 @@ import com.katsulabs.katsubot.domain.model.RagCompletionRequest;
 import com.katsulabs.katsubot.domain.model.RagStreamChunk;
 import com.katsulabs.katsubot.domain.port.ConversationRepository;
 import com.katsulabs.katsubot.domain.port.RagCompletionPort;
-import lombok.RequiredArgsConstructor;
+import com.katsulabs.katsubot.infrastructure.gateway.GatewayWrtnClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Consumer;
 
 @Service
-@RequiredArgsConstructor
 public class SendMessageUseCase {
 
     private final ConversationRepository conversationRepository;
     private final RagCompletionPort ragCompletionPort;
+    private final GatewayWrtnClient gatewayWrtnClient;
+
+    public SendMessageUseCase(
+            ConversationRepository conversationRepository,
+            RagCompletionPort ragCompletionPort,
+            @Autowired(required = false) GatewayWrtnClient gatewayWrtnClient) {
+        this.conversationRepository = conversationRepository;
+        this.ragCompletionPort = ragCompletionPort;
+        this.gatewayWrtnClient = gatewayWrtnClient;
+    }
 
     public record StreamResult(String assistantMessageId, String fullText) {}
 
     public StreamResult streamReply(String userId, String conversationId, String content, Consumer<RagStreamChunk> chunkConsumer) {
+        if (gatewayWrtnClient != null) {
+            return gatewayWrtnClient.streamReply(userId, conversationId, content, chunkConsumer);
+        }
+
         var conversation = conversationRepository.findById(conversationId)
                 .filter(c -> c.ownedBy(userId))
                 .orElseThrow(() -> new ConversationNotFoundException(conversationId));

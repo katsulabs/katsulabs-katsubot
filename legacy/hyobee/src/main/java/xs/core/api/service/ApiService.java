@@ -24,6 +24,8 @@ public interface ApiService {
 	public ApiEnvelope initClientPageLoad(ApiEnvelope objXtrmParams, HttpSession objSession) throws Exception;
 	//login페이지 로드 시점에 필수 전역데이터 로드(다국어 메시지 정보)
 	public ApiEnvelope initLoginPageLoad(ApiEnvelope objXtrmParams, HttpSession objSession) throws Exception;
+	// Hyobee aichat·로그인 전용 — com_message_lang만 조회(VIEW_COM_CODE 등 VOB 뷰 불필요)
+	public ApiEnvelope initAichatPageLoad(ApiEnvelope objXtrmParams, HttpSession objSession) throws Exception;
 	//공통코드 데이터 반환
 	public ApiEnvelope getCmmnCodeData(ApiEnvelope objXtrmParams) throws Exception;
 	//시스템코드 데이터 반환

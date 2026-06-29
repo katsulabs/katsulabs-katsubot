@@ -4,7 +4,8 @@ import com.katsulabs.katsubot.domain.model.Message;
 import com.katsulabs.katsubot.domain.model.MessageFeedback;
 import com.katsulabs.katsubot.domain.port.ConversationRepository;
 import com.katsulabs.katsubot.domain.port.FeedbackRepository;
-import lombok.RequiredArgsConstructor;
+import com.katsulabs.katsubot.infrastructure.gateway.GatewayWrtnClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -14,11 +15,20 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ListMessagesUseCase {
 
     private final ConversationRepository conversationRepository;
     private final FeedbackRepository feedbackRepository;
+    private final GatewayWrtnClient gatewayWrtnClient;
+
+    public ListMessagesUseCase(
+            ConversationRepository conversationRepository,
+            FeedbackRepository feedbackRepository,
+            @Autowired(required = false) GatewayWrtnClient gatewayWrtnClient) {
+        this.conversationRepository = conversationRepository;
+        this.feedbackRepository = feedbackRepository;
+        this.gatewayWrtnClient = gatewayWrtnClient;
+    }
 
     public record MessageView(
             String id,
@@ -33,6 +43,10 @@ public class ListMessagesUseCase {
     public record MessagesPage(List<MessageView> messages, boolean hasMore, Integer nextCursor) {}
 
     public MessagesPage list(String userId, String conversationId, int cursor, int size) {
+        if (gatewayWrtnClient != null) {
+            return gatewayWrtnClient.listMessagesPage(userId, conversationId, cursor, size);
+        }
+
         var conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new ConversationNotFoundException(conversationId));
 

@@ -1107,10 +1107,25 @@ let login010={
 
 	//기본 로그인 처리 시작 **********************************************************************************************************
 
+    // 로컬 DB에 VIEW_COM_SYS_CODE 없을 때 언어 콤보 최소 폴백
+    fallbackLanguageOptions : function(){
+        return [
+            {code:"ko", codeName:"한국어"},
+            {code:"en", codeName:"English"}
+        ];
+    },
+    resolveLanguageOptions : function(){
+        var langOptions = xui.syscode.get("SYS028");
+        if(xui.valid.isEmpty(langOptions)){
+            langOptions = login010.fallbackLanguageOptions();
+        }
+        return langOptions;
+    },
+
     // 메시지, 초기 다국어 콤보 로드
     loadLoginPage : function(response){
         var languageCode = response.getHeader("languageCode");
-        xui.util.drawCombo($("#languageCode"), xui.syscode.get("SYS028"));
+        xui.util.drawCombo($("#languageCode"), login010.resolveLanguageOptions());
         login010.unDefineEventLang();
         $("#languageCode").valExt(languageCode);
         login010.defineEventLang();
@@ -1138,11 +1153,16 @@ let login010={
         param.setAuthType(xui.enum.AUTH_TYPE_NONE.getCode());
         param.setCallBack(function(response, request){
             if(!response.getErrorFlag()){
-                xui.syscode.load(response.getDataJsonObject("SYS_CODE"));
+                var sysCode = response.getDataJsonObject("SYS_CODE");
+                if(!xui.valid.isEmpty(sysCode)){
+                    xui.syscode.load(sysCode);
+                }
                 xui.message.load(response.getDataJsonArray("MESSAGE_DATA"));
                 $.cookie("languageCode",languageCode, {expires:30});
                 response.setHeader("languageCode",languageCode);
                 login010.loadLoginPage(response);
+            }else{
+                xui.dialog.error(xui.util.restoreXSS(response.getMsg()), xui.enum.ERROR.getName());
             }
         });
         xui.ajax.callService(param);

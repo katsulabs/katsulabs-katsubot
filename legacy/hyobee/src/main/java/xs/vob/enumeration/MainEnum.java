@@ -13,7 +13,7 @@ public enum MainEnum {
 	//VALID_CHECK_EXCLUDE_SESSION_MAPPING	("/xs/webbase/login/,/xs/domain/certification,getSessionInfo.json,redirectErrorPage.json,getCompanyCodeData.json,initClientPageLoad.json,initLoginPageLoad.json"		,"MainEnum.VALID_CHECK_EXCLUDE_SESSION_MAPPING"		,""		),
 	//VALID_CHECK_EXCLUDE_SESSION_MAPPING	("/xs/system/interfaces,/editor,..."		,"MainEnum.VALID_CHECK_EXCLUDE_SESSION_MAPPING"		,""		),
 	VALID_CHECK_EXCLUDE_SESSION_MAPPING	("/xs/system/interfaces,/editor,/webapps/xs/webbase/pop/,/xs/core/api/getUploadedFileExtData.json,/xs/core/api/downloadFile.json" +
-			",/xs/webbase/login/,/xs/domain/certification,redirectErrorPage.json,getCompanyCodeData.json,initClientPageLoad.json,initLoginPageLoad.json,/xs/aichat/,retrievetMailSandList.json"		,"MainEnum.VALID_CHECK_EXCLUDE_SESSION_MAPPING"		,""		),
+			",/xs/webbase/login/,/xs/domain/certification,getSessionInfo.json,getPatternDateData.json,redirectErrorPage.json,getCompanyCodeData.json,getProperty.json,initClientPageLoad.json,initLoginPageLoad.json,initAichatPageLoad.json,/xs/aichat/,retrievetMailSandList.json"		,"MainEnum.VALID_CHECK_EXCLUDE_SESSION_MAPPING"		,""		),
 
 	ACCESS_LOG_EXCLUDE_SERVLET_MAPPING	("/xs/core/api/,/editor,/xs/aichat/,/hsgc-demo/" +
 											",/xs/webbase/login/selectDataCompanyInfo.json,/xs/webbase/login/createOTPEncryptKey.json"						,"MainEnum.ACCESS_LOG_EXCLUDE_SERVLET_MAPPING"		,""		),

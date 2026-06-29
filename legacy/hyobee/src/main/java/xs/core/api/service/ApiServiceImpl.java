@@ -289,16 +289,64 @@ public class ApiServiceImpl extends XtrmDefaultResource implements ApiService {
 	}
 
 	/**
+	 * Hyobee aichat·로그인 화면 — 다국어 메시지만 반환(com_message_lang).
+	 * initClientPageLoad(VIEW_COM_CODE·AUTH_MENU 등) 없이 로컬·aichat 단독 기동 가능.
+	 */
+	@Override
+	public ApiEnvelope initAichatPageLoad(ApiEnvelope objXtrmParams, HttpSession objSession) throws Exception {
+		ApiEnvelope objXtrmReturn = new ApiEnvelope();
+		ApiEnvelope messageData = getMessageData(objXtrmParams);
+		objXtrmReturn.setDataArrayNode(messageData.getDataArrayNode(), "MESSAGE_DATA");
+		return objXtrmReturn;
+	}
+
+	/**
 	 * 로그인 화면 로드 시 서버 기본 정보들을 반환한다.
 	 */
 	@Override
 	public ApiEnvelope initLoginPageLoad(ApiEnvelope objXtrmParams, HttpSession objSession) throws Exception {
-		ApiEnvelope objXtrmReturn = new ApiEnvelope();
-		//다국어 데이터셋 세팅
-		ApiEnvelope messageData = getMessageData(objXtrmParams);
-		objXtrmReturn.setDataArrayNode(messageData.getDataArrayNode()											, "MESSAGE_DATA");
-		objXtrmReturn.setDataArrayNode(getSysCodeData(objXtrmParams).getDataArrayNode()							, "SYS_CODE");
+		ApiEnvelope objXtrmReturn = initAichatPageLoad(objXtrmParams, objSession);
+		try {
+			ApiEnvelope sysCodeData = getSysCodeData(objXtrmParams);
+			if (sysCodeData.getDataArrayNode() != null) {
+				objXtrmReturn.setDataArrayNode(sysCodeData.getDataArrayNode(), "SYS_CODE");
+			}
+		} catch (Exception ex) {
+			log.debug("initLoginPageLoad: SYS_CODE skipped ({})", ex.getMessage());
+			attachFallbackLoginSysCode(objXtrmReturn);
+		}
 		return objXtrmReturn;
+	}
+
+	/** 로컬 DB에 VIEW_COM_SYS_CODE 없을 때 로그인 화면 언어 콤보(SYS028) 최소 폴백 */
+	private void attachFallbackLoginSysCode(ApiEnvelope objXtrmReturn) {
+		ArrayNode sys028 = JsonNodeFactory.instance.arrayNode();
+		sys028.add(loginSysCodeRow("*****", "SYS028", "SYS028", "언어", "SYS028", ""));
+		sys028.add(loginSysCodeRow("ko", "SYS028", "ko", "한국어", "ko", "SYS028"));
+		sys028.add(loginSysCodeRow("en", "SYS028", "en", "English", "en", "SYS028"));
+		ObjectNode grouped = JsonNodeFactory.instance.objectNode();
+		grouped.set("SYS028", sys028);
+		ArrayNode wrapper = JsonNodeFactory.instance.arrayNode();
+		wrapper.add(grouped);
+		objXtrmReturn.setDataArrayNode(wrapper, "SYS_CODE");
+	}
+
+	private static ObjectNode loginSysCodeRow(
+			String code,
+			String groupCode,
+			String codeSectionCode,
+			String codeName,
+			String nodeId,
+			String parentNodeId
+	) {
+		ObjectNode row = JsonNodeFactory.instance.objectNode();
+		row.put("code", code);
+		row.put("groupCode", groupCode);
+		row.put("codeSectionCode", codeSectionCode);
+		row.put("codeName", codeName);
+		row.put("nodeId", nodeId);
+		row.put("parentNodeId", parentNodeId);
+		return row;
 	}
 
 	/**

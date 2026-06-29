@@ -29,7 +29,7 @@ class SendMessageUseCaseTest {
             handler.accept(RagStreamChunk.delta("답변"));
             handler.accept(RagStreamChunk.finished());
         };
-        useCase = new SendMessageUseCase(repository, ragPort);
+        useCase = new SendMessageUseCase(repository, ragPort, null);
     }
 
     @Test
