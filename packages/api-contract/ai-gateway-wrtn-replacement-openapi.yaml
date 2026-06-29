@@ -11,7 +11,7 @@ info:
     | Consumer | Base URL config | API surface |
     |----------|-----------------|-------------|
     | Hyobee BFF (drop-in) | `WRTN_BASEURL` | `/api/v1/**`, `/api/v2/rnd/**`, `/_health` |
-    | chat-api | `RAG_SERVICE_BASE_URL` | `/_health`, `/v1/completions` |
+    | katsubot-api | `RAG_SERVICE_BASE_URL` | `/_health`, `/v1/completions` |
 
     - Handoff: `docs/modernization/wrtn-to-ai-gateway-handoff.md`
     - 역공학 원본: `wrtn-upstream-openapi.yaml`
@@ -19,7 +19,7 @@ info:
 
     **우선순위 extension:** `x-katsubot-priority` = P0 | P1 | P2
 
-    **SSE:** `/api/v1/.../ai-chat`는 WRTN JSON-line 형식. `/v1/completions`는 chat-api용 `data:` SSE.
+    **SSE:** `/api/v1/.../ai-chat`는 WRTN JSON-line 형식. `/v1/completions`는 katsubot-api용 `data:` SSE.
 servers:
   - url: http://localhost:8090
     description: 로컬 Gateway (docker-compose.ai-gateway.yml)
@@ -34,7 +34,7 @@ tags:
   - name: health
     description: 헬스체크
   - name: katsubot-completions
-    description: chat-api RagHttpClient (기존 계약 — 유지)
+    description: katsubot-api RagHttpClient (기존 계약 — 유지)
   - name: conversations
     description: 대화 CRUD
   - name: messages
@@ -49,13 +49,13 @@ paths:
   /v1/completions:
     post:
       operationId: katsubotCompletions
-      summary: chat-api RAG/LLM completion (기존 — breaking 금지)
+      summary: katsubot-api RAG/LLM completion (기존 — breaking 금지)
       description: |
         katsubot `RagHttpClient` 전용. Hyobee/WRTN 경로와 **다른 SSE 프로토콜**.
         동일 inference 코어를 내부에서 `/ai-chat` WRTN SSE로도 노출할 것.
       tags: [katsubot-completions]
       x-katsubot-priority: P0
-      x-katsubot-consumer: chat-api
+      x-katsubot-consumer: katsubot-api
       requestBody:
         required: true
         content:
@@ -82,7 +82,7 @@ paths:
       summary: 벤더 헬스체크
       tags: [health]
       x-katsubot-priority: P0
-      x-katsubot-consumer: hyobee,chat-api
+      x-katsubot-consumer: hyobee,katsubot-api
       security: []
       responses:
         '200':

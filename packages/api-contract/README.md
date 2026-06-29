@@ -2,12 +2,12 @@
 
 | 파일 | 설명 |
 |------|------|
-| [openapi.yaml](./openapi.yaml) | chat-api ↔ browser (OpenAPI 3.1) |
+| [openapi.yaml](./openapi.yaml) | katsubot-api ↔ browser (OpenAPI 3.1) |
 | [wrtn-upstream-openapi.yaml](./wrtn-upstream-openapi.yaml) | WRTN upstream 역공학 (참고) |
 | [ai-gateway-wrtn-replacement-openapi.yaml](./ai-gateway-wrtn-replacement-openapi.yaml) | **katsulabs-ai-gateway 구현 대상** (WRTN 대체, P0–P2, **v1.1.0 UUID**) |
 
-**Swagger UI (로컬):** chat-web 기동 후 [http://localhost:5173/api-docs/](http://localhost:5173/api-docs/)  
-또는 `cd apps/chat-web && npm run dev:docs`
+**Swagger UI (로컬):** katsubot-web 기동 후 [http://localhost:5173/api-docs/](http://localhost:5173/api-docs/)  
+또는 `cd apps/katsubot-web && npm run dev:docs`
 
 RAG 서비스 계약: [docs/06-rag-contract.md](../../docs/06-rag-contract.md)
 

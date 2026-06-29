@@ -11,7 +11,7 @@ info:
     - 인증: `Authorization: Bearer <JWT>` (세션 기반 Hyobee JWT)
     - JSON 필드명: snake_case (`@JsonNaming(SnakeCaseStrategy)` 또는 DTO 필드명)
 
-    **주의:** Hyobee BFF(`/xs/aichat/v2/**`)와 chat-api(`/api/v1/**`) 계약과는 별도 문서입니다.
+    **주의:** Hyobee BFF(`/xs/aichat/v2/**`)와 katsubot-api(`/api/v1/**`) 계약과는 별도 문서입니다.
     상세 분석: `docs/modernization/wrtn-upstream-api.md`
 servers:
   - url: '{wrtnBaseUrl}'
