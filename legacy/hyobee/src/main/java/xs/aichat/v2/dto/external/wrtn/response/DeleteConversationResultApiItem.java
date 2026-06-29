@@ -13,7 +13,7 @@ public class DeleteConversationResultApiItem {
 
     private int status;
 
-    private Long conversationId;
+    private String conversationId;
 
     private String chatCategory;
 }

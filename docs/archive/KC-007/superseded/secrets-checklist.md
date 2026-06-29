@@ -7,7 +7,7 @@
 - API 키·DB 비밀번호·JWT 서명 키를 git에 커밋
 - `.env` 파일 커밋 (`.gitignore` 확인)
 
-## 환경 변수 (chat-api)
+## 환경 변수 (katsubot-api)
 
 | 변수 | 용도 | 저장소 |
 |------|------|--------|
@@ -19,7 +19,7 @@
 | `SPRING_DATASOURCE_*` | JPA 프로필 DB | Environment secret |
 | JWT signing key | `katsubot.auth.jwt-secret` (향후) | Environment secret |
 
-## 환경 변수 (chat-web)
+## 환경 변수 (katsubot-web)
 
 | 변수 | 용도 |
 |------|------|

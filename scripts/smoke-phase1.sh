@@ -8,7 +8,7 @@ RAG_BASE="${RAG_BASE:-http://localhost:8090}"
 echo "== AI Gateway health (8090) =="
 curl -sf "${RAG_BASE}/_health" | grep -q '"status":"ok"'
 
-echo "== chat-api health =="
+echo "== katsubot-api health =="
 curl -sf "${API_BASE}/actuator/health" | grep -q '"status":"UP"'
 
 echo "== create conversation =="

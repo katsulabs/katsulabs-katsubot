@@ -85,7 +85,7 @@ public class ChatUserServiceImpl implements ChatUserService {
 
     @Override
     @Transactional
-    public void appendConversation(String userId, String corpCode, String teamCode, int conversationId) {
+    public void appendConversation(String userId, String corpCode, String teamCode, String conversationId) {
         // 1. 권한 검증 (일반 유저/다중 권한 유저 공통 체크)
         assertViewableTeam(userId, teamCode);
 
@@ -109,7 +109,7 @@ public class ChatUserServiceImpl implements ChatUserService {
 
     @Override
     @Transactional
-    public void removeConversations(String userId, List<Integer> conversationIds) {
+    public void removeConversations(String userId, List<String> conversationIds) {
         if (conversationIds == null || conversationIds.isEmpty()) {
             return;
         }
@@ -129,7 +129,7 @@ public class ChatUserServiceImpl implements ChatUserService {
         }
 
         var mappings = userMapper.findConversationDeptMappingsByUserId(userId);
-        Map<Integer, String> conversationToDept = new HashMap<>();
+        Map<String, String> conversationToDept = new HashMap<>();
         if (mappings != null) {
             for (ConversationDeptMapping mapping : mappings) {
                 if (mapping == null || mapping.getConversationId() == null) {
@@ -147,8 +147,8 @@ public class ChatUserServiceImpl implements ChatUserService {
             if (item == null) {
                 continue;
             }
-            Integer conversationId = item.getConversationId();
-            String targetDept = conversationId != null ? conversationToDept.get(conversationId) : null;
+            String conversationId = item.getConversationId();
+            String targetDept = StringUtils.hasText(conversationId) ? conversationToDept.get(conversationId) : null;
             // conversations 배열에 없으면 로그인 부서 = target (prefix·JWT 기본 부서)
             if (!StringUtils.hasText(targetDept)) {
                 targetDept = loginDeptCode;

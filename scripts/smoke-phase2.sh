@@ -22,7 +22,7 @@ echo "== target: ${BASE} (PROXY_BASE=${PROXY_BASE:-<direct>}) =="
 echo "== dummy-rag health =="
 curl -sf "${RAG_BASE}/_health" | grep -q '"status":"ok"'
 
-echo "== chat-api health =="
+echo "== katsubot-api health =="
 if [[ -n "${PROXY_BASE}" ]]; then
   curl -sf "${API_BASE}/actuator/health" | grep -q '"status":"UP"'
 else

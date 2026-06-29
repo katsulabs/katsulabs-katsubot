@@ -12,11 +12,11 @@
 
 ## 1. 요약
 
-**결론:** 채팅 E2E는 **별도 저장소가 아니라 기존 모노레포 3모듈**(`chat-web` → `chat-api` → RAG)로 완성하는 것이 맞다. Phase 0–4에서 API·UI·인프라 골격은 이미 존재하며, **“채팅이 동작한다”**는 상태는 아래 갭을 메우면 달성된다.
+**결론:** 채팅 E2E는 **별도 저장소가 아니라 기존 모노레포 3모듈**(`katsubot-web` → `katsubot-api` → RAG)로 완성하는 것이 맞다. Phase 0–4에서 API·UI·인프라 골격은 이미 존재하며, **“채팅이 동작한다”**는 상태는 아래 갭을 메우면 달성된다.
 
 | 우선순위 | 갭 | 영향 |
 |----------|-----|------|
-| P0 | 로컬 3-tier 기동·연결 (dummy-rag + chat-api + chat-web) | 메시지 전송 자체 |
+| P0 | 로컬 3-tier 기동·연결 (dummy-rag + katsubot-api + katsubot-web) | 메시지 전송 자체 |
 | P0 | SSE 스트림 UX (에러·중단·재시도) | 사용자 체감 |
 | P1 | `chat_category` (사내/웹 검색) API·RAG 전달 | UI 토글과 실제 동작 불일치 |
 | P1 | 피드백(like/dislike) UI | v2 parity |
@@ -33,14 +33,14 @@
 
 ```text
 katsulabs-katsubot/
-├── apps/chat-web/              # React SPA — ChatPage UI + 수동 api.ts
-├── services/api/               # Gradle 모듈명 :services:chat-api (경로 alias)
+├── apps/katsubot-web/              # React SPA — ChatPage UI + 수동 api.ts
+├── services/katsubot-api/               # Gradle 모듈명 :services:katsubot-api (경로 alias)
 ├── packages/api-contract/      # OpenAPI 0.2.0
 ├── infra/dummy-rag/            # 로컬 RAG 스텁 (SSE)
 └── legacy/hyobee/              # Strangler — SSO·v2 API (신규 기능 금지)
 ```
 
-> **주의:** `settings.gradle.kts`에서 `:services:chat-api` → `services/api` 디렉터리로 매핑. 문서·경로 혼동 방지를 위해 장기적으로 `services/api` → `services/chat-api` rename 권장.
+> **주의:** `settings.gradle.kts`에서 `:services:katsubot-api` → `services/katsubot-api` 디렉터리로 매핑. 문서·경로 혼동 방지를 위해 장기적으로 `services/katsubot-api` → `services/katsubot-api` rename 권장.
 
 ### 2.2 이미 구현된 것
 
@@ -74,8 +74,8 @@ katsulabs-katsubot/
 ```mermaid
 sequenceDiagram
   participant U as 사용자
-  participant W as chat-web
-  participant A as chat-api
+  participant W as katsubot-web
+  participant A as katsubot-api
   participant DB as PostgreSQL
   participant R as RAG 서비스
 
@@ -114,8 +114,8 @@ sequenceDiagram
 
 | 레이어 | 책임 | 하지 않을 것 |
 |--------|------|--------------|
-| **chat-web** | UI 상태, optimistic update, SSE 소비, 401 UX | RAG 직접 호출, JWT 검증 |
-| **chat-api** | 인증, 소유권, 영속화, RAG Port 호출, SSE 중계 | LLM·벡터 검색 로직 |
+| **katsubot-web** | UI 상태, optimistic update, SSE 소비, 401 UX | RAG 직접 호출, JWT 검증 |
+| **katsubot-api** | 인증, 소유권, 영속화, RAG Port 호출, SSE 중계 | LLM·벡터 검색 로직 |
 | **RAG 서비스** | 검색·생성·`web_search_enabled` 등 | 대화 메타 CRUD |
 | **legacy/hyobee** | SSO, JWT 발급, cutover 전 proxy | 신규 v1 API |
 
@@ -188,12 +188,12 @@ Frontend: `sendMessageStream(id, content, { chat_category: chatCategory })`.
 ```text
 katsulabs-katsubot/
 ├── docs/chat/                  # ← 본 분석·flow·QA 시나리오
-├── apps/chat-web/
+├── apps/katsubot-web/
 │   └── src/
 │       ├── features/chat/      # ChatPage 분리
 │       ├── hooks/useChat*.ts
 │       └── lib/api.ts → packages/chat-client
-├── services/chat-api/          # (rename from services/api)
+├── services/katsubot-api/          # (rename from services/katsubot-api)
 └── packages/
     ├── api-contract/
     └── chat-client/            # (선택) openapi-typescript 생성
@@ -201,13 +201,13 @@ katsulabs-katsubot/
 
 | 장점 | 단점 |
 |------|------|
-| KC-007·KC-000와 일치 | chat-web 내부 refactor 필요 |
+| KC-007·KC-000와 일치 | katsubot-web 내부 refactor 필요 |
 | Contract 단일 소스 | |
 | CI path filter 이미 분리 | |
 
 ### 옵션 B — `packages/chat-client` 추출
 
-OpenAPI → TypeScript SDK를 패키지로 분리. chat-web과 향후 admin·mobile이 공유.
+OpenAPI → TypeScript SDK를 패키지로 분리. katsubot-web과 향후 admin·mobile이 공유.
 
 | 장점 | 단점 |
 |------|------|
@@ -226,12 +226,12 @@ OpenAPI → TypeScript SDK를 패키지로 분리. chat-web과 향후 admin·mob
 
 ---
 
-## 5. chat-web 내부 구조 (제안)
+## 5. katsubot-web 내부 구조 (제안)
 
 558줄 `ChatPage.tsx`를 feature 단위로 분리:
 
 ```text
-apps/chat-web/src/
+apps/katsubot-web/src/
 ├── features/chat/
 │   ├── ChatPage.tsx            # layout shell only
 │   ├── ChatSidebar.tsx         # 대화 목록·삭제 모드
@@ -258,11 +258,11 @@ apps/chat-web/src/
 # 1. RAG 스텁
 cd infra && docker compose up -d dummy-rag
 
-# 2. chat-api (in-memory)
-./gradlew :services:chat-api:bootRun
+# 2. katsubot-api (in-memory)
+./gradlew :services:katsubot-api:bootRun
 
-# 3. chat-web
-cd apps/chat-web && npm run dev
+# 3. katsubot-web
+cd apps/katsubot-web && npm run dev
 
 # 4. 브라우저 http://localhost:5173 — 메시지 입력 → Dummy RAG 스트리밍
 ```
@@ -290,11 +290,11 @@ cd apps/chat-web && npm run dev
 sequenceDiagram
   participant B as Browser
   participant L as legacy/hyobee
-  participant W as chat-web
-  participant A as chat-api
+  participant W as katsubot-web
+  participant A as katsubot-api
 
   B->>L: ADFS SSO login.jsp
-  L-->>B: redirect → chat-web?jwt=...
+  L-->>B: redirect → katsubot-web?jwt=...
   W->>W: initAuthFromUrl() → sessionStorage
   W->>A: Bearer JWT (모든 /api/v1/**)
   A->>A: LegacyJwtTokenValidator (HS512)
@@ -311,7 +311,7 @@ sequenceDiagram
 | RAG 실서비스 URL·계약 불일치 | `docs/rag-external-client.md` + RagHttpClient 통합 테스트 |
 | SSE 60s timeout (SseEmitter) | 장문 응답 시 timeout 연장 또는 heartbeat |
 | 임시 message ID vs 서버 ID | done 후 `loadHistory` (현재) → ID merge로 개선 |
-| `services/api` vs `chat-api` 혼동 | Gradle rename 또는 README 명시 |
+| `services/katsubot-api` vs `katsubot-api` 혼동 | Gradle rename 또는 README 명시 |
 
 **사용자 결정 필요 (1건):**
 

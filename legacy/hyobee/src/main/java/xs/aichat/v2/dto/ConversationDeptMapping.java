@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ConversationDeptMapping {
 
-    private Integer conversationId;
+    private String conversationId;
 
     private String deptCode;
 

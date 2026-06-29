@@ -45,7 +45,7 @@ public final class KatsubotResponseMapper {
             return null;
         }
         return ConversationResponse.of(
-                String.valueOf(item.getConversationId()),
+                item.getConversationId(),
                 item.getTitle(),
                 item.getCreatedAt(),
                 item.getChatCategory()
@@ -89,7 +89,7 @@ public final class KatsubotResponseMapper {
         }
         boolean deleted = item.getStatus() >= 200 && item.getStatus() < 300;
         return DeleteConversationResult.of(
-                item.getConversationId() != null ? String.valueOf(item.getConversationId()) : "",
+                item.getConversationId() != null ? item.getConversationId() : "",
                 deleted,
                 deleted ? null : "delete failed"
         );
@@ -97,7 +97,7 @@ public final class KatsubotResponseMapper {
 
     public static MessagesPageResponse toMessagesPage(
             JsonDataWrapper<ApiResponse<MessageItem>> wrapped,
-            int cursor,
+            String cursor,
             int size
     ) {
         List<MessageItem> items = wrapped != null
@@ -112,7 +112,10 @@ public final class KatsubotResponseMapper {
                 .collect(Collectors.toList());
 
         boolean hasMore = messages.size() >= pageSize;
-        Integer nextCursor = hasMore ? cursor + messages.size() : null;
+        String nextCursor = null;
+        if (hasMore && !messages.isEmpty()) {
+            nextCursor = messages.get(messages.size() - 1).getId();
+        }
         return MessagesPageResponse.of(messages, hasMore, nextCursor);
     }
 
@@ -132,7 +135,7 @@ public final class KatsubotResponseMapper {
             }
         }
         return MessageResponse.of(
-                String.valueOf(item.getMessageId()),
+                item.getMessageId(),
                 normalizeRole(item.getRole()),
                 item.getContent(),
                 item.getCreatedAt(),

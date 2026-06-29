@@ -18,8 +18,8 @@ Playbook: `docs/01-project-conventions.md`, `docs/harness/agent-hierarchy.md`
 
 | 모듈 | 명령 |
 |------|------|
-| chat-api | `./gradlew test` |
-| chat-web | `pnpm test` + `pnpm build` |
+| katsubot-api | `./gradlew test` |
+| katsubot-web | `pnpm test` + `pnpm build` |
 | api-contract | OpenAPI breaking diff |
 | legacy/hyobee | `mvn test` (해당 PR만) |
 

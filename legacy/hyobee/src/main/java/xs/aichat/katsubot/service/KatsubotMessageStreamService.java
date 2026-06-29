@@ -20,7 +20,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * chat-web OpenAPI SSE 계약(event:delta / event:done)으로 벤더 스트림을 변환한다.
+ * katsubot-web OpenAPI SSE 계약(event:delta / event:done)으로 벤더 스트림을 변환한다.
  */
 @Slf4j
 @Service
@@ -134,6 +134,14 @@ public class KatsubotMessageStreamService {
                     sendError(emitter, "STREAM_ERROR", message);
                     emitter.complete();
                 }
+                case "response_completed" -> {
+                    String delta = extractDeltaText(responseMap);
+                    if (delta != null && !delta.isEmpty()) {
+                        accumulatedText.append(delta);
+                        sendDelta(emitter, delta);
+                    }
+                    // title은 다음 done 청크에 옴 — 여기서 종료하지 않음
+                }
                 case "done" -> finishStream(emitter, conversationId, responseMap, streamFinished, accumulatedText);
                 case "response_chunk" -> {
                     String delta = extractDeltaText(responseMap);
@@ -141,14 +149,6 @@ public class KatsubotMessageStreamService {
                         accumulatedText.append(delta);
                         sendDelta(emitter, delta);
                     }
-                }
-                case "response_completed" -> {
-                    String delta = extractDeltaText(responseMap);
-                    if (delta != null && !delta.isEmpty()) {
-                        accumulatedText.append(delta);
-                        sendDelta(emitter, delta);
-                    }
-                    finishStream(emitter, conversationId, responseMap, streamFinished, accumulatedText);
                 }
                 default -> {
                     String delta = extractDeltaText(responseMap);
@@ -175,7 +175,8 @@ public class KatsubotMessageStreamService {
         }
         streamFinished[0] = true;
         String messageId = extractMessageId(responseMap);
-        sendDone(emitter, conversationId, messageId, accumulatedText.toString());
+        String title = extractTitle(responseMap);
+        sendDone(emitter, conversationId, messageId, accumulatedText.toString(), title);
         emitter.complete();
     }
 
@@ -209,13 +210,25 @@ public class KatsubotMessageStreamService {
         }
     }
 
-    private void sendDone(SseEmitter emitter, String conversationId, String messageId, String content) {
+    private String extractTitle(Map<String, Object> responseMap) {
+        Object title = responseMap.get("title");
+        if (title == null) {
+            return null;
+        }
+        String text = String.valueOf(title);
+        return text.isBlank() ? null : text;
+    }
+
+    private void sendDone(SseEmitter emitter, String conversationId, String messageId, String content, String title) {
         try {
             Map<String, String> payload = new HashMap<>();
             payload.put("conversation_id", conversationId);
             payload.put("message_id", messageId);
             if (content != null && !content.isEmpty()) {
                 payload.put("content", content);
+            }
+            if (title != null && !title.isEmpty()) {
+                payload.put("title", title);
             }
             emitter.send(SseEmitter.event()
                     .name("done")

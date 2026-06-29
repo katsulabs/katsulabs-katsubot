@@ -13,6 +13,8 @@ import xs.core.api.service.ApiService;
 import xs.core.property.XtrmProperty;
 import xs.core.utility.XtrmCryptoUtil;
 import xs.domain.certification.service.CertificationService;
+import xs.aichat.v2.dto.LoginUserCredentials;
+import xs.aichat.v2.service.AichatUserLoginService;
 import xs.vob.cmmn.service.CmmnService;
 import xs.vob.enumeration.MainEnum;
 import xs.vob.management.dto.ComUser;
@@ -46,6 +48,9 @@ class LoginServiceImplTest {
     private ApiService apiService;
 
     @Mock
+    private AichatUserLoginService aichatUserLoginService;
+
+    @Mock
     private xs.core.database.XtrmDAOWeb mobjXtrmDao;
 
     @Mock
@@ -71,6 +76,7 @@ class LoginServiceImplTest {
         ReflectionTestUtils.setField(loginService, "certificationService", certificationService);
         ReflectionTestUtils.setField(loginService, "cmmnService", cmmnService);
         ReflectionTestUtils.setField(loginService, "apiService", apiService);
+        ReflectionTestUtils.setField(loginService, "aichatUserLoginService", aichatUserLoginService);
         ReflectionTestUtils.setField(loginService, "objXtrmConfig", xtrmProperty);
         ReflectionTestUtils.setField(loginService, "mobjXtrmDao", mobjXtrmDao);
         ReflectionTestUtils.setField(loginService, "mobjXtrmConfig", xtrmProperty);
@@ -296,7 +302,7 @@ class LoginServiceImplTest {
         }
 
         @Test
-        @DisplayName("정상 복호화 후 사용자 조회 및 세션 생성")
+        @DisplayName("정상 복호화 후 UserMapper 세션 생성")
         void successDecryptsAndCreatesSession() throws Exception {
             when(session.getAttribute("ENCRYPT_KEY")).thenReturn(ENCRYPT_KEY);
 
@@ -306,16 +312,18 @@ class LoginServiceImplTest {
                     "passwordEncrypt", XtrmCryptoUtil.encryptAES("secret", ENCRYPT_KEY),
                     "languageCode", "ko"
             );
-            var user = buildUser("user01");
+            var credentials = new LoginUserCredentials();
+            credentials.setUserId("user01");
+            credentials.setCompanyCode("1000");
 
-            when(cmmnService.selectUserForLogin("1000", "user01", "ko")).thenReturn(user);
-            when(session.getAttribute("LOGIN_DATETIME")).thenReturn("2026-05-29 11:00:00");
+            when(aichatUserLoginService.validateDecryptedPassword("1000", "user01", "secret"))
+                    .thenReturn(credentials);
 
             var result = loginService.loginBase(params, request, session);
 
             assertThat(result.getErrorFlag()).isFalse();
-            assertThat(result.getString("currLoginDate")).isEqualTo("2026-05-29 11:00:00");
-            verify(apiService).createSessionAndUpdate(eq(user), eq(request), any());
+            assertThat(result.getString("currLoginDate")).isNotBlank();
+            verify(aichatUserLoginService).establishChatSession(eq(session), eq(credentials), eq("ko"));
             verify(session).removeAttribute("ENCRYPT_KEY");
         }
 
@@ -331,15 +339,17 @@ class LoginServiceImplTest {
                     "passwordEncrypt", XtrmCryptoUtil.encryptAES("secret", ENCRYPT_KEY),
                     "languageCode", "ko"
             );
-            var user = buildUser("user01");
+            var credentials = new LoginUserCredentials();
+            credentials.setUserId("user01");
 
-            when(cmmnService.selectUserForLogin("1000", "user01", "ko")).thenReturn(user);
-            when(session.getAttribute("LOGIN_DATETIME")).thenReturn("2026-05-29 11:00:00");
+            when(aichatUserLoginService.validateDecryptedPassword("1000", "user01", "secret"))
+                    .thenReturn(credentials);
 
             var result = loginService.loginBase(params, request, session);
 
             assertThat(result.getErrorFlag()).isFalse();
             verify(request).getHeader("X-Forwarded-For");
+            verify(session).setAttribute(eq("ACCESS_IP"), eq("203.0.113.1"));
         }
     }
 

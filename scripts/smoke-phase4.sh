@@ -11,7 +11,7 @@ echo "proxy: ${PROXY_BASE}, rag: ${RAG_BASE}"
 echo "== proxy healthz =="
 curl -sf "${PROXY_BASE}/healthz" | grep -q 'ok'
 
-echo "== chat-web SPA (root) =="
+echo "== katsubot-web SPA (root) =="
 SPA_BODY=$(curl -sf "${PROXY_BASE}/")
 echo "${SPA_BODY}" | grep -q '<div id="root">'
 

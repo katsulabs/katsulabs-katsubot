@@ -17,8 +17,8 @@
 
 ```text
 katsulabs-katsubot/
-├── apps/chat-web/           # React SPA
-├── services/chat-api/       # Boot 4.1 BFF (Gradle :services:chat-api)
+├── apps/katsubot-web/           # React SPA
+├── services/katsubot-api/       # Boot 4.1 BFF (Gradle :services:katsubot-api)
 ├── packages/api-contract/   # OpenAPI 3.1
 ├── infra/                   # Postgres · AI Gateway · Strangler
 └── legacy/hyobee/           # SSO·v2 (전환기, 신규 기능 금지)
@@ -26,13 +26,13 @@ katsulabs-katsubot/
 
 ---
 
-## §2 인증 — SSO → JWT → chat-api
+## §2 인증 — SSO → JWT → katsubot-api
 
 ```mermaid
 sequenceDiagram
-  participant Browser as chat-web
+  participant Browser as katsubot-web
   participant Legacy as legacy/hyobee
-  participant API as chat-api
+  participant API as katsubot-api
 
   Browser->>Legacy: SSO 로그인 (ADFS)
   Legacy-->>Browser: 세션 + JWT (session.jwt)
@@ -46,11 +46,11 @@ sequenceDiagram
 sequenceDiagram
   participant B as Browser
   participant L as legacy/hyobee
-  participant W as chat-web
-  participant A as chat-api
+  participant W as katsubot-web
+  participant A as katsubot-api
 
   B->>L: ADFS SSO login.jsp
-  L-->>B: redirect → chat-web?jwt=...
+  L-->>B: redirect → katsubot-web?jwt=...
   W->>W: initAuthFromUrl() → sessionStorage
   W->>A: Bearer JWT (모든 /api/v1/**)
   A->>A: LegacyJwtTokenValidator (HS512)
@@ -63,8 +63,8 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
   participant U as 사용자
-  participant W as chat-web
-  participant A as chat-api
+  participant W as katsubot-web
+  participant A as katsubot-api
   participant DB as PostgreSQL
   participant R as RAG 서비스
 
@@ -125,8 +125,8 @@ sequenceDiagram
 flowchart TB
   Browser[Browser]
   Proxy[strangler-proxy :8088]
-  Web[chat-web SPA]
-  API[chat-api :8081]
+  Web[katsubot-web SPA]
+  API[katsubot-api :8081]
   Legacy[legacy/hyobee :8080]
   RAG[dummy-rag / 운영 RAG]
 
@@ -143,7 +143,7 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-  API[chat-api BoardAuthController]
+  API[katsubot-api BoardAuthController]
   Port[BoardAuthPort]
   Stub[StubBoardAuthAdapter]
   Legacy[LegacyBoardAuthClient]
@@ -164,7 +164,7 @@ flowchart LR
   Browser --> HyobeeBFF["Hyobee BFF :8080"]
   HyobeeBFF --> WrtnClient["WrtnChatVendorClient"]
   WrtnClient --> WRTN["WRTN API (폐기)"]
-  ChatWeb --> ChatApi["chat-api :8081"]
+  ChatWeb --> ChatApi["katsubot-api :8081"]
   ChatApi --> Gateway["AI Gateway :8090"]
 ```
 
@@ -177,7 +177,7 @@ flowchart LR
   end
   subgraph after [After — 목표]
     H2[Hyobee BFF] --> GW[katsulabs-ai-gateway]
-    CA[chat-api] --> GW
+    CA[katsubot-api] --> GW
     H2 -.->|Strangler 전환기| CA
   end
 ```

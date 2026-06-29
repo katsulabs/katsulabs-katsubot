@@ -585,6 +585,8 @@
 }
 .navigation-list .list-view2 .text-area {
     display: block;
+    flex: 1;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -593,23 +595,25 @@
     line-height: 22px;
     letter-spacing: -0.14px;
 }
-.navigation-list .list-view2[chat_category="internal_rules"]:before {
-    content: "";
-    display: inline-block;
-    vertical-align: top;
-    width: 40px;
-    height: 36px;
+.navigation-list .list-view2 .conversation-category-badge {
+    flex-shrink: 0;
+    width: 32px;
+    height: 18px;
     margin-right: 4px;
-    background: url('/html/xs/aichat/img/img_chat_internal.svg') center/auto no-repeat;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
 }
+.navigation-list .list-view2 .conversation-category-badge.--corp {
+    background-image: url(../img/img_chat_internal.svg);
+}
+.navigation-list .list-view2 .conversation-category-badge.--web {
+    background-image: url(../img/img_chat_web.svg);
+}
+.navigation-list .list-view2[chat_category="internal_rules"]:before,
 .navigation-list .list-view2[chat_category="web_search"]:before {
-    content: "";
-    display: inline-block;
-    vertical-align: top;
-    width: 40px;
-    height: 36px;
-    margin-right: 4px;
-    background: url('/html/xs/aichat/img/img_chat_web.svg') center/auto no-repeat;
+    content: none;
+    display: none;
 }
 .aside.--expanded .navigation:not(.--delete) .sub-title > .btn3 > i[class*="0225_history"] {
     display: block;

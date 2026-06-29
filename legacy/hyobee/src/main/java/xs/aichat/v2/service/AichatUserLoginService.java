@@ -60,9 +60,12 @@ public class AichatUserLoginService {
     /**
      * webbase {@code loginBase.json} — 복호화된 비밀번호(SHA256) 검증만 UserMapper 경로로 수행.
      */
-    public void validateDecryptedPassword(String companyCode, String userId, String decryptedPasswordHash)
-            throws Exception {
-        validatePassword(companyCode, userId, decryptedPasswordHash, null);
+    public LoginUserCredentials validateDecryptedPassword(
+            String companyCode,
+            String userId,
+            String decryptedPasswordHash
+    ) throws Exception {
+        return validatePassword(companyCode, userId, decryptedPasswordHash, null);
     }
 
     private DecryptedLogin decryptLoginFields(AichatEncryptedLoginRequest request, HttpSession session)

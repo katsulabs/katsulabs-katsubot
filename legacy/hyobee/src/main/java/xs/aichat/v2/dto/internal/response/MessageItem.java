@@ -25,7 +25,7 @@ import static xs.aichat.v2.util.DocumentLinkBuilder.resolveSourceUrl;
 public class MessageItem {
 
     @JsonProperty("message_id")
-    private int messageId;
+    private String messageId;
 
     private String content;
 

@@ -15,14 +15,14 @@
 | 인증 | `Authorization: Bearer <JWT>` (Hyobee 세션 JWT) |
 | JSON 규칙 | 대부분 **snake_case** |
 
-Hyobee BFF(`/xs/aichat/v2/**`)·신규 chat-api(`/api/v1/**`)와 **경로는 유사**하지만, 본 문서는 **벤더 upstream** 계약입니다.
+Hyobee BFF(`/xs/aichat/v2/**`)·신규 katsubot-api(`/api/v1/**`)와 **경로는 유사**하지만, 본 문서는 **벤더 upstream** 계약입니다.
 
 ```mermaid
 flowchart LR
   Browser --> HyobeeBFF["Hyobee BFF :8080"]
   HyobeeBFF --> WrtnClient["WrtnChatVendorClient"]
   WrtnClient --> WRTN["WRTN API Gateway"]
-  ChatWeb --> ChatApi["chat-api :8081"]
+  ChatWeb --> ChatApi["katsubot-api :8081"]
   ChatApi --> Gateway["AI Gateway :8090"]
 ```
 
@@ -167,11 +167,11 @@ Body (PUT): `{ "feedback_type": "like" }`
 
 ---
 
-## chat-api·AI Gateway와의 관계
+## katsubot-api·AI Gateway와의 관계
 
-| 영역 | WRTN upstream (본 문서) | chat-api / AI Gateway |
+| 영역 | WRTN upstream (본 문서) | katsubot-api / AI Gateway |
 |------|-------------------------|------------------------|
-| 대화 CRUD | `/api/v1/conversations/**` | chat-api 동일 경로 (JPA) |
+| 대화 CRUD | `/api/v1/conversations/**` | katsubot-api 동일 경로 (JPA) |
 | 스트리밍 | `/api/v1/.../ai-chat` SSE | `POST /v1/completions` SSE |
 | R&D 저널 | `/api/v2/rnd/**` | (미이관) |
 | Health | `/_health` | `/_health` |
@@ -190,7 +190,7 @@ packages/api-contract/wrtn-upstream-openapi.yaml
 npx @redocly/cli preview-docs packages/api-contract/wrtn-upstream-openapi.yaml
 ```
 
-신규 BFF 계약(chat-api ↔ browser)은 [`packages/api-contract/openapi.yaml`](../../packages/api-contract/openapi.yaml)을 사용하세요.
+신규 BFF 계약(katsubot-api ↔ browser)은 [`packages/api-contract/openapi.yaml`](../../packages/api-contract/openapi.yaml)을 사용하세요.
 
 ## 참고
 

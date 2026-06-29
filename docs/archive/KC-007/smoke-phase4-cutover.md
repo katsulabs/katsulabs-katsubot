@@ -1,13 +1,13 @@
 # Phase 4 Cutover 스모크 (G8)
 
-> 단일 origin (`:8088`) — React SPA + chat-api. **legacy 미기동** 상태에서 dev-token으로 검증 가능.
+> 단일 origin (`:8088`) — React SPA + katsubot-api. **legacy 미기동** 상태에서 dev-token으로 검증 가능.
 
 ## 구성
 
 | 파일 | 역할 |
 |------|------|
-| `infra/docker-compose.strangler.yml` | chat-web + strangler-proxy |
-| `infra/nginx/strangler.conf.template` | `/` → SPA, `/api/v1` → chat-api |
+| `infra/docker-compose.strangler.yml` | katsubot-web + strangler-proxy |
+| `infra/nginx/strangler.conf.template` | `/` → SPA, `/api/v1` → katsubot-api |
 | `scripts/smoke-phase4.sh` | G8 자동 스모크 |
 
 ## 1. 선행
@@ -17,10 +17,10 @@ cd infra
 docker compose up -d postgres dummy-rag
 ```
 
-호스트 chat-api:
+호스트 katsubot-api:
 
 ```bash
-./gradlew :services:chat-api:bootRun
+./gradlew :services:katsubot-api:bootRun
 ```
 
 ## 2. Cutover stack

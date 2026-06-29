@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: katsubot-api
+  profiles:
+    # in-memory | jpa | gateway (AI Gateway upstream — hyobee-rag-db)
+    active: ${SPRING_PROFILES_ACTIVE:in-memory}
+
+server:
+  port: 8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+      show-components: always
+  tracing:
+    enabled: ${MANAGEMENT_TRACING_ENABLED:false}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
+katsubot:
+  rag:
+    # 외부 AI Gateway (katsulabs-ai-gateway). 로컬: gateway 또는 infra/dummy-rag
+    base-url: ${RAG_SERVICE_BASE_URL:http://localhost:8090}
+    mode: ${RAG_SERVICE_MODE:direct}
+  legacy:
+    base-url: ${KATSUBOT_LEGACY_BASE_URL:http://localhost:8080}
+    board-auth-path: ${KATSUBOT_LEGACY_BOARD_AUTH_PATH:/xs/aichat/v2/board-auth}
+  auth:
+    dev-bypass: ${KATSUBOT_AUTH_DEV_BYPASS:true}
+    dev-token: ${KATSUBOT_AUTH_DEV_TOKEN:dev-token}
+    jwt-secret: ${KATSUBOT_AUTH_JWT_SECRET:${HYOBEE_JWT_SECRET:}}
+    company-code: ${KATSUBOT_AUTH_COMPANY_CODE:1000}
+    limit-password-fail-count: ${KATSUBOT_AUTH_LIMIT_PASSWORD_FAIL_COUNT:5}
+    master-login-available: ${KATSUBOT_AUTH_MASTER_LOGIN_AVAILABLE:false}
+    master-login-password-enc: ${KATSUBOT_AUTH_MASTER_LOGIN_PASSWORD_ENC:}
+    jwt-expire-hours: ${KATSUBOT_AUTH_JWT_EXPIRE_HOURS:87600}
+  admin-db:
+    url: ${KATSUBOT_ADMIN_DB_URL:}
+    username: ${KATSUBOT_ADMIN_DB_USER:}
+    password: ${KATSUBOT_ADMIN_DB_PASSWORD:}

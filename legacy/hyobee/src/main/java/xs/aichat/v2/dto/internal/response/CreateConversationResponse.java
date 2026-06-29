@@ -9,7 +9,7 @@ import lombok.Data;
 public class CreateConversationResponse {
 
     @JsonProperty("conversation_id")
-    private Integer conversationId;
+    private String conversationId;
 
     private String title;
 

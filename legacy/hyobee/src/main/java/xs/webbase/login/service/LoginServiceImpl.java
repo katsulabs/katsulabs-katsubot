@@ -7,8 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import xs.aichat.v2.dto.LoginUserCredentials;
 import xs.aichat.v2.exception.AichatLoginException;
 import xs.aichat.v2.service.AichatUserLoginService;
+import xs.core.handler.app.XtrmHttpSessionListener;
 import xs.core.api.service.ApiService;
 import xs.core.enumeration.XtrmEnum;
 import xs.core.extend.XtrmDefaultResource;
@@ -110,8 +112,9 @@ public class LoginServiceImpl extends XtrmDefaultResource implements LoginServic
 		//로그인을 위한 필수항목 체크 및 추가 처리
 		if(!validationLoginBase(objXtrmParams, objSession, objXtrmReturn)){return objXtrmReturn;}
 
+		LoginUserCredentials credentials;
 		try {
-			aichatUserLoginService.validateDecryptedPassword(
+			credentials = aichatUserLoginService.validateDecryptedPassword(
 					objXtrmParams.getString("companyCode"),
 					objXtrmParams.getString("userId"),
 					objXtrmParams.getString("password")
@@ -121,27 +124,20 @@ public class LoginServiceImpl extends XtrmDefaultResource implements LoginServic
 			return objXtrmReturn;
 		}
 
-		//사용자 정보 조회
-		//다국어를 지원하기 위해 로그인시 선택한 언어 코드를 파라메터에 추가함
-		ComUser objUser = cmmnService.selectUserForLogin(objXtrmParams.getString("companyCode"), objXtrmParams.getString("userId"), objXtrmParams.getString("languageCode"));
+		String languageCode = objXtrmParams.getString("languageCode");
+		aichatUserLoginService.establishChatSession(objSession, credentials, languageCode);
 
-		String cilentIp = objRequest.getHeader("X-Forwarded-For");
-		if( null != cilentIp && !cilentIp.isEmpty() ) {
-			cilentIp = cilentIp.split(",")[0].trim();
-		}else if(objRequest.getHeader("x-real-ip") == null) {
-			cilentIp = objRequest.getRemoteAddr();
-		}else {
-			cilentIp = objRequest.getHeader("x-real-ip");
-		}
+		String clientIp = resolveClientIp(objRequest);
+		objSession.setAttribute("ACCESS_IP", XtrmCmmnUtil.convertString(clientIp, ""));
+		String loginDateTime = XtrmCmmnUtil.getFormatDateTime();
+		objSession.setAttribute("LOGIN_DATETIME", loginDateTime);
+		objSession.setAttribute("MAIN_PAGE_URL", mobjXtrmConfig.getString("MAIN_PAGE_URL"));
+		objSession.setAttribute("ERROR_PAGE_URL", mobjXtrmConfig.getString("ERROR_PAGE_URL"));
+		XtrmHttpSessionListener.xtrmCreateSession(credentials.getUserId(), objSession);
 
-		//로그인을 위한 사용자정보 체크
-//		if(!validationLoginUser(objXtrmParams, objUser, objXtrmReturn, cilentIp)){return objXtrmReturn;}
-		
-		//세션정보생성 
-		String recentLoginDt = XtrmCmmnUtil.getFormatDateTime(objUser.getRecentLoginDt());
-		apiService.createSessionAndUpdate(objUser, objRequest, objXtrmParams);
-		objXtrmReturn.setString("recentLoginDt", recentLoginDt);
-		objXtrmReturn.setString("currLoginDate", objSession.getAttribute("LOGIN_DATETIME").toString());
+		objXtrmReturn.setResultHeader(false, XtrmEnum.PROCESS_SUCCESS.getCodeName());
+		objXtrmReturn.setString("recentLoginDt", "");
+		objXtrmReturn.setString("currLoginDate", loginDateTime);
 
 		return objXtrmReturn;
 	}		
@@ -168,7 +164,18 @@ public class LoginServiceImpl extends XtrmDefaultResource implements LoginServic
 		objXtrmParams.setString("password", XtrmCryptoUtil.decryptAES(password, strEncryptKey));
 		
 		return true;
-    }		
+    }
+
+	private static String resolveClientIp(HttpServletRequest objRequest) {
+		String clientIp = objRequest.getHeader("X-Forwarded-For");
+		if (clientIp != null && !clientIp.isEmpty()) {
+			return clientIp.split(",")[0].trim();
+		}
+		if (objRequest.getHeader("x-real-ip") == null) {
+			return objRequest.getRemoteAddr();
+		}
+		return objRequest.getHeader("x-real-ip");
+	}
 		
 	
 	// 로그아웃
@@ -292,7 +299,11 @@ public class LoginServiceImpl extends XtrmDefaultResource implements LoginServic
 		// languageCode값을 변경한다.
 		objSession.setAttribute("LANGUAGE_CODE", languageCode);
 		objXtrmReturn = apiService.initLoginPageLoad(objXtrmParams, objSession);
-		applyLocalizedUserNamesToSession(objSession, languageCode);
+		try {
+			applyLocalizedUserNamesToSession(objSession, languageCode);
+		} catch (Exception ex) {
+			log.debug("changeLocale: localized session names skipped ({})", ex.getMessage());
+		}
 		return objXtrmReturn;
 	}
 

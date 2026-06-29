@@ -1,6 +1,6 @@
 # Strangler proxy overlay — Phase 4 cutover (선택)
 #
-# 로컬 개발은 chat-web Vite(:5173) → legacy(:8080) 프록시로 충분하다.
+# 로컬 개발은 katsubot-web Vite(:5173) → legacy(:8080) 프록시로 충분하다.
 # 단일 origin(:8088) 스모크가 필요할 때만 profile로 기동:
 #
 #   docker compose -f docker-compose.strangler.yml --profile strangler up -d --build
@@ -8,10 +8,10 @@
 # 프록시: http://localhost:8088 — SPA + /api/v1(legacy facade) + /xs(legacy)
 
 services:
-  chat-web:
+  katsubot-web:
     profiles: ["strangler"]
     build:
-      context: ../apps/chat-web
+      context: ../apps/katsubot-web
       dockerfile: Dockerfile
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1/"]
@@ -25,15 +25,15 @@ services:
     ports:
       - "8088:80"
     environment:
-      CHAT_WEB_UPSTREAM: ${CHAT_WEB_UPSTREAM:-chat-web:80}
-      CHAT_API_UPSTREAM: ${CHAT_API_UPSTREAM:-host.docker.internal:8081}
+      KATSUBOT_WEB_UPSTREAM: ${KATSUBOT_WEB_UPSTREAM:-katsubot-web:80}
+      KATSUBOT_API_UPSTREAM: ${KATSUBOT_API_UPSTREAM:-host.docker.internal:8081}
       LEGACY_UPSTREAM: ${LEGACY_UPSTREAM:-host.docker.internal:8080}
     volumes:
       - ./nginx/strangler.conf.template:/etc/nginx/templates/default.conf.template:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
-      chat-web:
+      katsubot-web:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]

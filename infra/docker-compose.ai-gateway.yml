@@ -4,7 +4,7 @@
 #   cp infra/.env.example infra/.env   # 값 채우기
 #   ./scripts/up-ai-gateway.sh
 #
-# chat-api completions 만: GATEWAY_WRTN_ENABLED=false
+# katsubot-api completions 만: GATEWAY_WRTN_ENABLED=false
 
 services:
   ai-gateway:
@@ -23,7 +23,7 @@ services:
       PORT: "8090"
       GATEWAY_WRTN_ENABLED: ${GATEWAY_WRTN_ENABLED:-true}
       GATEWAY_FLYWAY_ENABLED: ${GATEWAY_FLYWAY_ENABLED:-false}
-      GATEWAY_JWT_SECRET: ${GATEWAY_JWT_SECRET:-}
+      GATEWAY_JWT_SECRET: ${GATEWAY_JWT_SECRET:${HYOBEE_JWT_SECRET:${KATSUBOT_AUTH_JWT_SECRET:-}}}
       GATEWAY_DEV_USER_ID: ${GATEWAY_DEV_USER_ID:-test20230128}
       GATEWAY_DEV_CORP_CODE: ${GATEWAY_DEV_CORP_CODE:-00}
       GATEWAY_DEV_PG_CODE: ${GATEWAY_DEV_PG_CODE:-H}

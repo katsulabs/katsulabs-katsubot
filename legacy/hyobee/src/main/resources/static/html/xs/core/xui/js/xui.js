@@ -768,6 +768,18 @@
 			return xuic.__CONFIG.contextRoot;
 		},
 		/**
+		 * Hyobee aichat v2·webbase 로그인 — VOB initClientPageLoad(VIEW_COM_CODE·AUTH_MENU) 생략 대상
+		 */
+		isHyobeeAichatStandalonePage : function(){
+			var path = (document.location.pathname || "").toLowerCase();
+			return path.indexOf("/webapps/xs/aichat/") >= 0
+				|| path.indexOf("/webapps/xs/webbase/login/") >= 0;
+		},
+		isHyobeeLoginPage : function(){
+			var path = (document.location.pathname || "").toLowerCase();
+			return path.indexOf("/webapps/xs/webbase/login/") >= 0;
+		},
+		/**
 		 * Scan all element from root to define default action
 		 * @param	{DOMElement}{required}	rootElement		Root element to scan
 		 * void
@@ -1244,19 +1256,34 @@
 					if(top.document === document && document.location.pathname !== _this.getContextPath()){
 						if(xui.valid.isEmpty(window.opener) || xuic.__CONFIG.browserName === "MSIE"){
 							var param						= new xui.json();
-							param.setURL(xui.com.getRequestPrefix() + "/initClientPageLoad.json");
-							param.setAuthType(xui.enum.AUTH_TYPE_NONE.getCode());
-							param.setSessionCheck(true);
-							param.setCallBack(function(response, request){
-								xui.com._setAppServiceMode(response.getString("SERVICE_MODE"));
-								xui.com._setAppFileUploadConfiguration(parseInt(response.getString("MAX_UPLOAD_SIZE")), parseInt(response.getString("MAX_UPLOAD_SIZE_PER_FILE")));
-								xui.dateutil._load(response.getDataJsonObject("PATTERN_DATE"));
-								xui.code.load(response.getDataJsonObject("CMMN_CODE"));
-								xui.syscode.load(response.getDataJsonObject("SYS_CODE"));
-								xui.message.load(response.getDataJsonArray("MESSAGE_DATA"));
-								xui.extends.menu.load(response);
-								resolve(true);
-							});
+							if(xui.com.isHyobeeAichatStandalonePage()){
+								param.setURL(xui.com.getRequestPrefix() + "/initAichatPageLoad.json");
+								param.setAuthType(xui.enum.AUTH_TYPE_NONE.getCode());
+								param.setCallBack(function(response, request){
+									if(!response.getErrorFlag()){
+										xui.message.load(response.getDataJsonArray("MESSAGE_DATA"));
+										var sysCode = response.getDataJsonObject("SYS_CODE");
+										if(sysCode){
+											xui.syscode.load(sysCode);
+										}
+									}
+									resolve(true);
+								});
+							}else{
+								param.setURL(xui.com.getRequestPrefix() + "/initClientPageLoad.json");
+								param.setAuthType(xui.enum.AUTH_TYPE_NONE.getCode());
+								param.setSessionCheck(true);
+								param.setCallBack(function(response, request){
+									xui.com._setAppServiceMode(response.getString("SERVICE_MODE"));
+									xui.com._setAppFileUploadConfiguration(parseInt(response.getString("MAX_UPLOAD_SIZE")), parseInt(response.getString("MAX_UPLOAD_SIZE_PER_FILE")));
+									xui.dateutil._load(response.getDataJsonObject("PATTERN_DATE"));
+									xui.code.load(response.getDataJsonObject("CMMN_CODE"));
+									xui.syscode.load(response.getDataJsonObject("SYS_CODE"));
+									xui.message.load(response.getDataJsonArray("MESSAGE_DATA"));
+									xui.extends.menu.load(response);
+									resolve(true);
+								});
+							}
 							xui.ajax.callService(param);
 						}else{
 							xui.com._setAppServiceMode(opener.top.xuic.__CONFIG.appServiceMode);
@@ -4319,6 +4346,18 @@
 					var loc = window.location.href;
 
                     if(redirect){
+						// 로그인 화면 — 세션 없음이 정상; redirectErrorPage 금지
+						if(xui.com.isHyobeeLoginPage()){
+							return;
+						}
+						// Hyobee aichat — 세션 없으면 에러 페이지 대신 로그인으로
+						if(xui.com.isHyobeeAichatStandalonePage()){
+							var aichatPath = (document.location.pathname || "").toLowerCase();
+							if(aichatPath.indexOf("/webapps/xs/aichat/") >= 0){
+								window.location.href = (xui.com.getContextPath() + "webapps/xs/webbase/login/login.jsp").replace("//", "/");
+								return;
+							}
+						}
 						// 20241211 통합테스트 요청사항으로 메인화면에서 session not Found 핸들링하도록 요청에따른 처리
 						//SSO연동으로 변경하면서 주석처리함 (25.04.18)
 						/*if(!xui.valid.isEmpty(top.main010)){
@@ -5860,6 +5899,10 @@
 		 */
 		_load : function(patternDate){
 			if(xui.valid.isEmpty(patternDate)){
+				if(xui.com.isHyobeeLoginPage && xui.com.isHyobeeLoginPage()){
+					this.patternDate							= this.patternDate || {};
+					return;
+				}
 				var param									= new xui.json();
 				param.setURL(xui.com.getRequestPrefix() + "/getPatternDateData.json");
 				param.setAuthType(xui.enum.AUTH_TYPE_NONE.getCode());

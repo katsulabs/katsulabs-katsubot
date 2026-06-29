@@ -18,8 +18,8 @@ description: Katsubot PR 하네스 Hard Gates, KC 티켓 범위, 4역할 경계,
 
 | 변경 | 명령 |
 |------|------|
-| chat-api | `cd services/chat-api && ./gradlew test` |
-| chat-web | `cd apps/chat-web && pnpm test && pnpm build` |
+| katsubot-api | `cd services/katsubot-api && ./gradlew test` |
+| katsubot-web | `cd apps/katsubot-web && pnpm test && pnpm build` |
 | legacy | `cd legacy/hyobee && mvn test` |
 
 ## PR 본문 예시

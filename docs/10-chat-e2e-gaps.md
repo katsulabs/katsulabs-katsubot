@@ -10,7 +10,7 @@
 
 ## 1. 요약
 
-채팅 E2E는 모노레포 3모듈(`chat-web` → `chat-api` → RAG)로 완성. Phase 0–4 골격은 존재하며, 아래 갭을 메우면 **“채팅이 동작한다”** 달성.
+채팅 E2E는 모노레포 3모듈(`katsubot-web` → `katsubot-api` → RAG)로 완성. Phase 0–4 골격은 존재하며, 아래 갭을 메우면 **“채팅이 동작한다”** 달성.
 
 | 우선순위 | 갭 | 영향 |
 |----------|-----|------|
@@ -26,8 +26,8 @@
 ### 모듈
 
 ```text
-apps/chat-web/          # React SPA
-services/chat-api/      # Gradle :services:chat-api (경로 services/api)
+apps/katsubot-web/          # React SPA
+services/katsubot-api/      # Gradle :services:katsubot-api (경로 services/katsubot-api)
 packages/api-contract/
 infra/dummy-rag/
 legacy/hyobee/          # Strangler, 신규 기능 금지
@@ -62,7 +62,7 @@ legacy/hyobee/          # Strangler, 신규 기능 금지
 
 OpenAPI `SendMessageRequest.chat_category` 확장 → Backend `RagCompletionRequest` → Frontend 전달.
 
-## 4. chat-web 구조 (제안)
+## 4. katsubot-web 구조 (제안)
 
 ```text
 features/chat/     ChatPage, Sidebar, Thread, Composer

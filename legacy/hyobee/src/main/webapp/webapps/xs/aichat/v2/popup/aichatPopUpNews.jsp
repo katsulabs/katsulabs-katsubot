@@ -8,6 +8,8 @@
     <jsp:include page="/webapps/xs/core/xui/xuicore.jsp" flush="false"></jsp:include>
     <!-- 화면script -->
     <script defer src="${pageContext.request.contextPath}/html/xs/aichat/js/xui-log.js?version=<%=System.currentTimeMillis() %>"></script>
+    <script defer src="${pageContext.request.contextPath}/html/xs/aichat/js/v2/hyobee-messages.js?version=<%=System.currentTimeMillis() %>"></script>
+    <script defer src="${pageContext.request.contextPath}/html/xs/aichat/js/v2/hyobee-i18n.js?version=<%=System.currentTimeMillis() %>"></script>
     <script defer src="${pageContext.request.contextPath}/html/xs/aichat/js/v2/popup/aichatPopUpNews.js?version=<%=System.currentTimeMillis() %>"></script>
 
     <!-- 화면CSS -->

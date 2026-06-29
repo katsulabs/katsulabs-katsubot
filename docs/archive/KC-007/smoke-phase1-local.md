@@ -14,7 +14,7 @@ docker compose up -d dummy-rag
 **katsulabs-ai-gateway (Phase 1 Direct LLM)**
 
 ```bash
-# gateway repo clone 후 — Java 스택 (Boot 4.1, chat-api와 동일)
+# gateway repo clone 후 — Java 스택 (Boot 4.1, katsubot-api와 동일)
 docker compose -f infra/docker-compose.java.yml up --build -d
 # LLM 키 없으면 stub 응답 (smoke·CI)
 ```
@@ -25,18 +25,18 @@ docker compose -f infra/docker-compose.java.yml up --build -d
 cd infra && docker compose up -d postgres
 ```
 
-## 2. chat-api
+## 2. katsubot-api
 
 **인메모리 (기본)**
 
 ```bash
-./gradlew :services:chat-api:bootRun
+./gradlew :services:katsubot-api:bootRun
 ```
 
 **Postgres + Flyway**
 
 ```bash
-SPRING_PROFILES_ACTIVE=jpa ./gradlew :services:chat-api:bootRun
+SPRING_PROFILES_ACTIVE=jpa ./gradlew :services:katsubot-api:bootRun
 ```
 
 | 변수 | 기본 | 설명 |
@@ -49,10 +49,10 @@ SPRING_PROFILES_ACTIVE=jpa ./gradlew :services:chat-api:bootRun
 
 Health: `curl -s http://localhost:8081/actuator/health`
 
-## 3. chat-web
+## 3. katsubot-web
 
 ```bash
-cd apps/chat-web
+cd apps/katsubot-web
 npm run dev
 ```
 

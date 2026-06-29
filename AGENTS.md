@@ -4,8 +4,8 @@
 
 | 모듈 | 경로 | JDK | 명령 |
 |------|------|-----|------|
-| chat-api | `services/chat-api` | **25** | `./gradlew :services:chat-api:test` |
-| chat-web | `apps/chat-web` | Node 22 | `npm ci && npm test && npm run build` |
+| katsubot-api | `services/katsubot-api` | **25** | `./gradlew :services:katsubot-api:test` |
+| katsubot-web | `apps/katsubot-web` | Node 22 | `npm ci && npm test && npm run build` |
 | legacy hyobee | `legacy/hyobee` | **21** | `mvn test` (P0 세트는 legacy-ci.yml 참고) |
 
 상세: [README-MONOREPO.md](./README-MONOREPO.md)
@@ -57,15 +57,15 @@ mvn spring-boot:run -Dspring-boot.run.jvmArguments="-DXTRMDB_JDBC_URL=jdbc:postg
 
 **Gateway JWT:** `/xs/aichat/v2/**` → Gateway WRTN API 는 **레거시 로그인 JWT** 필요 (`dev-token` 거절). `GATEWAY_JWT_SECRET` = `SECRET_KEY`.
 
-### chat-api (신규)
+### katsubot-api (신규)
 
 ```bash
 # 1) AI Gateway — WRTN + completions (:8090)
 cp infra/.env.example infra/.env   # hyobee-rag-db 비밀번호 등 채우기
 ./scripts/up-ai-gateway.sh
 
-# 2) chat-api — infra/.env 의 JWT·RAG 설정 적용
-./scripts/boot-chat-api.sh   # :8081
+# 2) katsubot-api — infra/.env 의 JWT·RAG 설정 적용
+./scripts/boot-katsubot-api.sh   # :8081
 curl -s http://localhost:8081/actuator/health
 ```
 

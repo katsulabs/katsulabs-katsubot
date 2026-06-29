@@ -11,7 +11,7 @@ echo "target: ${API_BASE}, rag: ${RAG_BASE}"
 echo "== dummy-rag / RAG health =="
 curl -sf "${RAG_BASE}/_health" | grep -q '"status":"ok"'
 
-echo "== chat-api health (incl. rag indicator) =="
+echo "== katsubot-api health (incl. rag indicator) =="
 HEALTH_JSON=$(curl -sf "${API_BASE}/actuator/health")
 echo "${HEALTH_JSON}" | grep -q '"status":"UP"'
 echo "${HEALTH_JSON}" | grep -q '"rag"'

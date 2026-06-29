@@ -81,7 +81,7 @@
 ## 병렬 착수 조건
 
 - worktree: `../katsubot-KC-007-phase2` (본 브랜치만 커밋)
-- `services/chat-api/**` vs `apps/chat-web/**` 비중첩 병렬 가능
+- `services/katsubot-api/**` vs `apps/katsubot-web/**` 비중첩 병렬 가능
 - OpenAPI·Port는 Contract 머지/확정 후 Backend·Frontend 착수
 
 ## 즉시 액션

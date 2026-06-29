@@ -1,6 +1,6 @@
 # RAG 운영 계약 (Phase 3)
 
-> OpenAPI **breaking 변경 없음**. RAG는 chat-api 외부 HTTP 서비스 (`RagCompletionPort` → `RagHttpClient`).
+> OpenAPI **breaking 변경 없음**. RAG는 katsubot-api 외부 HTTP 서비스 (`RagCompletionPort` → `RagHttpClient`).
 
 ## 환경 변수
 

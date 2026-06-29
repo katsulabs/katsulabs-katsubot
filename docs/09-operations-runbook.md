@@ -6,9 +6,9 @@
 
 | 경로 | Upstream | 비고 |
 |------|----------|------|
-| `/` | chat-web | React SPA |
-| `/api/v1/**` | chat-api | BFF REST/SSE |
-| `/actuator/**` | chat-api | health (내부망 제한) |
+| `/` | katsubot-web | React SPA |
+| `/api/v1/**` | katsubot-api | BFF REST/SSE |
+| `/actuator/**` | katsubot-api | health (내부망 제한) |
 | `/xs/**` | legacy | SSO·v2 — `Deprecation` 헤더 |
 | `/webapps/**` | legacy | JSP |
 | `/healthz` | proxy | liveness |
@@ -17,7 +17,7 @@
 
 ```bash
 cd infra && docker compose up -d postgres dummy-rag
-./gradlew :services:chat-api:bootRun
+./gradlew :services:katsubot-api:bootRun
 docker compose -f docker-compose.yml -f docker-compose.strangler.yml up -d --build
 PROXY_BASE=http://localhost:8088 ./scripts/smoke-phase4.sh
 ```
@@ -25,7 +25,7 @@ PROXY_BASE=http://localhost:8088 ./scripts/smoke-phase4.sh
 ## 인증 (전환기)
 
 1. **개발:** `Bearer dev-token` ([05-auth-bridge.md](./05-auth-bridge.md))
-2. **스테이징/운영:** legacy SSO → `/?jwt=<token>` → chat-web `sessionStorage`
+2. **스테이징/운영:** legacy SSO → `/?jwt=<token>` → katsubot-web `sessionStorage`
 
 ## 레거시 Deprecation
 
@@ -51,7 +51,7 @@ nginx `/xs/**`, `/webapps/**` 응답:
 
 > `katsubot-secrets-prep` 스킬. **금지:** API 키·DB·JWT를 git 커밋, `.env` 커밋
 
-### chat-api
+### katsubot-api
 
 | 변수 | 저장소 |
 |------|--------|
@@ -62,7 +62,7 @@ nginx `/xs/**`, `/webapps/**` 응답:
 | `SPRING_DATASOURCE_*` | Environment secret |
 | JWT signing key | Environment secret |
 
-### chat-web
+### katsubot-web
 
 | 변수 | 용도 |
 |------|------|

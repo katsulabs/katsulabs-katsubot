@@ -13,8 +13,8 @@
 
 | # | 문서 | 내용 |
 |---|------|------|
-| 05 | [auth-bridge.md](./05-auth-bridge.md) | SSO/JWT ↔ chat-api |
-| 06 | [rag-contract.md](./06-rag-contract.md) | chat-api ↔ AI Gateway |
+| 05 | [auth-bridge.md](./05-auth-bridge.md) | SSO/JWT ↔ katsubot-api |
+| 06 | [rag-contract.md](./06-rag-contract.md) | katsubot-api ↔ AI Gateway |
 | 07 | [api-reference.md](./07-api-reference.md) | REST/SSE 경로·v2 parity |
 | 08 | [ai-gateway-handoff.md](./08-ai-gateway-handoff.md) | WRTN → Gateway 마이그레이션 |
 
@@ -39,6 +39,7 @@
 |------|------|
 | [../README-MONOREPO.md](../README-MONOREPO.md) | 모노레포 빠른 시작 |
 | [../AGENTS.md](../AGENTS.md) | 에이전트 실행 명령 |
-| [../README.md](../README.md) | 레거시 Hyobee 상세 |
+| [../README.md](../README.md) | 저장소 개요·모듈·빠른 시작 |
+| [../legacy/hyobee/README.md](../legacy/hyobee/README.md) | 레거시 Hyobee 상세 매뉴얼 |
 | [../packages/api-contract/](../packages/api-contract/) | OpenAPI 단일 소스 |
 | [archive/KC-007/](./archive/KC-007/) | Phase 킥오ff·스모크·프롬프트 보관 |

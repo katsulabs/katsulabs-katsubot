@@ -39,8 +39,8 @@ Contract → Backend → Frontend → QA
 
 ## QA 전 게이트
 
-- chat-api: `./gradlew test`
-- chat-web: `pnpm test && pnpm build`
+- katsubot-api: `./gradlew test`
+- katsubot-web: `pnpm test && pnpm build`
 
 ## 참고
 

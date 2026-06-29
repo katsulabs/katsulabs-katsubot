@@ -21,6 +21,10 @@ import static org.mockito.Mockito.*;
 @DisplayName("ChatUserService 조회팀/대화 연동 테스트")
 class ChatUserServiceViewableTeamTest {
 
+    private static final String CONV_ID = "729a6287-ec1f-4e6d-a26a-0b1fed964896";
+    private static final String CONV_ID_1 = "829a6287-ec1f-4e6d-a26a-0b1fed964897";
+    private static final String CONV_ID_2 = "929a6287-ec1f-4e6d-a26a-0b1fed964898";
+
     @Mock
     private UserMapper userMapper;
 
@@ -72,31 +76,31 @@ class ChatUserServiceViewableTeamTest {
     @DisplayName("appendConversation — 메타 행 없으면 예외 (conversations만 갱신)")
     void appendConversation_throwsWhenNoRow() {
         when(userMapper.findAllViewableTeamCodesByUserId("u1")).thenReturn(List.of("T1"));
-        when(userMapper.appendConversation("u1", "C1", "T1", 42)).thenReturn(0);
+        when(userMapper.appendConversation("u1", "C1", "T1", CONV_ID)).thenReturn(0);
 
-        assertThatThrownBy(() -> service.appendConversation("u1", "C1", "T1", 42))
+        assertThatThrownBy(() -> service.appendConversation("u1", "C1", "T1", CONV_ID))
                 .isInstanceOf(HyobeeException.class);
 
-        verify(userMapper).appendConversation("u1", "C1", "T1", 42);
+        verify(userMapper).appendConversation("u1", "C1", "T1", CONV_ID);
     }
 
     @Test
     @DisplayName("appendConversation — 기존 행에 conversation_id append")
     void appendConversation_updatesExistingRow() {
         when(userMapper.findAllViewableTeamCodesByUserId("u1")).thenReturn(List.of("T1"));
-        when(userMapper.appendConversation("u1", "C1", "T1", 42)).thenReturn(1);
+        when(userMapper.appendConversation("u1", "C1", "T1", CONV_ID)).thenReturn(1);
 
-        service.appendConversation("u1", "C1", "T1", 42);
+        service.appendConversation("u1", "C1", "T1", CONV_ID);
 
-        verify(userMapper).appendConversation("u1", "C1", "T1", 42);
+        verify(userMapper).appendConversation("u1", "C1", "T1", CONV_ID);
     }
 
     @Test
     @DisplayName("removeConversations — userId 기준 mapper 호출")
     void removeConversations_callsMapper() {
-        service.removeConversations("u1", List.of(1, 2));
+        service.removeConversations("u1", List.of(CONV_ID_1, CONV_ID_2));
 
-        verify(userMapper).removeConversations(eq("u1"), eq(List.of(1, 2)));
+        verify(userMapper).removeConversations(eq("u1"), eq(List.of(CONV_ID_1, CONV_ID_2)));
     }
 
     @Test

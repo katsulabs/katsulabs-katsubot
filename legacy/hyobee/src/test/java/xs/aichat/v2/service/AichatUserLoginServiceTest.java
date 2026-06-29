@@ -15,6 +15,7 @@ import xs.vob.cmmn.service.CmmnService;
 
 import java.util.Properties;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.eq;
@@ -67,8 +68,8 @@ class AichatUserLoginServiceTest {
                 eq("key")
         )).thenReturn(true).thenReturn(false);
 
-        assertThatCode(() -> loginService.validateDecryptedPassword("1000", "user01", "client-hash"))
-                .doesNotThrowAnyException();
+        assertThat(loginService.validateDecryptedPassword("1000", "user01", "client-hash"))
+                .isSameAs(credentials);
     }
 
     @Test

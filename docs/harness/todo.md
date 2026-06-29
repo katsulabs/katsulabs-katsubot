@@ -36,6 +36,16 @@
 - [ ] (선택) 로컬 파일 업로드
 - [ ] (선택) [10-chat-e2e-gaps.md](../10-chat-e2e-gaps.md) P0–P1 갭
 
+## P5 — API Server 마이그레이션 (진행 중)
+
+- [x] 작업계획서 승인 — [KC-007-api-server-migration-plan.md](../KC-007-api-server-migration-plan.md) (2026-06-29, UUID)
+- [x] OpenAPI v1.1.0 UUID — `ai-gateway-wrtn-replacement-openapi.yaml`
+- [x] Gateway kickoff Issue — [katsulabs-ai-gateway#5](https://github.com/katsulabs/katsulabs-ai-gateway/issues/5)
+- [x] P5-A Gateway P0 구현 (외부 repo, smoke green)
+- [x] P5-B katsubot-api `gateway` 프로필 — UUID 매핑·SSE·`scripts/smoke-gateway-profile.sh` green
+- [x] P5-C Hyobee UUID DTO/mapper + `chat_viewable_teams.conversations` text[]
+- [x] P5-C 운영: `WRTN_BASEURL` Secrets + V3 SQL 적용 (로컬: XtrmConfig `8090`, V3 `text[]`, `infra/.env` gateway)
+
 ## 보류
 
 | 항목 | 상태 |

@@ -17,7 +17,7 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class MessageApiItem {
 
-    private int messageId;
+    private String messageId;
 
     private String content;
 

@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import xs.aichat.katsubot.dto.ErrorResponse;
+import xs.aichat.v2.exception.ExternalApiException;
 import xs.aichat.v2.exception.HyobeeException;
 
 import javax.validation.ConstraintViolation;
@@ -17,6 +18,17 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice(basePackages = "xs.aichat.katsubot.controller")
 public class KatsubotExceptionHandler {
+
+    @ExceptionHandler(ExternalApiException.class)
+    public ResponseEntity<ErrorResponse> handleExternalApi(ExternalApiException ex) {
+        HttpStatus status = ex.getHttpStatus() != null ? ex.getHttpStatus() : HttpStatus.BAD_GATEWAY;
+        if (status.is5xxServerError() && status != HttpStatus.BAD_GATEWAY) {
+            status = HttpStatus.BAD_GATEWAY;
+        }
+        String code = ex.getErrorCode() != null ? ex.getErrorCode() : toErrorCode(status);
+        log.warn("ExternalApiException: status={}, message={}", status.value(), ex.getMessage());
+        return ResponseEntity.status(status).body(new ErrorResponse(code, ex.getMessage()));
+    }
 
     @ExceptionHandler(HyobeeException.class)
     public ResponseEntity<ErrorResponse> handleHyobee(HyobeeException ex) {

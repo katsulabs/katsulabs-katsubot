@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: katsubot-api-test
+  profiles:
+    active: in-memory
+
+katsubot:
+  auth:
+    dev-bypass: true
+    dev-token: dev-token

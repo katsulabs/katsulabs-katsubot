@@ -14,8 +14,8 @@
 1. 최신 `main` 기준으로 worktree 생성 (`.cursor/skills/katsubot-worktree-ticket`)
 2. `[KC-xxx][Role]` 태그로 Sub-agent 분배
 3. 구현 및 테스트
-   - `services/chat-api`: `./gradlew test`
-   - `apps/chat-web`: `pnpm test` / `pnpm build`
+   - `services/katsubot-api`: `./gradlew test`
+   - `apps/katsubot-web`: `pnpm test` / `pnpm build`
    - `legacy/hyobee` (전환기): `mvn test`
 4. PR 생성 및 CI 확인 (`katsubot-pr-harness-gate`)
 5. 승인 후 `main`에 no-ff 머지

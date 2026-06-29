@@ -2827,16 +2827,11 @@ var aichat010={
         if (response.getErrorFlag()) {
             return;
         }
-        var sysCode = response.getDataJsonObject("SYS_CODE");
-        if (sysCode) {
-            xui.syscode.load(sysCode);
-        }
-        var messageData = response.getDataJsonArray("MESSAGE_DATA");
-        if (messageData && messageData.length) {
-            xui.message.load(messageData);
-        }
         if (typeof $.cookie === "function") {
             $.cookie("languageCode", lang, { expires: 30 });
+        }
+        if (xui.extends.session.sessionInfo) {
+            xui.extends.session.sessionInfo.LANGUAGE_CODE = lang;
         }
         aichat010.syncClientSessionInfo();
     },
@@ -2975,18 +2970,11 @@ var aichat010={
             if (response.getErrorFlag()) {
                 return;
             }
-            var sysCode = response.getDataJsonObject("SYS_CODE");
-            if (sysCode) {
-                xui.syscode.load(sysCode);
-            }
-            var messageData = response.getDataJsonArray("MESSAGE_DATA");
-            if (messageData && messageData.length) {
-                xui.message.load(messageData);
-            }
             if (typeof $.cookie === "function") {
                 $.cookie("languageCode", languageCode, { expires: 30 });
             }
             aichat010.refreshSessionAfterLocaleChange(languageCode);
+            aichat010.syncClientSessionInfo();
             aichat010.applyLocaleToDynamicUi();
         });
         xui.ajax.callService(param);
@@ -3884,6 +3872,45 @@ var aichat010={
         }
     },
 
+    /** 대화 목록 뱃지(CORP/WEB)용 chat_category 정규화 */
+    resolveConversationListCategory: function(rawCategory) {
+        var category = String(rawCategory || "internal_rules").toLowerCase();
+        if (category === "web_search" || category === "web") {
+            return "web_search";
+        }
+        return "internal_rules";
+    },
+
+    conversationCategoryBadgeClass: function(listCategory) {
+        return listCategory === "web_search" ? "--web" : "--corp";
+    },
+
+    buildConversationListItemHtml: function(item, checkboxIndex) {
+        var rawCategory = item.chat_category || item.chatCategory || "internal_rules";
+        var listCategory = aichat010.resolveConversationListCategory(rawCategory);
+        var badgeClass = aichat010.conversationCategoryBadgeClass(listCategory);
+        var badgeLabel = listCategory === "web_search" ? "WEB" : "CORP";
+        var conversationId = item.conversation_id != null ? item.conversation_id : item.conversationId;
+        var title = item.title != null ? String(item.title) : "";
+        var targetDeptAttr = item.target_dept_code
+            ? ' data-target-dept-code="' + item.target_dept_code + '"'
+            : "";
+
+        return '<div class="list-view2-item">'
+            + '<input type="checkbox" id="checkbox-' + checkboxIndex + '" title="대화 삭제" class="navigation-item-checkbox" />'
+            + '<label for="checkbox-' + checkboxIndex + '" class="navigation-item-label"></label>'
+            + '<div class="list-view2"'
+            + ' conversation_id="' + conversationId + '"'
+            + ' chat_category="' + listCategory + '"'
+            + ' data-real-chat-category="' + rawCategory + '"'
+            + targetDeptAttr
+            + '>'
+            + '<span class="conversation-category-badge ' + badgeClass + '" aria-label="' + badgeLabel + '"></span>'
+            + '<div class="text-area">' + title + '</div>'
+            + '</div>'
+            + '</div>';
+    },
+
     //대화목록 데이터세팅
     setConversations : function(response, isAppend){
         // 파라미터 기본값 설정
@@ -3923,19 +3950,7 @@ var aichat010={
         var startIndex = isAppend ? $("#chatHistory .list-view2-item").length : 0;
 
         for (var i = 0; i < content.length; i++) {
-            var checkboxIndex = startIndex + i;
-            listHTML += '<div class="list-view2-item">'
-                + '    <input type="checkbox" id="checkbox-' + checkboxIndex + '" title="대화 삭제" class="navigation-item-checkbox" id="' + content[i].conversation_id + '" />'
-                + '    <label for="checkbox-' + checkboxIndex + '" class="navigation-item-label"></label>'
-                + '    <div class="list-view2"'
-                + ' conversation_id=' + content[i].conversation_id
-                + ' chat_category=' + (content[i].chat_category === "rnd_search" ? "internal_rules" : content[i].chat_category)
-                + ' data-real-chat-category=' + content[i].chat_category
-                + (content[i].target_dept_code ? ' data-target-dept-code="' + content[i].target_dept_code + '"' : '')
-                + '>'
-                + '        <div class="text-area">'+ content[i].title + '</div>'
-                + '    </div>'
-                + '</div>';
+            listHTML += aichat010.buildConversationListItemHtml(content[i], startIndex + i);
         }
 
         //대화를 하지않았을때 처리
