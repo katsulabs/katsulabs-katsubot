@@ -1,7 +1,8 @@
 package com.katsulabs.katsubot.application;
 
-import com.katsulabs.katsubot.infrastructure.admindb.AdminLoginUser;
-import com.katsulabs.katsubot.infrastructure.admindb.AdminLoginUserRepository;
+import com.katsulabs.katsubot.infrastructure.admindb.AdminChatUser;
+import com.katsulabs.katsubot.infrastructure.admindb.AdminLoginCredentials;
+import com.katsulabs.katsubot.infrastructure.admindb.AdminUserRepository;
 import com.katsulabs.katsubot.infrastructure.auth.AuthProperties;
 import com.katsulabs.katsubot.infrastructure.auth.LegacyAesCrypto;
 import com.katsulabs.katsubot.infrastructure.auth.LegacyJwtTokenIssuer;
@@ -22,7 +23,7 @@ public class LoginUseCase {
 
     private static final String SESSION_ENCRYPT_KEY = "ENCRYPT_KEY";
 
-    private final AdminLoginUserRepository adminLoginUserRepository;
+    private final AdminUserRepository adminUserRepository;
     private final LegacyPasswordValidator passwordValidator;
     private final LegacyJwtTokenIssuer jwtTokenIssuer;
     private final AuthProperties authProperties;
@@ -39,17 +40,27 @@ public class LoginUseCase {
 
     public String login(EncryptedLoginCommand command, HttpSession session) {
         DecryptedLogin decrypted = decryptLoginFields(command, session);
-        AdminLoginUser user = validatePassword(
+        String userId = validatePassword(
                 decrypted.companyCode(),
                 decrypted.userId(),
                 decrypted.passwordHash()
         );
+        AdminChatUser profile = adminUserRepository.findById(decrypted.companyCode(), userId)
+                .orElseThrow(() -> loginError(
+                        HttpStatus.UNAUTHORIZED,
+                        "PASSWORD_CHANGE_ERROR02",
+                        "아이디 또는 비밀번호가 올바르지 않습니다."
+                ));
+        return issueTokenForProfile(profile);
+    }
+
+    private String issueTokenForProfile(AdminChatUser profile) {
         return jwtTokenIssuer.issueToken(
-                user.userId(),
-                user.corpCode(),
-                user.pgCode(),
-                user.puCode(),
-                user.resolveTeamCode(),
+                profile.userId(),
+                profile.corpCode(),
+                profile.pgCode(),
+                profile.puCode(),
+                profile.teamCode(),
                 List.of("ROLE_USER", "ROLE_ADMIN")
         );
     }
@@ -82,8 +93,8 @@ public class LoginUseCase {
         }
     }
 
-    private AdminLoginUser validatePassword(String companyCode, String userId, String clientPasswordHash) {
-        AdminLoginUser user = adminLoginUserRepository.findLoginCredentials(companyCode, userId)
+    private String validatePassword(String companyCode, String userId, String clientPasswordHash) {
+        AdminLoginCredentials credentials = adminUserRepository.findLoginCredentials(companyCode, userId)
                 .orElseThrow(() -> loginError(
                         HttpStatus.UNAUTHORIZED,
                         "PASSWORD_CHANGE_ERROR02",
@@ -91,37 +102,38 @@ public class LoginUseCase {
                 ));
 
         int limit = authProperties.limitPasswordFailCount();
-        int errorCount = user.passwordErrorCount();
+        int errorCount = credentials.passwordErrorCount();
         boolean isMaster = authProperties.masterLoginAvailable()
                 && StringUtils.hasText(authProperties.masterLoginPasswordEnc())
                 && clientPasswordHash.equals(authProperties.masterLoginPasswordEnc());
 
-        if (!"Y".equals(user.accountUseAt()) && errorCount > limit) {
+        if (!"Y".equals(credentials.accountUseAt()) && errorCount > limit) {
             throw loginError(HttpStatus.UNAUTHORIZED, "LOGIN_PFO", "비밀번호 오류 횟수를 초과했습니다.");
         }
 
-        if (!"Y".equals(user.accountUseAt())) {
+        if (!"Y".equals(credentials.accountUseAt())) {
             throw loginError(HttpStatus.UNAUTHORIZED, "LOGIN_UTL", "사용할 수 없는 계정입니다.");
         }
 
-        if (!passwordValidator.matches(clientPasswordHash, user.passwordEncpt(), user.encptKeyInfo()) && !isMaster) {
-            adminLoginUserRepository.increaseWrongPasswordCount(companyCode, userId, errorCount, limit);
+        if (!passwordValidator.matches(clientPasswordHash, credentials.passwordEncpt(), credentials.encptKeyInfo())
+                && !isMaster) {
+            adminUserRepository.increaseWrongPasswordCount(companyCode, userId, errorCount, limit);
             throw loginError(HttpStatus.UNAUTHORIZED, "LOGIN_NMP", "아이디 또는 비밀번호가 올바르지 않습니다.");
         }
 
-        if ("Y".equals(user.isLockAccount())) {
+        if ("Y".equals(credentials.isLockAccount())) {
             throw loginError(HttpStatus.UNAUTHORIZED, "LOGIN_LNL", "장기 미접속으로 계정이 잠겼습니다.");
         }
 
         if (passwordValidator.matches(
-                passwordValidator.sha256Hex(user.userId()),
-                user.passwordEncpt(),
-                user.encptKeyInfo()
+                passwordValidator.sha256Hex(credentials.userId()),
+                credentials.passwordEncpt(),
+                credentials.encptKeyInfo()
         )) {
             throw loginError(HttpStatus.UNAUTHORIZED, "LOGIN_EUP", "초기 비밀번호 변경이 필요합니다.");
         }
 
-        return user;
+        return credentials.userId();
     }
 
     private static LoginException loginError(HttpStatus status, String code, String message) {

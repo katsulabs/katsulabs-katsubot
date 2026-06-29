@@ -2,6 +2,8 @@ package com.katsulabs.katsubot.interfaces.rest;
 
 import com.katsulabs.katsubot.application.LoginException;
 import com.katsulabs.katsubot.application.LoginUseCase;
+import com.katsulabs.katsubot.interfaces.rest.dto.EncryptedLoginRequest;
+import com.katsulabs.katsubot.interfaces.rest.dto.ErrorResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,7 +43,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void loginReturnsToken() throws Exception {
+    void loginAcceptsSnakeCaseRequestBody() throws Exception {
         when(loginUseCase.login(any(), any())).thenReturn("jwt-token");
 
         mockMvc.perform(post("/api/v1/auth/login")

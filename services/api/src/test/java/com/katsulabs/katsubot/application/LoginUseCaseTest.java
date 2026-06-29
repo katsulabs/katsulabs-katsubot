@@ -1,9 +1,11 @@
 package com.katsulabs.katsubot.application;
 
-import com.katsulabs.katsubot.infrastructure.admindb.AdminLoginUser;
-import com.katsulabs.katsubot.infrastructure.admindb.AdminLoginUserRepository;
+import com.katsulabs.katsubot.infrastructure.admindb.AdminChatUser;
+import com.katsulabs.katsubot.infrastructure.admindb.AdminLoginCredentials;
+import com.katsulabs.katsubot.infrastructure.admindb.AdminUserRepository;
 import com.katsulabs.katsubot.infrastructure.auth.AuthProperties;
 import com.katsulabs.katsubot.infrastructure.auth.LegacyJwtTokenIssuer;
+import com.katsulabs.katsubot.infrastructure.auth.LegacyJwtTokenValidator;
 import com.katsulabs.katsubot.infrastructure.auth.LegacyPasswordValidator;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +20,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,7 +30,7 @@ class LoginUseCaseTest {
     private static final String TEST_SECRET = "yZp3n4W8LkqS1tDbE9mV0rXuA7wC2pTfG5hQ8jR3xU6sNcKdF4vB1zYeH0aMiOwP";
 
     @Mock
-    private AdminLoginUserRepository adminLoginUserRepository;
+    private AdminUserRepository adminUserRepository;
 
     private LegacyPasswordValidator passwordValidator;
     private LoginUseCase loginUseCase;
@@ -39,7 +40,7 @@ class LoginUseCaseTest {
         passwordValidator = new LegacyPasswordValidator();
         var authProperties = new AuthProperties(false, "dev-token", TEST_SECRET, "1000", 5, false, null, 87600L);
         loginUseCase = new LoginUseCase(
-                adminLoginUserRepository,
+                adminUserRepository,
                 passwordValidator,
                 new LegacyJwtTokenIssuer(authProperties),
                 authProperties
@@ -65,7 +66,7 @@ class LoginUseCaseTest {
     }
 
     @Test
-    void loginIssuesJwtWhenPasswordMatches() throws Exception {
+    void loginIssuesJwtFromFindByIdProfile() throws Exception {
         HttpSession session = new MockHttpSession();
         String encryptKey = loginUseCase.createEncryptKey(session);
 
@@ -78,23 +79,12 @@ class LoginUseCaseTest {
             dbHash = passwordValidator.sha256Hex(dbHash + encptKeyInfo);
         }
 
-        var user = new AdminLoginUser(
-                companyCode,
-                userId,
-                "User",
-                dbHash,
-                encptKeyInfo,
-                "Y",
-                0,
-                "N",
-                "H",
-                "H01",
-                "00",
-                "65H00",
-                "65H00",
-                "Team"
-        );
-        when(adminLoginUserRepository.findLoginCredentials(companyCode, userId)).thenReturn(Optional.of(user));
+        when(adminUserRepository.findLoginCredentials(companyCode, userId)).thenReturn(Optional.of(
+                new AdminLoginCredentials(companyCode, userId, dbHash, encptKeyInfo, "Y", 0, "N")
+        ));
+        when(adminUserRepository.findById(companyCode, userId)).thenReturn(Optional.of(
+                new AdminChatUser(userId, "User", "H", "H01", "00", "65H00", "Team")
+        ));
 
         var command = new EncryptedLoginCommand(
                 encryptLegacy(companyCode, encryptKey),
@@ -105,6 +95,15 @@ class LoginUseCaseTest {
 
         String token = loginUseCase.login(command, session);
         assertThat(token).isNotBlank();
+
+        var validator = new LegacyJwtTokenValidator(new AuthProperties(false, "dev-token", TEST_SECRET, "1000", 5, false, null, 87600L));
+        var user = validator.validate(token);
+        assertThat(user).isPresent();
+        assertThat(user.get().userId()).isEqualTo(userId);
+        assertThat(user.get().corpCode()).isEqualTo("00");
+        assertThat(user.get().teamCode()).isEqualTo("65H00");
+
+        verify(adminUserRepository).findById(companyCode, userId);
     }
 
     @Test
@@ -112,23 +111,9 @@ class LoginUseCaseTest {
         HttpSession session = new MockHttpSession();
         String encryptKey = loginUseCase.createEncryptKey(session);
 
-        var user = new AdminLoginUser(
-                "1000",
-                "user01",
-                "User",
-                "db-hash",
-                "key-info",
-                "Y",
-                1,
-                "N",
-                "H",
-                "H01",
-                "00",
-                "65H00",
-                "65H00",
-                "Team"
-        );
-        when(adminLoginUserRepository.findLoginCredentials("1000", "user01")).thenReturn(Optional.of(user));
+        when(adminUserRepository.findLoginCredentials("1000", "user01")).thenReturn(Optional.of(
+                new AdminLoginCredentials("1000", "user01", "db-hash", "key-info", "Y", 1, "N")
+        ));
 
         var command = new EncryptedLoginCommand(
                 encryptLegacy("1000", encryptKey),
@@ -140,7 +125,7 @@ class LoginUseCaseTest {
         assertThatThrownBy(() -> loginUseCase.login(command, session))
                 .isInstanceOf(LoginException.class);
 
-        verify(adminLoginUserRepository).increaseWrongPasswordCount(eq("1000"), eq("user01"), eq(1), anyInt());
+        verify(adminUserRepository).increaseWrongPasswordCount(eq("1000"), eq("user01"), eq(1), anyInt());
     }
 
     private static String encryptLegacy(String plain, String key) throws Exception {

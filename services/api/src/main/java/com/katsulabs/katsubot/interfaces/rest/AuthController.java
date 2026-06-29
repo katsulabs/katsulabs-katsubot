@@ -1,8 +1,8 @@
 package com.katsulabs.katsubot.interfaces.rest;
 
-import com.katsulabs.katsubot.application.EncryptedLoginCommand;
 import com.katsulabs.katsubot.application.LoginException;
 import com.katsulabs.katsubot.application.LoginUseCase;
+import com.katsulabs.katsubot.interfaces.rest.dto.EncryptedLoginRequest;
 import com.katsulabs.katsubot.interfaces.rest.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
@@ -33,9 +33,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody EncryptedLoginCommand command, HttpSession session) {
+    public ResponseEntity<?> login(@RequestBody EncryptedLoginRequest request, HttpSession session) {
         try {
-            String token = loginUseCase.login(command, session);
+            String token = loginUseCase.login(request.toCommand(), session);
             return ResponseEntity.ok(Map.of("token", token));
         } catch (LoginException ex) {
             return ResponseEntity.status(ex.status())
