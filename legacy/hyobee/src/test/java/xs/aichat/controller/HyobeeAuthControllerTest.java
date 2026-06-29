@@ -178,13 +178,7 @@ class HyobeeAuthControllerTest {
             mockMvc.perform(post(AUTH_LOGIN_URL)
                             .session(session)
                             .contentType("application/json")
-                            .content("""
-                                    {
-                                      "company_code_encrypt": "c",
-                                      "user_id_encrypt": "u",
-                                      "password_encrypt": "p"
-                                    }
-                                    """))
+                            .content("{\"company_code_encrypt\":\"c\",\"user_id_encrypt\":\"u\",\"password_encrypt\":\"p\"}"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.token").value("issued.jwt.token"));
         }

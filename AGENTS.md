@@ -6,7 +6,7 @@
 |------|------|-----|------|
 | katsubot-api | `services/katsubot-api` | **25** | `./gradlew :services:katsubot-api:test` |
 | katsubot-web | `apps/katsubot-web` | Node 22 | `npm ci && npm test && npm run build` |
-| legacy hyobee | `legacy/hyobee` | **21** | `mvn test` (P0 세트는 legacy-ci.yml 참고) |
+| legacy hyobee | `legacy/hyobee` | **11** | `mvn test` (P0 세트는 legacy-ci.yml 참고) |
 
 상세: [README-MONOREPO.md](./README-MONOREPO.md)
 
@@ -20,7 +20,7 @@ Spring Boot 2.7 WAR (Hyobee / 효성 AI 챗봇 BFF). 메인 클래스: `xs.XtrmM
 
 ### 시스템 의존성
 
-- **JDK 21** — `legacy/hyobee/pom.xml` (`java.version` 21). JDK 25로 레거시를 빌드하지 마세요.
+- **JDK 11** — `legacy/hyobee/pom.xml` (`java.version` 11, Spring Boot **2.7.18**). JDK 25로 레거시를 빌드하지 마세요.
 - **Maven 3**
 - **PostgreSQL** — `spring-boot:run` 시 필요 (아래 JVM 오버라이드 참고)
 
@@ -46,7 +46,7 @@ for f in src/main/resources/sql/aichat/*.sql; do sudo -u postgres psql -d xtrmvo
 
 ```bash
 mkdir -p /tmp/hyobee/{upload,clob,files,temp,download}
-export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+export JAVA_HOME=$(/usr/libexec/java_home -v 11)
 cd legacy/hyobee
 # DB: hyobee-admin-db → localhost:53254 (XtrmConfig.properties 기본)
 # WRTN: 로컬 AI Gateway → http://127.0.0.1:8090 (XtrmConfig.properties WRTN_BASEURL)

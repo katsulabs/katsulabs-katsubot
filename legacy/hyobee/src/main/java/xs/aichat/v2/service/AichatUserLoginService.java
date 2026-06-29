@@ -15,6 +15,7 @@ import xs.core.utility.XtrmCmmnUtil;
 import xs.core.utility.XtrmCryptoUtil;
 import xs.vob.cmmn.service.CmmnService;
 import xs.vob.enumeration.MainEnum;
+import xs.vob.management.dto.ComUser;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -186,6 +187,35 @@ public class AichatUserLoginService {
         session.setAttribute("DEPT_CODE", firstNonBlank(credentials.getTeamCode(), credentials.getDeptCode()));
         session.setAttribute("DEPT_NAME", credentials.getTeamName());
         session.setAttribute("LANGUAGE_CODE", StringUtils.hasText(languageCode) ? languageCode : "ko");
+        enrichSessionDisplayProfile(session);
+    }
+
+    /**
+     * selectUserBase 기준으로 세션 표시명(이름·직위·부서)을 갱신한다.
+     * loginBase·aichat /login 경로는 establishChatSession만으로 USER_NAME·직위가 비는 경우가 있어 보강한다.
+     */
+    public void enrichSessionDisplayProfile(HttpSession session) {
+        if (session == null || session.getAttribute("USER_ID") == null || session.getAttribute("COMPANY_CODE") == null) {
+            return;
+        }
+        String userId = session.getAttribute("USER_ID").toString();
+        String companyCode = session.getAttribute("COMPANY_CODE").toString();
+        Object langAttr = session.getAttribute("LANGUAGE_CODE");
+        String languageCode = langAttr == null || !StringUtils.hasText(langAttr.toString()) ? "ko" : langAttr.toString();
+        try {
+            ComUser user = cmmnService.selectUserBase(companyCode, userId, languageCode);
+            if (user == null || user.getUserId() == null || "".equals(user.getUserId())) {
+                return;
+            }
+            session.setAttribute("COMPANY_NAME", XtrmCmmnUtil.convertString(user.getCompanyName(), ""));
+            session.setAttribute("CORP_NAME", XtrmCmmnUtil.convertString(user.getCorpName(), ""));
+            session.setAttribute("OFFICIAL_POSITION_NAME", XtrmCmmnUtil.convertString(user.getOfficialPositionName(), ""));
+            session.setAttribute("USER_NAME", XtrmCmmnUtil.convertString(user.getUserName(), ""));
+            session.setAttribute("DEPT_NAME", XtrmCmmnUtil.convertString(user.getDeptName(), ""));
+            session.setAttribute("FULL_DEPT_NAME", XtrmCmmnUtil.convertString(user.getFullDeptName(), ""));
+        } catch (Exception ignored) {
+            // 로그인·페이지 진입은 표시명 보강 실패만으로 막지 않는다.
+        }
     }
 
     private static String normalizeCipher(String value) {
@@ -208,6 +238,12 @@ public class AichatUserLoginService {
         );
     }
 
-    private record DecryptedLogin(String companyCode, String userId, String passwordHash, String languageCode) {
+    @lombok.Value
+    @lombok.experimental.Accessors(fluent = true)
+    private static class DecryptedLogin {
+        String companyCode;
+        String userId;
+        String passwordHash;
+        String languageCode;
     }
 }

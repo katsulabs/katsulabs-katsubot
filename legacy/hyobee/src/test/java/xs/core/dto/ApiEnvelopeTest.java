@@ -106,9 +106,9 @@ class ApiEnvelopeTest {
 			envelope.setHeader("COUNT", 1);
 
 			ResponseHeader header = ResponseHeader.from(envelope);
-			assertThat(header.errorFlag()).isFalse();
-			assertThat(header.errorMsg()).isEqualTo("ok");
-			assertThat(header.count()).isOne();
+			assertThat(header.isErrorFlag()).isFalse();
+			assertThat(header.getErrorMsg()).isEqualTo("ok");
+			assertThat(header.getCount()).isOne();
 
 			ApiEnvelope restored = new ApiEnvelope();
 			header.applyTo(restored);

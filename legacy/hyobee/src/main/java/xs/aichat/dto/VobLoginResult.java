@@ -1,8 +1,14 @@
 package xs.aichat.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Value;
 import xs.core.dto.ApiEnvelope;
 
-public record VobLoginResult(boolean successful, String errorData) {
+@Value
+@AllArgsConstructor
+public class VobLoginResult {
+    boolean successful;
+    String errorData;
 
     /** Lombok {@code isSuccess()} 호환 — SSO 테스트·컨트롤러 */
     public boolean isSuccess() {

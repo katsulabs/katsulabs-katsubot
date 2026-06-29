@@ -11,7 +11,7 @@ description: Katsubot GitHub Actions CI — katsubot-api(Gradle), katsubot-web(p
 |------|--------------|-----|
 | `.github/workflows/katsubot-api-ci.yml` | `services/katsubot-api/**` | JDK 25, `./gradlew test` |
 | `.github/workflows/katsubot-web-ci.yml` | `apps/katsubot-web/**` | Node 22, `pnpm test`, `pnpm build` |
-| `.github/workflows/legacy-ci.yml` | `legacy/hyobee/**`, `pom.xml` | JDK 21, `mvn test` (선택) |
+| `.github/workflows/legacy-ci.yml` | `legacy/hyobee/**`, `pom.xml` | JDK 11, `mvn test` (선택) |
 
 ## katsubot-api-ci 스켈레ton
 

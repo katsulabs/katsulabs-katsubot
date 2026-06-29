@@ -31,7 +31,7 @@ cd infra && docker compose --profile stub up -d dummy-rag
 |------|------|------|
 | katsubot-api | `services/katsubot-api` | `./gradlew :services:katsubot-api:test` |
 | katsubot-web | `apps/katsubot-web` | `npm ci && npm test && npm run build` |
-| legacy hyobee | `legacy/hyobee` | `mvn test` (JDK 21) |
+| legacy hyobee | `legacy/hyobee` | `mvn test` (JDK 11, Boot 2.7.18) |
 
 ## 1. 인프라
 

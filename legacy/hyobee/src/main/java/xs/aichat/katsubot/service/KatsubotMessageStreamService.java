@@ -122,40 +122,38 @@ public class KatsubotMessageStreamService {
             return;
         }
         try {
-            Map<String, Object> responseMap = objectMapper.readValue(chunk.trim(), new TypeReference<>() {});
+            Map<String, Object> responseMap = objectMapper.readValue(chunk.trim(), new TypeReference<Map<String, Object>>() {});
             String status = String.valueOf(responseMap.getOrDefault("status", ""));
 
             switch (status) {
-                case "error" -> {
+                case "error": {
                     String message = Objects.toString(
                             responseMap.getOrDefault("message", responseMap.getOrDefault("error", "stream error")),
                             "stream error"
                     );
                     sendError(emitter, "STREAM_ERROR", message);
                     emitter.complete();
+                    break;
                 }
-                case "response_completed" -> {
+                case "response_completed": {
                     String delta = extractDeltaText(responseMap);
                     if (delta != null && !delta.isEmpty()) {
                         accumulatedText.append(delta);
                         sendDelta(emitter, delta);
                     }
-                    // title은 다음 done 청크에 옴 — 여기서 종료하지 않음
+                    break;
                 }
-                case "done" -> finishStream(emitter, conversationId, responseMap, streamFinished, accumulatedText);
-                case "response_chunk" -> {
+                case "done":
+                    finishStream(emitter, conversationId, responseMap, streamFinished, accumulatedText);
+                    break;
+                case "response_chunk":
+                default: {
                     String delta = extractDeltaText(responseMap);
                     if (delta != null && !delta.isEmpty()) {
                         accumulatedText.append(delta);
                         sendDelta(emitter, delta);
                     }
-                }
-                default -> {
-                    String delta = extractDeltaText(responseMap);
-                    if (delta != null && !delta.isEmpty()) {
-                        accumulatedText.append(delta);
-                        sendDelta(emitter, delta);
-                    }
+                    break;
                 }
             }
         } catch (Exception ex) {

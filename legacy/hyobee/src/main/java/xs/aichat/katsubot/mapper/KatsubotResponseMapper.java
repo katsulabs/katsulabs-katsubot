@@ -124,7 +124,8 @@ public final class KatsubotResponseMapper {
             return null;
         }
         MessageFeedbackSummary feedbackSummary = null;
-        if (item.getFeedback() instanceof Map<?, ?> feedbackMap) {
+        if (item.getFeedback() instanceof Map) {
+            Map<?, ?> feedbackMap = (Map<?, ?>) item.getFeedback();
             Object feedbackId = feedbackMap.get("feedback_id");
             Object feedbackType = feedbackMap.get("feedback_type");
             if (feedbackId != null && feedbackType != null) {

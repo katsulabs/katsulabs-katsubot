@@ -84,13 +84,21 @@ public class KatsubotExceptionHandler {
     }
 
     private static String toErrorCode(HttpStatus status) {
-        return switch (status) {
-            case UNAUTHORIZED -> "UNAUTHORIZED";
-            case FORBIDDEN -> "FORBIDDEN";
-            case NOT_FOUND -> "NOT_FOUND";
-            case BAD_REQUEST -> "BAD_REQUEST";
-            case INTERNAL_SERVER_ERROR -> "INTERNAL_ERROR";
-            default -> String.valueOf(status.value());
-        };
+        if (status == HttpStatus.UNAUTHORIZED) {
+            return "UNAUTHORIZED";
+        }
+        if (status == HttpStatus.FORBIDDEN) {
+            return "FORBIDDEN";
+        }
+        if (status == HttpStatus.NOT_FOUND) {
+            return "NOT_FOUND";
+        }
+        if (status == HttpStatus.BAD_REQUEST) {
+            return "BAD_REQUEST";
+        }
+        if (status == HttpStatus.INTERNAL_SERVER_ERROR) {
+            return "INTERNAL_ERROR";
+        }
+        return String.valueOf(status.value());
     }
 }

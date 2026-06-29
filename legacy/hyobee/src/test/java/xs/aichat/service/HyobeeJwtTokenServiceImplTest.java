@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("HyobeeJwtTokenServiceImpl Î?®Ï?? Ì??Ï?§Ì?∏")
+@DisplayName("HyobeeJwtTokenServiceImpl ?? ???")
 class HyobeeJwtTokenServiceImplTest {
 
     private static final String TEST_SECRET = "yZp3n4W8LkqS1tDbE9mV0rXuA7wC2pTfG5hQ8jR3xU6sNcKdF4vB1zYeH0aMiOwP";
@@ -59,16 +59,15 @@ class HyobeeJwtTokenServiceImplTest {
     class GenerateToken {
 
         @Test
-        @DisplayName("Ï†?Ï?Å Ì?†ÌÅ∞ Ï?ùÏ?± Ï?? Îπ?Ï?¥Ï??Ïß? Ï??Ïù? Î¨∏Ï?êÏ?¥ Î∞?Ì??")
+        @DisplayName("?? ?? ?? ? ? ???? ??")
         void returnsNonEmptyToken() {
             List<String> roles = Arrays.asList("ROLE_USER", "ROLE_ADMIN");
             String token = jwtTokenService.generateToken(USER_ID, CORP_CODE, PG_CODE, PU_CODE, TEAM_CODE, roles);
-            System.out.println(token);
             assertThat(token).isNotBlank();
         }
 
         @Test
-        @DisplayName("Ï?ùÏ?±Ì?? Ì?†ÌÅ∞Ïù? validateTokenÏ?ºÎ°? Ì??Ï?± Í∞?Î?•")
+        @DisplayName("??? ??? validateToken?? ?? ??")
         void generatedTokenCanBeValidated() {
             List<String> roles = Collections.singletonList("ROLE_USER");
             String token = jwtTokenService.generateToken(USER_ID, CORP_CODE, PG_CODE, PU_CODE, TEAM_CODE, roles);
@@ -82,7 +81,7 @@ class HyobeeJwtTokenServiceImplTest {
         }
 
         @Test
-        @DisplayName("rolesÍ∞? Îπ? Î¶¨Ï?§Ì?∏Ï?¨Îè? Ì?†ÌÅ∞ Ï?ùÏ?± Í∞?Î?•")
+        @DisplayName("roles? ? ????? ?? ?? ??")
         void acceptsEmptyRoles() {
             String token = jwtTokenService.generateToken(
                     USER_ID, CORP_CODE, PG_CODE, PU_CODE, TEAM_CODE, Collections.emptyList()
@@ -96,7 +95,7 @@ class HyobeeJwtTokenServiceImplTest {
     class ValidateToken {
 
         @Test
-        @DisplayName("Ï?†Ì?®Ì?? Ì?†ÌÅ∞Ïù? Claims Î∞?Ì??")
+        @DisplayName("??? ??? Claims ??")
         void validTokenReturnsClaims() {
             String token = jwtTokenService.generateToken(
                     USER_ID, CORP_CODE, PG_CODE, PU_CODE, TEAM_CODE, Collections.emptyList()
@@ -108,7 +107,7 @@ class HyobeeJwtTokenServiceImplTest {
         }
 
         @Test
-        @DisplayName("Ï??Î™ªÎê? Ï??Î™?Ïù? Ì?†ÌÅ∞Ïù? Ï??Ï?∏")
+        @DisplayName("??? ??? ??? ??")
         void invalidSignatureThrows() {
             Properties otherProps = new Properties();
             otherProps.setProperty("SECRET_KEY", "other-secret-key-32bytes-minimum!!!");
@@ -126,11 +125,10 @@ class HyobeeJwtTokenServiceImplTest {
         }
 
         @Test
-        @DisplayName("??? ?? ??? ??")
+        @DisplayName("??? ??? ??? ??")
         void malformedTokenThrows() {
             assertThatThrownBy(() -> jwtTokenService.validateToken("not.a.valid.jwt"))
                     .isInstanceOf(Exception.class);
         }
     }
 }
-

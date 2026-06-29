@@ -6,7 +6,7 @@
 |------|------|------|-----------|--------|
 | **katsubot-web** | `apps/katsubot-web` | React · Vite | 5173 | `npm ci && npm test && npm run build` |
 | **katsubot-api** | `services/katsubot-api` | Spring Boot 4.1 · JDK 25 | 8081 | `./gradlew :services:katsubot-api:test` |
-| **legacy hyobee** | `legacy/hyobee` | Spring Boot 2.7 WAR · JDK 21 | 8080 | `mvn test` |
+| **legacy hyobee** | `legacy/hyobee` | Spring Boot 2.7.18 WAR · **JDK 11** | 8080 | `mvn test` |
 | **api-contract** | `packages/api-contract` | OpenAPI 3.1 | — | 스펙 diff·리뷰 |
 | **infra** | `infra/` | Docker · nginx strangler | 8090 (Gateway) | `./scripts/up-ai-gateway.sh` |
 
