@@ -1,0 +1,63 @@
+# EC2-1 (Gateway) — AI Gateway + WRTN Postgres
+#
+#   cp infra/poc-ec2/.env.gateway.example infra/poc-ec2/.env
+#   ./scripts/poc/deploy-gateway-ec2.sh
+#
+# 선행: katsulabs-ai-gateway 클론 (AI_GATEWAY_REPO)
+
+services:
+  rag-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: wrtn
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${RAG_DB_PASSWORD:?RAG_DB_PASSWORD required}
+    volumes:
+      - rag_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d wrtn"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  ai-gateway:
+    image: katsubot-ai-gateway-poc
+    build:
+      context: ${AI_GATEWAY_REPO:?AI_GATEWAY_REPO required}/services/gateway-java
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${GATEWAY_BIND:-8090}:8090"
+    depends_on:
+      rag-db:
+        condition: service_healthy
+    env_file:
+      - path: .env
+        required: true
+    environment:
+      PORT: "8090"
+      GATEWAY_WRTN_ENABLED: ${GATEWAY_WRTN_ENABLED:-true}
+      GATEWAY_FLYWAY_ENABLED: ${GATEWAY_FLYWAY_ENABLED:-true}
+      GATEWAY_JWT_SECRET: ${GATEWAY_JWT_SECRET:?GATEWAY_JWT_SECRET required}
+      GATEWAY_DEV_USER_ID: ${GATEWAY_DEV_USER_ID:-test20230128}
+      GATEWAY_DEV_CORP_CODE: ${GATEWAY_DEV_CORP_CODE:-00}
+      GATEWAY_DEV_PG_CODE: ${GATEWAY_DEV_PG_CODE:-H}
+      GATEWAY_DEV_PU_CODE: ${GATEWAY_DEV_PU_CODE:-H01}
+      GATEWAY_DEV_TEAM_CODE: ${GATEWAY_DEV_TEAM_CODE:-65H00}
+      GATEWAY_DEV_ROLES: ${GATEWAY_DEV_ROLES:-ROLE_USER,ROLE_ADMIN}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://rag-db:5432/wrtn
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${RAG_DB_PASSWORD}
+      LLM_API_KEY: ${LLM_API_KEY:?LLM_API_KEY required}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://generativelanguage.googleapis.com/v1beta/openai/}
+      LLM_MODEL: ${LLM_MODEL:-gemini-2.0-flash}
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:8090/_health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+
+volumes:
+  rag_data:
