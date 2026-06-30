@@ -1,0 +1,48 @@
+# EC2-2 (Katsubot) — nginx(SPA) + katsubot-api
+#
+#   cp infra/poc-ec2/.env.katsubot.example infra/poc-ec2/.env
+#   ./scripts/poc/deploy-katsubot-ec2.sh
+#
+# RAG_SERVICE_BASE_URL → EC2-1 Gateway private IP:8090
+
+services:
+  katsubot-api:
+    image: katsubot-api-poc
+    build:
+      context: ../..
+      dockerfile: services/katsubot-api/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: true
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-gateway}
+      RAG_SERVICE_BASE_URL: ${RAG_SERVICE_BASE_URL:?RAG_SERVICE_BASE_URL required}
+      RAG_SERVICE_MODE: ${RAG_SERVICE_MODE:-direct}
+      KATSUBOT_AUTH_DEV_BYPASS: ${KATSUBOT_AUTH_DEV_BYPASS:-true}
+      KATSUBOT_AUTH_DEV_TOKEN: ${KATSUBOT_AUTH_DEV_TOKEN:-}
+      KATSUBOT_AUTH_JWT_SECRET: ${KATSUBOT_AUTH_JWT_SECRET:?KATSUBOT_AUTH_JWT_SECRET required}
+      HYOBEE_JWT_SECRET: ${HYOBEE_JWT_SECRET:-${KATSUBOT_AUTH_JWT_SECRET}}
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:8081/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+
+  katsubot-web:
+    image: katsubot-web-poc
+    build:
+      context: ../..
+      dockerfile: apps/katsubot-web/Dockerfile.poc
+    restart: unless-stopped
+    ports:
+      - "${KATSUBOT_HTTP_PORT:-80}:80"
+    depends_on:
+      katsubot-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5

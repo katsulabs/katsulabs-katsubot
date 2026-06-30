@@ -81,6 +81,10 @@ nginx `/xs/**`, `/webapps/**` 응답:
 - Phase 3: RAG ops·OTel·legacy-bridge·JWT handoff (PR [#4](https://github.com/katsulabs/katsulabs-katsubot/pull/4))
 - Phase 4: Strangler `:8088`, decommission runbook (PR [#5](https://github.com/katsulabs/katsulabs-katsubot/pull/5))
 
+## POC EC2 (2대)
+
+- [poc-ec2-deployment.md](./poc-ec2-deployment.md) — Gateway EC2 + Katsubot EC2, POC teardown
+
 ## 운영 전 잔여
 
 - Epic 승인 · staging Secrets
